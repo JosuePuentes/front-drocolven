@@ -1,12 +1,12 @@
-import ExcelUploader from "../components/ExcelUploader";
+import UploadInventory from "../components/UploadInventary";
 
 const ProductUploaderPage = () => {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4 text-amber-50">
+      <h1 className="text-2xl font-bold mb-4 ">
         Cargar Productos desde Excel
       </h1>
-      <ExcelUploader />
+      <UploadInventory />
     </div>
   );
 };

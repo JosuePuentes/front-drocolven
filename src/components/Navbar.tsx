@@ -22,9 +22,6 @@ const Navbar = () => {
                         <Link to="/about" className="hover:text-gray-300">Sobre Nosotros</Link>
                     </li>
                     <li>
-                        <Link to="/productos" className="hover:text-gray-300">Nuestros Productos</Link>
-                    </li>
-                    <li>
                         <Link to="/contact" className="hover:text-gray-300">Contacto</Link>
                     </li>
                 </ul>

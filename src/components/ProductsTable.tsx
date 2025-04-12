@@ -3,7 +3,7 @@ import { useState } from "react";
 interface Product {
   descripcion: string;
   dpto: string;
-  nacional: string;
+  importado: string;
   laboratorio: string;
   fv: string;
   existencia: number;
@@ -18,7 +18,7 @@ const initialProducts: Product[] = [
   {
     descripcion: "AGUA OXIGENADA 40 VOL X 120 ML DIPLONA",
     dpto: "CH-MISCELANEOS CH",
-    nacional: "Si",
+    importado: "Si",
     laboratorio: "DIPLOMA",
     fv: "28/2/2026",
     existencia: 35,
@@ -75,7 +75,7 @@ export default function ProductTable() {
             <tr key={index} className="text-center">
               <td className="border p-2">{product.descripcion}</td>
               <td className="border p-2">{product.dpto}</td>
-              <td className="border p-2">{product.nacional}</td>
+              <td className="border p-2">{product.importado}</td>
               <td className="border p-2">{product.laboratorio}</td>
               <td className="border p-2">{product.fv}</td>
               <td className="border p-2">{product.existencia}</td>

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
+    "axios": "^1.8.4",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.479.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -20,7 +22,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@types/react": "^19.0.10",
+    "@types/jwt-decode": "^2.2.1",
+    "@types/react": "^19.1.0",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "eslint": "^9.21.0",

@@ -24,6 +24,9 @@ const Navbar = () => {
                     <li>
                         <Link to="/contact" className="hover:text-gray-300">Contacto</Link>
                     </li>
+                    <li>
+                        <Link to="/productos" className="hover:text-gray-300">Contacto</Link>
+                    </li>
                 </ul>
 
                 {/* Mobile Menu Button */}

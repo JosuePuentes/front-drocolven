@@ -15,6 +15,11 @@ import AdminLayout from "./layouts/AdminLayout";
 import CreateAdminUser from "./components/CreateAdminUser";
 import AdminLoginPage from "./components/AdminLoginPage";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import UploadInventory from "./components/UploadInventary";
+import Inventario from "./components/Inventario";
+import { CarritoCompras } from "./components/Compras/CarritoCompras";
+import {PedidosOrganizados} from "./components/Pedidos/ArmarPedidos";
+import { ListaPedidos } from "./components/Pedidos/ListaPedidos";
 
 function App() {
   return (
@@ -32,6 +37,11 @@ function App() {
               <ProductsPage />
             </ProtectedRoute>
           } />
+          <Route path="/comprar" element={
+            <ProtectedRoute>
+              <CarritoCompras />
+            </ProtectedRoute>
+          } />
         </Route>
 
         {/* ADMIN ROUTES */}
@@ -44,8 +54,16 @@ function App() {
 
           <Route path="inventario" element={<AdminProtectedRoute moduleRequired="inventario"><InventarioPage /></AdminProtectedRoute>} />
 
-          <Route path="usuarios" element={<UsuariosPage />} />
+          <Route path="usuarios" element={<AdminProtectedRoute moduleRequired="usuarios"><UsuariosPage /></AdminProtectedRoute>} />
+          <Route path="usuarios/create" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
+          <Route path="usuarios/editar" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
+          <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
+          <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><Inventario /></AdminProtectedRoute>} />
+          <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><CarritoCompras /></AdminProtectedRoute>} />
+          <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosOrganizados /></AdminProtectedRoute>} />
+          <Route path="listapedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><ListaPedidos /></AdminProtectedRoute>} />
           {/* Más rutas administrativas aquí */}
+      
         </Route>
 
         {/* CATCH-ALL */}

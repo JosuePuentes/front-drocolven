@@ -5,14 +5,15 @@ type Producto = {
   codigo: string;
   descripcion: string;
   dpto: string;
-  importado: string;
+  nacional: string;
   laboratorio: string;
   fv: string;
   existencia: number;
   precio: number;
   cantidad: number;
-  descuentoPorCantidad: number;
-  descuentoLineal: number;
+  descuento1: number;
+  descuento2: number;
+  descuento3: number;
 };
 
 export default function Inventario() {
@@ -25,17 +26,26 @@ export default function Inventario() {
         const response = await axios.get("http://localhost:8000/inventario/");
         const data = response.data;
 
-        // Extraer la clave dinámica tipo "inventario_08-04-2025"
-        const claveInventario = Object.keys(data).find((key) =>
-          key.startsWith("inventario_")
-        );
+        console.log(data); // Verifica la estructura de los datos
 
-        if (claveInventario) {
-          setProductos(data[claveInventario]);
-          setFecha(claveInventario.replace("inventario_", ""));
+
+        // // Extraer la clave dinámica tipo "inventario_08-04-2025"
+        // const claveInventario = Object.keys(data["ultimo_inventario"]).find((key) =>
+        //   key.startsWith("inventario_")
+        // );
+
+        if (data) {
+          setProductos(data.inventario);
+        } else {
+          console.warn("No se encontró una clave de inventario válida en la respuesta.");
+          setProductos([]); // Establecer un estado vacío si no se encuentra la clave
+          setFecha("");
         }
       } catch (error) {
         console.error("Error al obtener inventario:", error);
+
+        // Mostrar un mensaje de error al usuario (opcional)
+        alert("Hubo un problema al cargar el inventario. Por favor, inténtelo de nuevo más tarde.");
       }
     };
 
@@ -58,8 +68,9 @@ export default function Inventario() {
               <th className="border p-2">Existencia</th>
               <th className="border p-2">Precio</th>
               <th className="border p-2">Cantidad</th>
-              <th className="border p-2">Desc. Cant.</th>
-              <th className="border p-2">Desc. Lineal</th>
+              <th className="border p-2">Desc. 1</th>
+              <th className="border p-2">Desc. 2</th>
+              <th className="border p-2">Desc. 3</th>
             </tr>
           </thead>
           <tbody>
@@ -68,14 +79,15 @@ export default function Inventario() {
                 <td className="border p-2">{producto.codigo}</td>
                 <td className="border p-2">{producto.descripcion.trim()}</td>
                 <td className="border p-2">{producto.dpto.trim()}</td>
-                <td className="border p-2">{producto.importado.trim()}</td>
+                <td className="border p-2">{producto.nacional.trim()}</td>
                 <td className="border p-2">{producto.laboratorio.trim()}</td>
                 <td className="border p-2">{producto.fv}</td>
                 <td className="border p-2">{producto.existencia}</td>
                 <td className="border p-2">{producto.precio}</td>
                 <td className="border p-2">{producto.cantidad}</td>
-                <td className="border p-2">{producto.descuentoPorCantidad}</td>
-                <td className="border p-2">{producto.descuentoLineal}</td>
+                <td className="border p-2">{producto.descuento1}</td>
+                <td className="border p-2">{producto.descuento2}</td>
+                <td className="border p-2">{producto.descuento3}</td>
               </tr>
             ))}
           </tbody>

@@ -12,6 +12,7 @@ export interface Producto {
   descuento2: number; // Added descuento2 property
   descuento3: number;
   descuento4: number;
+  cantidad_encontrada: number;
 }
 
 export function useCarrito() {

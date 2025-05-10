@@ -10,6 +10,7 @@ export interface Producto {
   descuento2: number;
   descuento3: number;
   descuento4: number;
+  cantidad_encontrada: number;
   [key: string]: any; // para aceptar campos adicionales como descuentos
 }
 
@@ -34,13 +35,13 @@ export const useProductos = () => {
             descripcion: item.descripcion.trim(),
             precio: parseFloat(item.precio) || 0,
             cantidad_pedida: Number(item.cantidad) || 0,
+            cantidad_encontrada: 0, // Inicialización correcta
             descuento1: parseFloat(item.descuento1) || 0,
             descuento2: parseFloat(item.descuento2) || 0,
             descuento3: parseFloat(item.descuento3) || 0,
             descuento4: parseFloat(item.descuento4) || 0,
             ...item,
           }));
-        console.log("Productos cargados:", productosFormateados);
         setProductos(productosFormateados);
       } catch (error) {
         console.error("Error al cargar productos del backend:", error);

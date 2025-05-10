@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import { usePedidoArmado } from "../hooks/usePedidoArmado";
-
+import { usePedidoArmado, PedidoArmado } from "../hooks/usePedidoArmado";
 
 export const PedidosOrganizados = () => {
-
-  const [ventas, setVentas] = useState<Venta[]>([]);
-  const [loading, setLoading] = useState(true);
   const [fechaSeleccionada, setFechaSeleccionada] = useState<string | null>(null);
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState<string | null>(null);
 
@@ -13,69 +9,41 @@ export const PedidosOrganizados = () => {
     pedido,
     iniciarPedido,
     actualizarCantidadEncontrada,
+    ventas,
+    loading,
+    fetchVentas
   } = usePedidoArmado();
 
   useEffect(() => {
-    const fetchVentas = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/obtener_pedidos/");
-        const data = await response.json();
-
-        const ventasFiltradas = data.filter((venta: Venta) => venta.estado === "pedido_creado");
-
-        const ventasFormateadas = ventasFiltradas.map((venta: Venta) => ({
-          ...venta,
-          fecha: venta.fecha.split(" ")[0],
-          productos: venta.productos.map((prod: any) => ({
-            ...prod,
-            precio: parseFloat(prod.precio || "0"),
-            precio_n: parseFloat(prod.precio_n || "0"),
-            subtotal: parseFloat(prod.subtotal || "0"),
-            cantidad: parseInt(prod.cantidad || "0"),
-            descuento1: prod.descuento1 || 0,
-            descuento2: prod.descuento2 || 0,
-            descuento3: prod.descuento3 || 0,
-            descuento4: prod.descuento4 || 0,
-          })),
-        }));
-
-        setVentas(ventasFormateadas);
-      } catch (error) {
-        console.error("Error al obtener ventas:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchVentas();
   }, []);
 
   const fechasDisponibles = [...new Set(ventas.map((venta) => venta.fecha))];
   const clientesDelDia = ventas.filter((v) => v.fecha === fechaSeleccionada);
 
-  const manejarInicioPedido = async (venta: Venta) => {
+  const manejarInicioPedido = async (pedido: PedidoArmado) => {
     try {
-      await fetch(`http://localhost:8000/pedidos/actualizar_estado/${venta._id}`, {
+      await fetch(`http://localhost:8000/pedidos/actualizar_estado/${pedido._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "nuevo_estado": "pedido_armandose" }),
+        body: JSON.stringify({ "nuevo_estado": "pedido_creado" }),
       });
 
       iniciarPedido(
-        venta.cliente,
-        venta.rif,
-        venta.total,
-        venta.fecha,
-        venta._id,
-        venta.observacion,
-        venta.productos.map((p) => ({
+        pedido.cliente,
+        pedido.rif,
+        pedido.total,
+        pedido.fecha || new Date().toISOString().split('T')[0],
+        pedido.observacion,
+        pedido._id,
+        pedido.productos.map((p) => ({
           ...p,
-          cantidadPedida: p.cantidad,
-          cantidadEncontrada: 0,
-        }))
+          cantidad_encontrada: 0,
+        })),
+        "pedido_armandose"
       );
 
-      setClienteSeleccionadoId(venta._id);
+      setClienteSeleccionadoId(pedido._id);
     } catch (error) {
       console.error("Error al iniciar armado de pedido:", error);
       alert("No se pudo iniciar el armado del pedido.");
@@ -112,17 +80,17 @@ export const PedidosOrganizados = () => {
           <div className="mt-6 max-h-96 overflow-y-auto border rounded-lg p-4 bg-gray-50">
             <ul className="space-y-3">
               {pedido.productos.map((p) => {
-                const correcto = p.cantidadEncontrada === p.cantidadPedida;
-                const incompleto = p.cantidadEncontrada < p.cantidadPedida;
-                const sobrante = p.cantidadEncontrada > p.cantidadPedida;
+                const correcto = p.cantidad_encontrada === p.cantidad_pedida;
+                const incompleto = p.cantidad_encontrada < p.cantidad_pedida;
+                const sobrante = p.cantidad_encontrada > p.cantidad_pedida;
 
                 const bgColor = correcto
                   ? "bg-green-100 border-green-300"
                   : incompleto
-                  ? "bg-red-100 border-red-300"
-                  : sobrante
-                  ? "bg-yellow-100 border-yellow-300"
-                  : "bg-white";
+                    ? "bg-red-100 border-red-300"
+                    : sobrante
+                      ? "bg-yellow-100 border-yellow-300"
+                      : "bg-white";
 
                 return (
                   <li key={p.id} className={`border ${bgColor} rounded-lg p-4`}>
@@ -132,7 +100,7 @@ export const PedidosOrganizados = () => {
                     <div className="text-sm text-gray-700">
                       Precio: ${p.precio.toFixed(2)} | Subtotal: ${p.subtotal.toFixed(2)}
                     </div>
-                    <div className="text-sm text-gray-700">Cantidad pedida: {p.cantidadPedida}</div>
+                    <div className="text-sm text-gray-700">Cantidad pedida: {p.cantidad_pedida}</div>
                     <div className="mt-2">
                       <label htmlFor={`cantidad-${p.id}`} className="mr-2 text-gray-600">
                         Cantidad encontrada:
@@ -141,9 +109,9 @@ export const PedidosOrganizados = () => {
                         id={`cantidad-${p.id}`}
                         type="number"
                         min="0"
-                        value={p.cantidadEncontrada || ""}
+                        value={p.cantidad_encontrada || ""}
                         onChange={(e) =>
-                          actualizarCantidadEncontrada(p.id, parseInt(e.target.value || "0"))
+                          actualizarCantidadEncontrada(p.id, Number(e.target.value || "0"))
                         }
                         className="w-20 p-2 border rounded-lg text-center"
                         aria-label={`Cantidad encontrada para ${p.descripcion}`}
@@ -167,41 +135,41 @@ export const PedidosOrganizados = () => {
       ) : (
         <>
           <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-center">Selecciona un día:</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <h2 className="text-2xl font-semibold text-center">Selecciona un día y cliente:</h2>
+
+            {/* Contenedor de tarjetas para seleccionar la fecha */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {fechasDisponibles.map((fecha) => (
-                <button
+                <div
                   key={fecha}
+                  className={`p-4 border rounded-lg text-center cursor-pointer transition-colors 
+                    ${fecha === fechaSeleccionada ? "bg-blue-600 text-white" : "bg-gray-200"}`}
                   onClick={() => {
                     setFechaSeleccionada(fecha);
                     setClienteSeleccionadoId(null);
                   }}
-                  className={`px-4 py-2 rounded-lg ${
-                    fecha === fechaSeleccionada ? "bg-blue-600 text-white" : "bg-gray-200"
-                  }`}
                 >
                   {fecha}
-                </button>
+                </div>
               ))}
             </div>
           </div>
 
           {fechaSeleccionada && (
-            <div className="space-y-4">
+            <div className="space-y-4 mt-6">
               <h2 className="text-2xl font-semibold text-center">Selecciona un cliente:</h2>
-              <div className="flex flex-wrap gap-4 justify-center">
+
+              {/* Contenedor de tarjetas para seleccionar el cliente */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {clientesDelDia.map((venta) => (
-                  <button
+                  <div
                     key={venta._id}
+                    className={`p-4 border rounded-lg text-center cursor-pointer transition-colors
+                      ${venta._id === clienteSeleccionadoId ? "bg-green-600 text-white" : "bg-gray-200"}`}
                     onClick={() => manejarInicioPedido(venta)}
-                    className={`px-4 py-2 rounded-lg ${
-                      venta._id === clienteSeleccionadoId
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-200"
-                    }`}
                   >
                     {venta.cliente}
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>

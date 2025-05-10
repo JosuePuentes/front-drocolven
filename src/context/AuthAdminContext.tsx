@@ -4,113 +4,152 @@ import {
     useState,
     ReactNode,
     useEffect,
-    useCallback,
 } from "react";
-import { NavigateFunction } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import axios from 'axios';
 
-// Tipos
-type AdminUserDecoded = {
+interface AdminUsuario {
     id: string;
     usuario: string;
     rol: string;
     modulos: string[];
-    exp: number;
-};
+}
 
-type AdminUser = {
-    access_token: string;
-    token_type: string;
-    usuario: string;
-    rol: string;
-    modulos: string[];
-};
-
-type AdminAuthContextType = {
-    admin: AdminUser | null;
-    login: (data: { access_token: string; token_type: string; usuario: string; modulos: string[] }) => void;
-    logout: (navigate?: NavigateFunction) => void;
+interface AuthAdminContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    hasModule: (moduleName: string) => boolean; // <- NUEVO
-};
+    login: (tokens: { 
+        access_token: string;
+        token_type: string;
+        usuario: string;
+        modulos: string[];
+    }) => void;
+    logout: () => Promise<void>;
+    admin: AdminUsuario | null;
+    hasModule: (moduleName: string) => boolean;
+}
 
-// Contexto
-const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
+const AuthAdminContext = createContext<AuthAdminContextType | undefined>(undefined);
 
-// Proveedor
-export function AdminAuthProvider({ children }: { children: ReactNode }) {
-    const [admin, setAdmin] = useState<AdminUser | null>(null);
+export const AuthAdminProvider = ({ children }: { children: ReactNode }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [admin, setAdmin] = useState<AdminUsuario | null>(null);
 
-    const hasModule = (moduleName: string) => {
+    const hasModule = (moduleName: string): boolean => {
         return admin?.modulos.includes(moduleName) || false;
     };
 
-    const validateToken = useCallback((token: string): boolean => {
-        try {
-            const { exp } = jwtDecode<{ exp: number }>(token);
-            return Date.now() < exp * 1000;
-        } catch (error) {
-            console.log("Error al validar token:", error);
-            return false;
-        }
+    // Configurar axios interceptor para manejar tokens
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            (response) => response,
+            async (error) => {
+                if (error.response?.status === 401) {
+                    await logout();
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
     }, []);
 
+    const login = (tokens: { 
+        access_token: string;
+        token_type: string;
+        usuario: string;
+        modulos: string[];
+    }) => {
+        setAccessToken(tokens.access_token);
+        setIsAuthenticated(true);
+        
+        const adminData: AdminUsuario = {
+            id: jwtDecode<{ id: string }>(tokens.access_token).id,
+            usuario: tokens.usuario,
+            rol: 'admin',
+            modulos: tokens.modulos
+        };
+        
+        setAdmin(adminData);
+        localStorage.setItem('admin_access_token', tokens.access_token);
+        localStorage.setItem('admin_usuario', tokens.usuario);
+        localStorage.setItem('admin_modulos', JSON.stringify(tokens.modulos));
+        localStorage.setItem('admin_data', JSON.stringify(adminData));
+        
+        // Configurar el token en axios
+        axios.defaults.headers.common['Authorization'] = `Bearer ${tokens.access_token}`;
+    };
+
+    const logout = async () => {
+        try {
+            if (accessToken) {
+                await axios.post('http://localhost:8000/logout/', {}, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+            }
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        } finally {
+            setAccessToken(null);
+            setIsAuthenticated(false);
+            setAdmin(null);
+            localStorage.removeItem('admin_access_token');
+            localStorage.removeItem('admin_usuario');
+            localStorage.removeItem('admin_modulos');
+            localStorage.removeItem('admin_data');
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    };
+
+    // Verificar token al cargar
     useEffect(() => {
-        const stored = localStorage.getItem("adminUser");
-        if (stored) {
-            const parsed: AdminUser = JSON.parse(stored);
-            if (validateToken(parsed.access_token)) {
-                setAdmin(parsed);
-            } else {
+        const storedAccessToken = localStorage.getItem('admin_access_token');
+        const storedAdminData = localStorage.getItem('admin_data');
+        
+        if (storedAccessToken && storedAdminData) {
+            try {
+                const decodedToken = jwtDecode(storedAccessToken);
+                const currentTime = Date.now() / 1000;
+                
+                if (decodedToken.exp && decodedToken.exp > currentTime) {
+                    setAccessToken(storedAccessToken);
+                    setIsAuthenticated(true);
+                    setAdmin(JSON.parse(storedAdminData));
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${storedAccessToken}`;
+                } else {
+                    // Token expirado
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error al decodificar el token:', error);
                 logout();
             }
         }
         setIsLoading(false);
-    }, [validateToken]);
-
-    const login = (data: { access_token: string; token_type: string; usuario: string; modulos: string[] }) => {
-        try {
-            if (typeof data.access_token !== "string") {
-                throw new Error("Token inválido: no es un string");
-            }
-
-            const decoded = jwtDecode<AdminUserDecoded>(data.access_token);
-            const adminUser: AdminUser = {
-                ...data,
-                rol: decoded.rol,
-            };
-            setAdmin(adminUser);
-            localStorage.setItem("adminUser", JSON.stringify(adminUser));
-        } catch (error) {
-            console.error("Error al decodificar token de admin:", error);
-        }
-    };
-
-
-    const logout = (navigate?: NavigateFunction) => {
-        setAdmin(null);
-        localStorage.removeItem("adminUser");
-        if (navigate) {
-            navigate("/admin/login", { replace: true });
-        }
-    };
-
-    const isAuthenticated = !!admin;
+    }, []);
 
     return (
-        <AdminAuthContext.Provider value={{ admin, login, logout, isAuthenticated, isLoading, hasModule }}>
+        <AuthAdminContext.Provider value={{ 
+            isAuthenticated, 
+            isLoading,
+            login, 
+            logout, 
+            admin,
+            hasModule 
+        }}>
             {children}
-        </AdminAuthContext.Provider>
+        </AuthAdminContext.Provider>
     );
-}
+};
 
-// Hook
-export function useAdminAuth() {
-    const context = useContext(AdminAuthContext);
-    if (!context) {
-        throw new Error("useAdminAuth debe usarse dentro de un AdminAuthProvider");
+export const useAdminAuth = () => {
+    const context = useContext(AuthAdminContext);
+    if (context === undefined) {
+        throw new Error('useAdminAuth debe ser usado dentro de un AuthAdminProvider');
     }
     return context;
-}
+};

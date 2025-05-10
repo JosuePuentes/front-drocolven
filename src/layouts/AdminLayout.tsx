@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
-import BotonRegresar from "../components/Volver";
+import BtnBackPage from "../components/btn/BtnBackPage";
 
 const AdminLayout = () => {
   return (
     <div className="flex">
       <main className="flex-grow">
-      <BotonRegresar />
+        <BtnBackPage/>
         <Outlet />
       </main>
     </div>

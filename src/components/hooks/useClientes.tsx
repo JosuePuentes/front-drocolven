@@ -28,19 +28,21 @@ export const useClientes = () => {
       try {
         setLoading(true);
         const res = await fetch("http://localhost:8000/api/clientes");
-        const data = await res.json();
-
-        const resumen = data.map((c: any) => ({
-          id: c._id.$oid, // Convertir ObjectId a string
-          email: c.email,
-          rif: c.rif,
-          encargado: c.encargado,
+        const json = await res.json();
+        console.log(json);
+        const resumen = json.map((c: any) => ({
+          id: c._id?.$oid || c._id, // Manejar tanto ObjectId como string
+          email: c.email || '',
+          rif: c.rif || '',
+          encargado: c.encargado || '',
         }));
 
         setClientes(resumen);
+        console.log(resumen);
       } catch (err) {
         console.error(err);
         setError("Error al obtener lista de clientes");
+        setClientes([]); // Establecer array vacío en caso de error
       } finally {
         setLoading(false);
       }
@@ -58,24 +60,34 @@ export const useClientes = () => {
     try {
       setLoading(true);
       const res = await fetch(`http://localhost:8000/api/clientes/${rif}`);
+      
+      if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+      }
+
       const data = await res.json();
+      
+      if (!data || data.error) {
+        throw new Error(data?.error || 'No se encontraron datos del cliente');
+      }
 
       const detalle: ClienteDetalle = {
-        id: data._id.$oid, // Convertir ObjectId a string
-        email: data.email,
-        rif: data.rif,
-        encargado: data.encargado,
-        direccion: data.direccion,
-        telefono: data.telefono,
-        activo: data.activo,
-        descuento1: data.descuento1,
-        descuento2: data.descuento2,
-        descuento3: data.descuento3,
+        id: data._id || '',
+        email: data.email || '',
+        rif: data.rif || '',
+        encargado: data.encargado || '',
+        direccion: data.direccion || '',
+        telefono: data.telefono || '',
+        activo: data.activo || false,
+        descuento1: Number(data.descuento1) || 0,
+        descuento2: Number(data.descuento2) || 0,
+        descuento3: Number(data.descuento3) || 0,
       };
       setClienteSeleccionado(detalle);
     } catch (err) {
-      console.error(err);
-      setError("Error al obtener detalle de cliente");
+      console.error('Error al obtener detalle de cliente:', err);
+      setError(err instanceof Error ? err.message : 'Error al obtener detalle de cliente');
+      setClienteSeleccionado(null);
     } finally {
       setLoading(false);
     }

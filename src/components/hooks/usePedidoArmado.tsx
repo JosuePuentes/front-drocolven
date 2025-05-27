@@ -40,7 +40,7 @@ export const usePedidoArmado = () => {
 
   const fetchPedidos = async () => {
     try {
-      const response = await fetch("http://localhost:8000/obtener_pedidos/");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/obtener_pedidos/`);
       const data: PedidoArmado[] = await response.json();
       const ventasFiltradas = data.filter((venta) => venta.estado === "pedido_creado");
       setPedidos(ventasFiltradas);
@@ -56,7 +56,7 @@ export const usePedidoArmado = () => {
   const obtenerPedidos = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/obtener_pedidos/");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/obtener_pedidos/`);
       if (!response.ok) {
         throw new Error("Error al obtener pedidos");
       }
@@ -72,7 +72,7 @@ export const usePedidoArmado = () => {
   // Función para actualizar el estado de un pedido
   const actualizarEstadoPedido = async (pedidoId: string, nuevoEstado: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/pedidos/actualizar_estado/${pedidoId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_estado/${pedidoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nuevo_estado: nuevoEstado }),

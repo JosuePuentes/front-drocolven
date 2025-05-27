@@ -14,7 +14,7 @@ const CreateAdminUser = () => {
   useEffect(() => {
     const fetchModulos = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/modulos/admin/');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/modulos/admin/`);
         setModulosDisponibles(response.data);
       } catch (error) {
         setError('No se pudieron cargar los módulos disponibles');
@@ -43,7 +43,7 @@ const CreateAdminUser = () => {
 
     try {
       const newUser = { usuario, password, rol, modulos };
-      const response = await axios.post('http://127.0.0.1:8000/register/admin/', newUser);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/register/admin/`, newUser);
 
       setSuccess(response.data.message);
       setUsuario('');

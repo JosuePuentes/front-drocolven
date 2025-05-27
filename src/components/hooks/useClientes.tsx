@@ -27,7 +27,7 @@ export const useClientes = () => {
     const fetchClientes = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:8000/api/clientes");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/clientes`);
         const json = await res.json();
         console.log(json);
         const resumen = json.map((c: any) => ({
@@ -59,7 +59,7 @@ export const useClientes = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/clientes/${rif}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/clientes/${rif}`);
       
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${res.statusText}`);

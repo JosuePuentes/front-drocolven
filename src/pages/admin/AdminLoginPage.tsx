@@ -19,7 +19,7 @@ const AdminLoginPage = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8000/login/admin/', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/login/admin/`, {
                 usuario,
                 password,
             });

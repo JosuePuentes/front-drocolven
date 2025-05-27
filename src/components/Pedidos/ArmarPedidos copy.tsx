@@ -23,7 +23,7 @@ export const PedidosOrganizados = () => {
 
   const manejarInicioPedido = async (pedido: PedidoArmado) => {
     try {
-      await fetch(`http://localhost:8000/pedidos/actualizar_estado/${pedido._id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_estado/${pedido._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ "nuevo_estado": "pedido_creado" }),
@@ -54,7 +54,7 @@ export const PedidosOrganizados = () => {
     if (!pedido) return;
 
     try {
-      await fetch(`http://localhost:8000/pedidos/actualizar_estado/${pedido._id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_estado/${pedido._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nuevo_estado: "pedido_armado" }),

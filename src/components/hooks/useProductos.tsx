@@ -21,9 +21,8 @@ export const useProductos = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const res = await fetch("http://localhost:8000/inventario");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/inventario`);
         const data = await res.json();
-
 
         if (!data || !Array.isArray(data["inventario"])) {
           throw new Error("Inventario no válido");

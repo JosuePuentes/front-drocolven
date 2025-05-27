@@ -23,7 +23,7 @@ export default function InventarioList() {
   useEffect(() => {
     const fetchInventario = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/inventario/");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/inventario/`);
         const data = response.data;
 
         // // Extraer la clave dinámica tipo "inventario_08-04-2025"

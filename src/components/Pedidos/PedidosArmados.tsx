@@ -25,7 +25,9 @@ const PedidosArmados: React.FC = () => {
   useEffect(() => {
     const fetchPedidosArmados = async () => {
       try {
-        const response = await fetch("http://localhost:8000/obtener_pedidos/");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/obtener_pedidos/`
+        );
         if (!response.ok) {
           throw new Error("Error al obtener los pedidos");
         }
@@ -111,4 +113,4 @@ const PedidosArmados: React.FC = () => {
   );
 };
 
-export default PedidosArmados; 
+export default PedidosArmados;

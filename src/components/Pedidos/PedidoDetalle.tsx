@@ -33,7 +33,7 @@ const PedidoDetalle: React.FC = () => {
       // Crear una copia del pedido sin el campo '_id'
       const { _id, ...pedidoSinId } = pedidoDetalle;
   
-      const response = await fetch(`http://localhost:8000/pedidos/actualizar/${_id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar/${_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedidoSinId),
@@ -64,7 +64,7 @@ const PedidoDetalle: React.FC = () => {
 
     if (confirmacion) {
       try {
-        const response = await fetch(`http://localhost:8000/pedidos/actualizar/${pedidoDetalle._id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar/${pedidoDetalle._id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

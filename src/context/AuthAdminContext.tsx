@@ -87,7 +87,7 @@ export const AuthAdminProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         try {
             if (accessToken) {
-                await axios.post('http://localhost:8000/logout/', {}, {
+                await axios.post(`${import.meta.env.VITE_API_URL}/logout/`, {}, {
                     headers: { 'Authorization': `Bearer ${accessToken}` }
                 });
             }

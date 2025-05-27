@@ -81,7 +81,7 @@ const UploadInventory = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/subir_inventario/",
+        `${import.meta.env.VITE_API_URL}/subir_inventario/`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

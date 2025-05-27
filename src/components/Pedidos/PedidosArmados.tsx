@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { usePedidoArmado } from "../hooks/usePedidoArmado";
 
 interface PedidoArmado {
   _id: string;

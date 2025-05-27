@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { Products } from "./ProductsData"; // Importa tus productos
 
-function ProductCard({ product }) {
+// TIPADO para ProductCard y ProductList
+interface ProductType {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+}
+
+function ProductCard({ product }: { product: ProductType }) {
   return (
     <div className="bg-white shadow-lg rounded-xl p-4 w-64">
       <img
@@ -25,7 +34,7 @@ function ProductList() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filtra los productos por nombre
-  const filteredProducts = Products.filter((product) =>
+  const filteredProducts = Products.filter((product: ProductType) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -49,7 +58,7 @@ function ProductList() {
       {/* Lista de productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
+          filteredProducts.map((product: ProductType) => (
             <ProductCard key={product.id} product={product} />
           ))
         ) : (

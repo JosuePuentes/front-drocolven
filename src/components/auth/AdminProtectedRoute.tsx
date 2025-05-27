@@ -1,8 +1,9 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAdminAuth } from "../../context/AuthAdminContext";
 
 type Props = {
-  children: JSX.Element;
+  children: React.ReactNode;
   moduleRequired?: string;
 };
 
@@ -21,7 +22,7 @@ const AdminProtectedRoute = ({ children, moduleRequired }: Props) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default AdminProtectedRoute;

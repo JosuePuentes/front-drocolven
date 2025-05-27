@@ -34,7 +34,7 @@ export default function MonitorPedidos() {
     [pedidos, estadoSeleccionado, search, fechaDesde, fechaHasta]
   );
 
-  const handleChangeEstado = async (id, nuevoEstado) => {
+  const handleChangeEstado = async (id: string, nuevoEstado: string) => {
     await actualizarEstadoPedido(id, nuevoEstado);
     obtenerPedidos();
   };

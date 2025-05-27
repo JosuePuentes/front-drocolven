@@ -1,54 +1,10 @@
-import { useEffect, useState } from "react";
-import { usePedidoArmado, PedidoArmado } from "../hooks/usePedidoArmado";
+import { usePedidoArmado } from "../hooks/usePedidoArmado";
 
 export const PedidosOrganizados = () => {
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<string | null>(null);
-  const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState<string | null>(null);
-
   const {
     pedido,
-    iniciarPedido,
-    actualizarCantidadEncontrada,
-    ventas,
-    loading,
-    fetchVentas
+    actualizarCantidadEncontrada
   } = usePedidoArmado();
-
-  useEffect(() => {
-    fetchVentas();
-  }, []);
-
-  const fechasDisponibles = [...new Set(ventas.map((venta) => venta.fecha))];
-  const clientesDelDia = ventas.filter((v) => v.fecha === fechaSeleccionada);
-
-  const manejarInicioPedido = async (pedido: PedidoArmado) => {
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_estado/${pedido._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "nuevo_estado": "pedido_creado" }),
-      });
-
-      iniciarPedido(
-        pedido.cliente,
-        pedido.rif,
-        pedido.total,
-        pedido.fecha || new Date().toISOString().split('T')[0],
-        pedido.observacion,
-        pedido._id,
-        pedido.productos.map((p) => ({
-          ...p,
-          cantidad_encontrada: 0,
-        })),
-        "pedido_armandose"
-      );
-
-      setClienteSeleccionadoId(pedido._id);
-    } catch (error) {
-      console.error("Error al iniciar armado de pedido:", error);
-      alert("No se pudo iniciar el armado del pedido.");
-    }
-  };
 
   const totalizarPedido = async () => {
     if (!pedido) return;
@@ -66,8 +22,6 @@ export const PedidosOrganizados = () => {
       alert("Error al totalizar el pedido.");
     }
   };
-
-  if (loading) return <div className="text-center p-6">Cargando pedidos...</div>;
 
   return (
     <div className="p-4 space-y-6 max-w-7xl mx-auto">
@@ -133,48 +87,9 @@ export const PedidosOrganizados = () => {
           </div>
         </>
       ) : (
-        <>
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-center">Selecciona un día y cliente:</h2>
-
-            {/* Contenedor de tarjetas para seleccionar la fecha */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {fechasDisponibles.map((fecha) => (
-                <div
-                  key={fecha}
-                  className={`p-4 border rounded-lg text-center cursor-pointer transition-colors 
-                    ${fecha === fechaSeleccionada ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-                  onClick={() => {
-                    setFechaSeleccionada(fecha);
-                    setClienteSeleccionadoId(null);
-                  }}
-                >
-                  {fecha}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {fechaSeleccionada && (
-            <div className="space-y-4 mt-6">
-              <h2 className="text-2xl font-semibold text-center">Selecciona un cliente:</h2>
-
-              {/* Contenedor de tarjetas para seleccionar el cliente */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {clientesDelDia.map((venta) => (
-                  <div
-                    key={venta._id}
-                    className={`p-4 border rounded-lg text-center cursor-pointer transition-colors
-                      ${venta._id === clienteSeleccionadoId ? "bg-green-600 text-white" : "bg-gray-200"}`}
-                    onClick={() => manejarInicioPedido(venta)}
-                  >
-                    {venta.cliente}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </>
+        <div className="text-center text-gray-500 py-10">
+          <p className="text-lg">No hay pedidos para mostrar.</p>
+        </div>
       )}
     </div>
   );

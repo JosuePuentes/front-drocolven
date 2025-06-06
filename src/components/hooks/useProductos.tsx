@@ -4,14 +4,14 @@ export interface Producto {
   id: string;
   descripcion: string;
   precio: number;
-  precio_n: number;
+  precio_n?: number;
   cantidad_pedida: number;
+  cantidad_encontrada: number; // Ensure this property is included
+  existencia: number; // Ensure this property is included
   descuento1: number;
   descuento2: number;
   descuento3: number;
   descuento4: number;
-  cantidad_encontrada: number;
-  [key: string]: any; // para aceptar campos adicionales como descuentos
 }
 
 export const useProductos = () => {
@@ -35,6 +35,7 @@ export const useProductos = () => {
             precio: parseFloat(item.precio) || 0,
             cantidad_pedida: Number(item.cantidad) || 0,
             cantidad_encontrada: 0, // Inicialización correcta
+            existencia: item.existencia, // Asegurar que existencia esté presente
             descuento1: parseFloat(item.descuento1) || 0,
             descuento2: parseFloat(item.descuento2) || 0,
             descuento3: parseFloat(item.descuento3) || 0,

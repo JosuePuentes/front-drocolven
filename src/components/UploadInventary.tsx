@@ -11,6 +11,7 @@ interface Producto {
   "f.v.": string;
   existencia: number;
   precio: number;
+  cantidad_encontrada: number; // Ensure this property is included
   [key: string]: any; // para permitir columnas adicionales
 }
 

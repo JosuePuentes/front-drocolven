@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useCarrito } from "../hooks/useCarrito";
 import { useProductos } from "../hooks/useProductos";
 import { useClientes } from "../hooks/useClientes";
-import { AdminProductoItem } from "./AdminProductoItem";
+import { AdminProductItem } from "./AdminProductoItem";
 import { AdminResumenCarrito } from "./AdminResumenCarrito";
 
 function filtrarPorMultiplesPalabrasAND<T>(data: T[], textoBusqueda: string, campos: (keyof T)[]): T[] {
@@ -65,7 +65,7 @@ export const AdminCarritoCompras = () => {
 
             <div className="grid grid-cols-1 gap-4 max-h-[70vh] overflow-y-auto">
                 {productosFiltrados.map((producto) => (
-                <AdminProductoItem
+                <AdminProductItem
                   key={producto.id}
                   producto={producto}
                   onAgregar={agregarProducto}
@@ -103,6 +103,7 @@ export const AdminCarritoCompras = () => {
                   carrito={carrito}
                   onEliminar={eliminarProducto}
                   cliente={clienteSeleccionado}
+                  onLoadOrder={() => {}}
                 />
                 <div className="mt-4 text-right">
                   <button onClick={() => { limpiarCarrito(); setModalAbierto(false); }} className="text-red-600">
@@ -119,6 +120,7 @@ export const AdminCarritoCompras = () => {
             carrito={carrito}
             onEliminar={eliminarProducto}
             cliente={clienteSeleccionado}
+            onLoadOrder={() => {}}
           />
         </div>
       )}

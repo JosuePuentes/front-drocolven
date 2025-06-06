@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { animate, stagger } from 'animejs';
 import { FiRefreshCw, FiMoreHorizontal } from "react-icons/fi";
 import { usePedidoArmado } from "../hooks/usePedidoArmado";
 
@@ -17,6 +17,7 @@ export default function MonitorPedidos() {
   const [search, setSearch] = useState("");
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
+  const listaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     obtenerPedidos();
@@ -34,13 +35,25 @@ export default function MonitorPedidos() {
     [pedidos, estadoSeleccionado, search, fechaDesde, fechaHasta]
   );
 
+  useEffect(() => {
+    if (listaRef.current) {
+      animate('.pedido-item', {
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        delay: stagger(60),
+        easing: 'easeOutQuad',
+      });
+    }
+  }, [pedidosFiltrados]);
+
   const handleChangeEstado = async (id: string, nuevoEstado: string) => {
     await actualizarEstadoPedido(id, nuevoEstado);
     obtenerPedidos();
   };
 
   return (
-    <div className="p-6 pt-20 space-y-6">
+    <div className="p-6 pt-20 space-y-6" ref={listaRef}>
       {/* Filtros */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex gap-2 overflow-x-auto">
@@ -85,14 +98,12 @@ export default function MonitorPedidos() {
       </div>
 
       {/* Lista de pedidos */}
-      <AnimatePresence>
+      <div>
         {pedidosFiltrados.map(p => (
-          <motion.div
+          <div
             key={p._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="border rounded-lg shadow p-4 bg-white relative"
+            className="pedido-item border rounded-lg shadow p-4 bg-white relative"
+            style={{ opacity: 0, transform: 'translateY(20px)' }}
           >
             <div className="flex justify-between items-start">
               <div>
@@ -122,9 +133,9 @@ export default function MonitorPedidos() {
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
+      </div>
 
       {pedidosFiltrados.length === 0 && (
         <p className="text-center text-gray-500">No se encontraron pedidos para este filtro.</p>

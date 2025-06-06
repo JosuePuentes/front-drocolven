@@ -6,23 +6,23 @@ import axios from 'axios';
 const CreateClient = () => {
   // Estado para los datos del cliente
   const [rif, setRif] = useState('');
-  const [cliente, setCliente] = useState('');
+  const [encargado, setEncargado] = useState('');
   const [direccion, setDireccion] = useState('');
-  const [numero, setNumero] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [contraseña, setContraseña] = useState('');
-  const [descuentoComercial, setDescuentoComercial] = useState(0);
-  const [descuentoAdicional, setDescuentoAdicional] = useState(0);
+  const [telefono, setTelefono] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [descuento1, setDescuento1] = useState(0);
+  const [descuento2, setDescuento2] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   // Validación de campos
   const validateForm = () => {
-    if (!rif || !cliente || !direccion || !numero || !correo || !contraseña) {
+    if (!rif || !encargado || !direccion || !telefono || !email || !password) {
       setError('Todos los campos son obligatorios');
       return false;
     }
-    if (descuentoComercial < 0 || descuentoAdicional < 0) {
+    if (descuento1 < 0 || descuento2 < 0) {
       setError('Los descuentos no pueden ser negativos');
       return false;
     }
@@ -33,43 +33,34 @@ const CreateClient = () => {
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) return; // No enviar si la validación falla
-    console.log("entro");
-
+    if (!validateForm()) return;
     try {
-      // Crear un objeto con los datos del cliente
       const newClient = {
         rif,
-        cliente,
+        encargado,
         direccion,
-        numero,
-        correo,
-        contraseña,
-        descuento_comercial: descuentoComercial,
-        descuento_adicional: descuentoAdicional,
+        telefono,
+        email,
+        password,
+        activo: true,
+        descuento1,
+        descuento2,
+        descuento3: 0,
       };
-
       // Realizar la solicitud HTTP POST
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/clientes/`, newClient);
-      console.log("Cliente creado:", response.data);
-      console.log(response);
-      
-      // Si la solicitud es exitosa, limpiar los campos del formulario
+      await axios.post(`${import.meta.env.VITE_API_URL}/clientes/`, newClient);
       setSuccess('Cliente registrado exitosamente');
       setRif('');
-      setCliente('');
+      setEncargado('');
       setDireccion('');
-      setNumero('');
-      setCorreo('');
-      setContraseña('');
-      setDescuentoComercial(0);
-      setDescuentoAdicional(0);
+      setTelefono('');
+      setEmail('');
+      setPassword('');
+      setDescuento1(0);
+      setDescuento2(0);
       setError('');
     } catch (error: any) {
-      // En caso de error, mostrar el mensaje
       setError(error.response?.data?.detail || 'Error al crear el cliente');
-      console.error('Error:', error);
     }
   };
 
@@ -90,11 +81,11 @@ const CreateClient = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
+          <label className="block text-sm font-medium text-gray-700">Nombre del Encargado</label>
           <input
             type="text"
-            value={cliente}
-            onChange={(e) => setCliente(e.target.value)}
+            value={encargado}
+            onChange={(e) => setEncargado(e.target.value)}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
           />
@@ -110,11 +101,11 @@ const CreateClient = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Número de Teléfono</label>
+          <label className="block text-sm font-medium text-gray-700">Teléfono</label>
           <input
             type="text"
-            value={numero}
-            onChange={(e) => setNumero(e.target.value)}
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
           />
@@ -123,8 +114,8 @@ const CreateClient = () => {
           <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
           <input
             type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
           />
@@ -133,8 +124,8 @@ const CreateClient = () => {
           <label className="block text-sm font-medium text-gray-700">Contraseña</label>
           <input
             type="password"
-            value={contraseña}
-            onChange={(e) => setContraseña(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
           />
@@ -143,19 +134,19 @@ const CreateClient = () => {
           <label className="block text-sm font-medium text-gray-700">Descuento Comercial (%)</label>
           <input
             type="number"
-            value={descuentoComercial}
-            onChange={(e) => setDescuentoComercial(parseFloat(e.target.value))}
+            value={descuento1}
+            onChange={(e) => setDescuento1(parseFloat(e.target.value))}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
             min="0"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Descuento Adicional (%)</label>
+          <label className="block text-sm font-medium text-gray-700">Descuento Pronto Pago (%)</label>
           <input
             type="number"
-            value={descuentoAdicional}
-            onChange={(e) => setDescuentoAdicional(parseFloat(e.target.value))}
+            value={descuento2}
+            onChange={(e) => setDescuento2(parseFloat(e.target.value))}
             className="w-full mt-2 p-2 border border-gray-300 rounded-md"
             required
             min="0"

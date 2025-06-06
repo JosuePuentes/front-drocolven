@@ -1,6 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
-import LoginPage from "./components/LoginPage";
 import ClientLayout from "./layouts/ClientLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import UploadInventory from "./components/UploadInventary";
@@ -12,17 +10,19 @@ import AboutPage from "./pages/client/AboutPage";
 import NotFoundPage from "./pages/client/NotFoundPage";
 import RegisterPage from "./pages/client/RegisterPage";
 import ContactPage from "./pages/client/ContactPage";
-import ProductsPage from "./pages/client/ProductsPage";
 import AdminPage from "./pages/admin/AdminPage";
 import UsuariosPage from "./pages/admin/UsuariosPage";
 import AdminInventarioPage from "./pages/admin/AdminInventarioPage";
-import InventarioList from "./components/InventarioList";
+import { InventoryList } from "./components/InventarioList";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
-import { CarritoComprasCliente } from "./components/ClientCompras/CarritoComprasCliente";
+import { ShoppingCartClient } from "./components/ClientCompras/CarritoComprasCliente";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import { AdminCarritoCompras } from "./components/AdminCompras/AdminCarritoCompras";
 import CreateAdminUser from "./components/auth/CreateAdminUser";
 import PedidoDetalle from "./components/Pedidos/PedidoDetalle";
+import CreateClient from "./components/auth/CreateClient";
+import LoginClientPage from "./pages/client/LoginClientPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
   return (
@@ -33,18 +33,16 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginClientPage />} />
           <Route path="/registrar" element={<RegisterPage />} />
-          <Route path="/productos" element={
-            <ProtectedRoute>
-              <ProductsPage />
-            </ProtectedRoute>
-          } />
+
+
           <Route path="/comprar" element={
             <ProtectedRoute>
-              <CarritoComprasCliente />
+              <ShoppingCartClient />
             </ProtectedRoute>
           } />
+
         </Route>
 
         {/* ADMIN ROUTES */}
@@ -59,8 +57,9 @@ function App() {
           <Route path="usuarios" element={<AdminProtectedRoute moduleRequired="usuarios"><UsuariosPage /></AdminProtectedRoute>} />
           <Route path="usuarios/create" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
           <Route path="usuarios/editar" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
+          <Route path="usuarios/crearcliente" element={<AdminProtectedRoute moduleRequired="clientes"><CreateClient /></AdminProtectedRoute>} />
           <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
-          <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventarioList /></AdminProtectedRoute>} />
+          <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosResumen /></AdminProtectedRoute>} />
           <Route path="listapedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><MonitorPedidos /></AdminProtectedRoute>} />

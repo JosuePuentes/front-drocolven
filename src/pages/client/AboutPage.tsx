@@ -1,23 +1,90 @@
+import { useEffect, useRef } from 'react';
+import { animate, stagger } from 'animejs';
+
 function AboutPage() {
+  const heroTitleRef = useRef<HTMLHeadingElement>(null);
+  const heroDescRef = useRef<HTMLParagraphElement>(null);
+  const historiaRef = useRef<HTMLDivElement>(null);
+  const historiaImgRef = useRef<HTMLImageElement>(null);
+  const valoresTitleRef = useRef<HTMLHeadingElement>(null);
+  const valoresCardsRef = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    if (heroTitleRef.current) {
+      animate(heroTitleRef.current, {
+        opacity: [0, 1],
+        translateY: [-30, 0],
+        duration: 700,
+        easing: 'easeOutCubic',
+      });
+    }
+    if (heroDescRef.current) {
+      animate(heroDescRef.current, {
+        opacity: [0, 1],
+        translateY: [-10, 0],
+        duration: 700,
+        delay: 150,
+        easing: 'easeOutCubic',
+      });
+    }
+    if (historiaRef.current) {
+      animate(historiaRef.current, {
+        opacity: [0, 1],
+        translateX: [-40, 0],
+        duration: 700,
+        delay: 200,
+        easing: 'easeOutCubic',
+      });
+    }
+    if (historiaImgRef.current) {
+      animate(historiaImgRef.current, {
+        opacity: [0, 1],
+        translateX: [40, 0],
+        duration: 700,
+        delay: 300,
+        easing: 'easeOutCubic',
+      });
+    }
+    if (valoresTitleRef.current) {
+      animate(valoresTitleRef.current, {
+        opacity: [0, 1],
+        translateY: [-20, 0],
+        duration: 600,
+        delay: 200,
+        easing: 'easeOutCubic',
+      });
+    }
+    if (valoresCardsRef.current.length) {
+      animate(valoresCardsRef.current, {
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 600,
+        delay: stagger(120),
+        easing: 'easeOutCubic',
+      });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-gray-800">
       {/* Hero Section */}
       <section className="relative bg-green-100 py-20 px-6 text-center">
-        <h1 className="text-5xl font-bold mb-4">Sobre Nosotros</h1>
-        <p className="text-lg max-w-2xl mx-auto">
+        <h1 ref={heroTitleRef} className="text-5xl font-bold mb-4">Sobre Nosotros</h1>
+        <p ref={heroDescRef} className="text-lg max-w-2xl mx-auto">
           En <span className="font-semibold text-green-700">Drocolven</span>, estamos comprometidos con tu bienestar, brindando medicamentos de calidad a precios accesibles.
         </p>
       </section>
 
       {/* Historia y misión */}
       <section className="py-20 px-6 max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-        <div>
+        <div ref={historiaRef}>
           <h2 className="text-3xl font-bold mb-4">Nuestra Historia</h2>
           <p className="text-gray-600">
             Fundada en 2010, Drocolven ha crecido hasta convertirse en uno de los distribuidores farmacéuticos más confiables del país. Comenzamos con una simple idea: hacer que los medicamentos esenciales sean accesibles para todos.
           </p>
         </div>
         <img
+          ref={historiaImgRef}
           src="./img.jpg"
           alt="Historia de la empresa"
           className="rounded-xl shadow-md w-full h-80 object-cover"
@@ -27,20 +94,22 @@ function AboutPage() {
       {/* Valores */}
       <section className="py-20 bg-gray-50 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Nuestros Valores</h2>
+          <h2 ref={valoresTitleRef} className="text-3xl font-bold mb-6">Nuestros Valores</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-2 text-green-700">Compromiso</h3>
-              <p className="text-gray-600">Nos esforzamos por brindar un servicio excepcional a cada cliente.</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-2 text-green-700">Calidad</h3>
-              <p className="text-gray-600">Solo trabajamos con productos aprobados y de confianza.</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-2 text-green-700">Accesibilidad</h3>
-              <p className="text-gray-600">Precios competitivos para que nadie quede sin sus medicamentos.</p>
-            </div>
+            {['Compromiso', 'Calidad', 'Accesibilidad'].map((valor, i) => (
+              <div
+                key={valor}
+                ref={el => { valoresCardsRef.current[i] = el!; }}
+                className="bg-white p-6 rounded-xl shadow-md"
+              >
+                <h3 className="text-xl font-semibold mb-2 text-green-700">{valor}</h3>
+                <p className="text-gray-600">
+                  {valor === 'Compromiso' && 'Nos esforzamos por brindar un servicio excepcional a cada cliente.'}
+                  {valor === 'Calidad' && 'Solo trabajamos con productos aprobados y de confianza.'}
+                  {valor === 'Accesibilidad' && 'Precios competitivos para que nadie quede sin sus medicamentos.'}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

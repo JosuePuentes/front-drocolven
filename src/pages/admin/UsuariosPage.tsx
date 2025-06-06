@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import CardModule from "../../components/card/CardModule";
 import HasModule from "../../components/auth/HasModule";
+import { AiOutlineUserAdd } from "react-icons/ai"; // Importa un icono minimalista para crear cliente
 
 const UsuariosPage = () => {
     const navigate = useNavigate();
@@ -21,6 +22,14 @@ const UsuariosPage = () => {
                     topText=""
                     onClick={() => navigate("editar")}
                     logo={<User size={64} />}
+                />
+            </HasModule>
+            <HasModule module="usuarios">
+                <CardModule
+                    bottomText="Crear Cliente"
+                    topText=""
+                    onClick={() => navigate("crearcliente")}
+                    logo={<AiOutlineUserAdd className="w-16 h-16 text-gray-700" />}
                 />
             </HasModule>
         </div>

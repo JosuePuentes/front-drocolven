@@ -46,32 +46,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
+        // Buscar primero cliente, luego usuario admin
+        const storedClient = localStorage.getItem("cliente");
         const storedUser = localStorage.getItem("usuario");
-        
-        if (storedToken && storedUser) {
+        let userObj = null;
+        if (storedToken && (storedClient || storedUser)) {
             if (validateToken(storedToken)) {
                 setToken(storedToken);
-                setUser(JSON.parse(storedUser));
-                // Configurar el token en axios
+                if (storedClient) {
+                    userObj = JSON.parse(storedClient);
+                } else if (storedUser) {
+                    userObj = JSON.parse(storedUser);
+                }
+                setUser(userObj);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
             } else {
                 logout();
             }
         }
-
         setIsLoading(false);
     }, [validateToken]);
 
-    const login = (token: string) => {
+    const login = (token: string, isClient: boolean = false) => {
         try {
             const decodedToken = jwtDecode<Usuario>(token);
             setToken(token);
             setUser(decodedToken);
-            
-            localStorage.setItem("usuario", JSON.stringify(decodedToken));
+            if (isClient) {
+                localStorage.setItem("cliente", JSON.stringify(decodedToken));
+            } else {
+                localStorage.setItem("usuario", JSON.stringify(decodedToken));
+            }
             localStorage.setItem("token", token);
-            
-            // Configurar el token en axios
+            if (decodedToken.email) {
+                localStorage.setItem("cliente_email", decodedToken.email);
+            }
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         } catch (error) {
             console.error("Error al decodificar el token:", error);
@@ -82,9 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(null);
         setUser(null);
         localStorage.removeItem("usuario");
+        localStorage.removeItem("cliente");
         localStorage.removeItem("token");
+        localStorage.removeItem("cliente_email");
         delete axios.defaults.headers.common['Authorization'];
-
         if (navigate) {
             navigate("/login", { replace: true });
         }

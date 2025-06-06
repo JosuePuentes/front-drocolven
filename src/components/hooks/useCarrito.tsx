@@ -5,14 +5,15 @@ export interface Producto {
   id: string;
   descripcion: string;
   precio: number;
-  precio_n: number; // precio_n es opcional y puede ser null
+  precio_n?: number; // precio_n es opcional y puede ser null
   cantidad_pedida: number;
+  cantidad_encontrada: number; // Ensure this property is included
+  existencia: number; // Ensure this property is included
   subtotal?: number;
   descuento1: number;
   descuento2: number; // Added descuento2 property
   descuento3: number;
   descuento4: number;
-  cantidad_encontrada: number;
 }
 
 export function useCarrito() {

@@ -9,7 +9,7 @@ interface Props {
   descuentoCliente2: number; // Segundo descuento del cliente
 }
 
-export const AdminProductoItem = ({ producto, onAgregar, descuentoCliente1, descuentoCliente2 }: Props) => {
+const AdminProductoItem = ({ producto, onAgregar, descuentoCliente1, descuentoCliente2 }: Props) => {
   const [cantidadPedida, setCantidadPedida] = useState(0);
   const calcularPrecioNeto = () => {
     const { precio, descuento1, descuento2 } = producto;
@@ -69,3 +69,5 @@ export const AdminProductoItem = ({ producto, onAgregar, descuentoCliente1, desc
     </div>
   );
 };
+
+export const AdminProductItem = AdminProductoItem;

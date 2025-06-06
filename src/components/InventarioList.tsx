@@ -11,12 +11,13 @@ type Producto = {
   existencia: number;
   precio: number;
   cantidad: number;
+  cantidad_encontrada: number; // Asegurando que esta propiedad esté incluida
   descuento1: number;
   descuento2: number;
   descuento3: number;
 };
 
-export default function InventarioList() {
+function InventarioList() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [fecha, setFecha] = useState("");
 
@@ -93,3 +94,5 @@ export default function InventarioList() {
     </div>
   );
 }
+
+export const InventoryList = InventarioList;

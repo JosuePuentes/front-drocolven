@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ClientLayout from "./layouts/ClientLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import UploadInventory from "./components/UploadInventary";
-import PedidosResumen from "./components/Pedidos/ArmarPedidos";
 import MonitorPedidos from "./components/Pedidos/ListaPedidos";
 import PedidosArmados from "./components/Pedidos/PedidosArmados";
 import HomePage from "./pages/client/HomePage";
@@ -61,7 +60,7 @@ function App() {
           <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
-          <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosResumen /></AdminProtectedRoute>} />
+          <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
           <Route path="listapedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
           <Route path="pedidosarmados" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosArmados /></AdminProtectedRoute>} />
           <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidoDetalle /></AdminProtectedRoute>} />

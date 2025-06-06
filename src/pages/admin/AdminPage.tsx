@@ -1,4 +1,4 @@
-import { BookA, ShoppingCart, SquareChartGantt, User } from "lucide-react";
+import { BookA, SquareChartGantt, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CardModule from "../../components/card/CardModule";
 import HasModule from "../../components/auth/HasModule";
@@ -9,15 +9,6 @@ const AdminPage = () => {
   return (
     <div className="flex flex-wrap gap-2 justify-center items-center h-screen bg-gray-100 p-4">
       <div className="flex flex-wrap gap-6 justify-center items-center max-w-4xl">
-
-        <HasModule module="compras">
-          <CardModule
-            bottomText="Comprar"
-            topText=""
-            onClick={() => navigate("comprar")}
-            logo={<ShoppingCart size={64} />}
-          />
-        </HasModule>
 
         <HasModule module="inventario">
           <CardModule

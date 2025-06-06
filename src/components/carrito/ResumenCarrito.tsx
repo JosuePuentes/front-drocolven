@@ -119,6 +119,8 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
             total: parseFloat(total.toFixed(2)),
             estado: "pedido_creado",
             subtotal: parseFloat(subtotal.toFixed(2)),
+            descuento_cliente1: cliente?.descuento1 ?? 0, // Enviar descuento1 del cliente
+            descuento_cliente2: cliente?.descuento2 ?? 0, // Enviar descuento2 del cliente
             productos: carrito.map((prod: Producto) => ({
                 id: prod.id,
                 descripcion: prod.descripcion,
@@ -126,7 +128,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 descuento1: parseFloat(prod.descuento1.toFixed(4)),
                 descuento2: parseFloat(prod.descuento2.toFixed(4)),
                 descuento3: parseFloat(prod.descuento3.toFixed(4)),
-                descuento4: parseFloat(prod.descuento4.toFixed(4)), // Corregido a descuento4
+                descuento4: parseFloat(prod.descuento4.toFixed(4)),
                 precio_n: parseFloat((prod.precio_n ?? prod.precio).toFixed(4)),
                 total_Neto: parseFloat(((prod.precio_n ?? prod.precio) * prod.cantidad_pedida).toFixed(4)),
                 subtotal: parseFloat((prod.precio * prod.cantidad_pedida).toFixed(4)),

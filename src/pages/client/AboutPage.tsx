@@ -80,12 +80,12 @@ function AboutPage() {
         <div ref={historiaRef}>
           <h2 className="text-3xl font-bold mb-4">Nuestra Historia</h2>
           <p className="text-gray-600">
-            Fundada en 2010, Drocolven ha crecido hasta convertirse en uno de los distribuidores farmacéuticos más confiables del país. Comenzamos con una simple idea: hacer que los medicamentos esenciales sean accesibles para todos.
+            Fundada en 2019, Drocolven ha crecido hasta convertirse en uno de los distribuidores farmacéuticos más confiables de la región. Comenzamos con una simple idea: hacer que los medicamentos esenciales sean accesibles para todos.
           </p>
         </div>
         <img
           ref={historiaImgRef}
-          src="./img.jpg"
+          src="./rpina.jpeg"
           alt="Historia de la empresa"
           className="rounded-xl shadow-md w-full h-80 object-cover"
         />
@@ -117,7 +117,7 @@ function AboutPage() {
       {/* Imagen final y contacto */}
       <section className="py-20 px-6 flex flex-col md:flex-row items-center justify-center gap-12">
         <img
-          src="./img.jpg"
+          src="./dpachay.jpeg"
           alt="Farmacéutico organizando"
           className="w-full md:w-1/2 rounded-xl shadow-lg object-cover"
         />

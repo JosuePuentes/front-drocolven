@@ -29,7 +29,6 @@ export const useClientes = () => {
         setLoading(true);
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/clientes`);
         const json = await res.json();
-        console.log(json);
         const resumen = json.map((c: any) => ({
           id: c._id?.$oid || c._id, // Manejar tanto ObjectId como string
           email: c.email || '',
@@ -38,7 +37,6 @@ export const useClientes = () => {
         }));
 
         setClientes(resumen);
-        console.log(resumen);
       } catch (err) {
         console.error(err);
         setError("Error al obtener lista de clientes");
@@ -79,9 +77,9 @@ export const useClientes = () => {
         direccion: data.direccion || '',
         telefono: data.telefono || '',
         activo: data.activo || false,
-        descuento1: Number(data.descuento1) || 0,
-        descuento2: Number(data.descuento2) || 0,
-        descuento3: Number(data.descuento3) || 0,
+        descuento1: Number(data.descuento1?.$numberDouble ?? data.descuento1) || 0,
+        descuento2: Number(data.descuento2?.$numberDouble ?? data.descuento2) || 0,
+        descuento3: Number(data.descuento3?.$numberDouble ?? data.descuento3) || 0,
       };
       setClienteSeleccionado(detalle);
     } catch (err) {

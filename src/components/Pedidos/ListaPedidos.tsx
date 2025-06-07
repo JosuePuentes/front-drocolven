@@ -4,11 +4,12 @@ import { FiRefreshCw, FiMoreHorizontal } from "react-icons/fi";
 import { usePedidoArmado } from "../hooks/usePedidoArmado";
 
 const ESTADOS = [
-  { id: 'pedido_creado', label: 'Nuevos' },
-  { id: 'pedido_armandose', label: 'Armándose' },
-  { id: 'pedido_armado', label: 'Armado' },
-  { id: 'pedido_enviado', label: 'Enviado' },
-  { id: 'pedido_eliminado', label: 'Eliminado' },
+  { id: 'nuevo', label: 'Nuevo' },
+  { id: 'picking', label: 'Picking' },
+  { id: 'packing', label: 'Packing' },
+  { id: 'enviado', label: 'Enviado' },
+  { id: 'entregado', label: 'Entregado' },
+  { id: 'cancelado', label: 'Cancelado' },
 ];
 
 export default function MonitorPedidos() {
@@ -53,7 +54,7 @@ export default function MonitorPedidos() {
   };
 
   return (
-    <div className="p-6 pt-20 space-y-6" ref={listaRef}>
+    <div className="p-6 pt-20 space-y-6 bg-gray-50 min-h-screen" ref={listaRef}>
       {/* Filtros */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex gap-2 overflow-x-auto">
@@ -61,7 +62,11 @@ export default function MonitorPedidos() {
             <button
               key={e.id}
               onClick={() => setEstadoSeleccionado(e.id)}
-              className={`${estadoSeleccionado === e.id ? 'bg-blue-600 text-white' : 'bg-gray-200'} py-2 px-4 rounded`}
+              className={`text-sm font-semibold px-4 py-2 rounded-full transition ${
+                estadoSeleccionado === e.id
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+              }`}
             >
               {e.label}
             </button>
@@ -73,23 +78,23 @@ export default function MonitorPedidos() {
             placeholder="Buscar cliente..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="border rounded px-2 py-1"
+            className="input"
           />
           <input
             type="date"
             value={fechaDesde}
             onChange={e => setFechaDesde(e.target.value)}
-            className="border rounded px-2 py-1"
+            className="input"
           />
           <input
             type="date"
             value={fechaHasta}
             onChange={e => setFechaHasta(e.target.value)}
-            className="border rounded px-2 py-1"
+            className="input"
           />
           <button
             onClick={() => obtenerPedidos()}
-            className="border rounded px-2 py-1 flex items-center justify-center"
+            className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 p-2 rounded-md"
             title="Refrescar"
           >
             <FiRefreshCw size={20} />
@@ -98,47 +103,99 @@ export default function MonitorPedidos() {
       </div>
 
       {/* Lista de pedidos */}
-      <div>
-        {pedidosFiltrados.map(p => (
-          <div
-            key={p._id}
-            className="pedido-item border rounded-lg shadow p-4 bg-white relative"
-            style={{ opacity: 0, transform: 'translateY(20px)' }}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-bold">{p.cliente}</h3>
-                <p className="text-sm text-gray-500">{new Date(p.fecha).toLocaleString()}</p>
+      <div className="space-y-4">
+        {pedidosFiltrados.map(p => {
+          const getNumber = (val: any) => {
+            if (typeof val === 'number') return val;
+            if (val?.$numberDouble) return parseFloat(val.$numberDouble);
+            if (val?.$numberInt) return parseInt(val.$numberInt);
+            return 0;
+          };
+          const subtotal = getNumber((p as any).subtotal);
+          const total = getNumber(p.total);
+          return (
+            <div
+              key={p._id}
+              className="pedido-item border rounded-xl shadow-sm p-5 bg-white space-y-3"
+              style={{ opacity: 0, transform: 'translateY(20px)' }}
+            >
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-gray-900">Cliente: {p.cliente}</h3>
+                  <p className="text-sm text-gray-500">RIF: {p.rif}</p>
+                  <p className="text-sm text-gray-500">Fecha: {new Date(p.fecha).toLocaleString()}</p>
+                  <p className="text-sm text-gray-500">Estado: <span className="font-medium">{p.estado}</span></p>
+                  {p.observacion && (
+                    <p className="text-sm text-gray-500">Observación: {p.observacion}</p>
+                  )}
+                </div>
+                <FiMoreHorizontal className="text-gray-400" size={24} />
               </div>
-              <FiMoreHorizontal className="text-gray-400" size={24} />
-            </div>
-            <p className="mt-2 font-semibold">Total: ${p.total.toFixed(2)}</p>
-            <ul className="mt-2 list-disc list-inside space-y-1 max-h-40 overflow-y-auto">
-              {p.productos.map((prod, idx) => (
-                <li key={idx} className="text-sm">
-                  {prod.descripcion} - pedido: {prod.cantidad_pedida} encontrado: {prod.cantidad_encontrada || 0} x ${prod.precio.toFixed(2)}
-                </li>
-              ))}
-            </ul>
 
-            {/* Botones de cambio de estado */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {ESTADOS.filter(e => e.id !== p.estado).map(e => (
-                <button
-                  key={e.id}
-                  onClick={() => handleChangeEstado(p._id, e.id)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-                >
-                  {e.label}
-                </button>
-              ))}
+              <div className="flex flex-wrap gap-4">
+                {subtotal > 0 && (
+                  <span className="text-base font-semibold text-gray-700">Subtotal: ${subtotal.toFixed(2)}</span>
+                )}
+                <span className="text-base font-semibold text-gray-700">Total: ${total.toFixed(2)}</span>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">Productos:</h4>
+                <ul className="divide-y divide-gray-100">
+                  {p.productos?.map((prod: any, idx: number) => {
+                    const precio = getNumber(prod.precio);
+                    const cantidad = getNumber(prod.cantidad_pedida);
+                    const d1 = getNumber(prod.descuento1);
+                    const d2 = getNumber(prod.descuento2);
+                    const d3 = getNumber(prod.descuento3);
+                    const d4 = getNumber(prod.descuento4);
+                    let precioConDescuentos = precio;
+                    precioConDescuentos *= (1 - d1 / 100);
+                    precioConDescuentos *= (1 - d2 / 100);
+                    precioConDescuentos *= (1 - d3 / 100);
+                    precioConDescuentos *= (1 - d4 / 100);
+                    const subtotalConDescuentos = precioConDescuentos * cantidad;
+                    return (
+                      <li key={prod.id + idx} className="py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                        <div className="flex-1">
+                          <span className="font-medium text-gray-900">{prod.descripcion}</span>
+                          <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-3">
+                            <span>Cant. pedida: <strong>{cantidad}</strong></span>
+                            <span>Encontrada: <strong>{getNumber(prod.cantidad_encontrada)}</strong></span>
+                            <span>Precio base: <strong>${precio.toFixed(2)}</strong></span>
+                            <span className="text-blue-700">Subtotal c/desc: <strong>${subtotalConDescuentos.toFixed(2)}</strong></span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-1 text-xs font-semibold">
+                          <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5">DL: {d1.toFixed(2)}%</span>
+                          <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5">DE: {d2.toFixed(2)}%</span>
+                          <span className="bg-green-100 text-green-700 rounded px-2 py-0.5">DC: {d3.toFixed(2)}%</span>
+                          <span className="bg-green-100 text-green-700 rounded px-2 py-0.5">PP: {d4.toFixed(2)}%</span>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              <div className="pt-3 border-t mt-3 flex flex-wrap gap-2">
+                {ESTADOS.filter(e => e.id !== p.estado).map(e => (
+                  <button
+                    key={e.id}
+                    onClick={() => handleChangeEstado(p._id, e.id)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
+                  >
+                    {e.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {pedidosFiltrados.length === 0 && (
-        <p className="text-center text-gray-500">No se encontraron pedidos para este filtro.</p>
+        <p className="text-center text-gray-500 italic">No se encontraron pedidos para este filtro.</p>
       )}
     </div>
   );

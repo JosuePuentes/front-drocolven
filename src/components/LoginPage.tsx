@@ -24,7 +24,6 @@ const LoginPage = () => {
                 email,
                 password,
             });
-            console.log('Respuesta de inicio de sesión:', response.data);
             login(response.data.access_token); // 👈 Usa login del contexto
         } catch (err) {
             setError((err as any).response?.data?.detail || 'Error al iniciar sesión');

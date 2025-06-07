@@ -91,7 +91,6 @@ export const usePedidoArmado = () => {
       if (response.ok) {
         const data = await response.json();
         alert(`Pedido armado registrado exitosamente para ${data.cliente}. Total: $${data.total}`);
-        console.log("Pedido registrado:", data);
       } else {
         const errorData = await response.json();
         console.error("Error al registrar el pedido armado:", errorData);

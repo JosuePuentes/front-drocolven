@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 export const ESTADOS_PEDIDO = {
-  PEDIDO_CREADO: "pedido_creado",
-  EN_PROCESO: "en_proceso",
-  CANCELADO: "cancelado",
-  COMPLETADO: "completado"
+  NUEVO: "nuevo",
+  PICKING: "picking",
+  PACKING: "packing",
+  ENVIADO: "enviado",
+  ENTREGADO: "entregado",
+  CANCELADO: "cancelado"
 } as const;
 
 export interface ProductoArmado {
@@ -82,7 +84,6 @@ export const usePedidoArmado = () => {
         throw new Error("Error al actualizar el estado del pedido");
       }
 
-      console.log(`Estado del pedido ${pedidoId} actualizado a ${nuevoEstado}`);
     } catch (error) {
       console.error(`Error al actualizar el estado del pedido (${nuevoEstado}):`, error);
     }
@@ -117,7 +118,7 @@ export const usePedidoArmado = () => {
 
   const actualizarCantidadEncontrada = (productoId: string, cantidad: number) => {
     if (!pedido) return;
-    console.log("Actualizando cantidad encontrada para producto:", productoId, "con cantidad:", cantidad);
+    console.log(" cantidad encontrada para producto:", productoId, "con cantidad:", cantidad);
     const productosActualizados = pedido.productos.map((prod) =>
       prod.id === productoId ? { ...prod, cantidad_encontrada: cantidad } : prod
     );

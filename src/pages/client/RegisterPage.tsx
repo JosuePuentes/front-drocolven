@@ -17,7 +17,7 @@ const RegisterPage = () => {
         setError('');
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/register/`, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/register/`, {
                 email,
                 password,
                 rif,
@@ -26,7 +26,6 @@ const RegisterPage = () => {
                 encargado,
             });
 
-            console.log('Registro exitoso:', response.data);
             navigate('/login');
         } catch (err: any) {
             setError(err.response?.data?.detail || 'Error al registrar el usuario');

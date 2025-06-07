@@ -1,4 +1,3 @@
-// src/components/ProductoItem.tsx
 import React, { useState, useMemo } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai"; // Icono para el botón de info
 
@@ -13,6 +12,10 @@ interface Producto {
     descuento4: number;
     cantidad_pedida: number;
     existencia: number;
+    dpto?: string;
+    laboratorio?: string;
+    nacional?: string;
+    fv?: string;
 }
 
 interface ProductoItemProps {
@@ -28,7 +31,7 @@ export const ProductoItem: React.FC<ProductoItemProps> = ({
     descuentoCliente1,
     descuentoCliente2,
 }) => {
-    const [cantidadPedida, setCantidadPedida] = useState(1);
+    const [cantidadPedida, setCantidadPedida] = useState<string | number>("");
     const [showDescuentos, setShowDescuentos] = useState(false); // Estado para mostrar/ocultar descuentos en mobile
 
     const precioNetoFinal = useMemo(() => {
@@ -60,121 +63,120 @@ export const ProductoItem: React.FC<ProductoItemProps> = ({
             alert("Por favor, introduce una cantidad válida.");
             return;
         }
-        if (cantidadValida > producto.existencia) {
-            alert(`Solo hay ${producto.existencia} unidades disponibles en stock.`);
-            return;
-        }
 
         onAgregar(
             {
                 ...producto,
                 precio_n: precioNetoFinal,
                 cantidad_pedida: cantidadValida,
+                descuento3: descuentoCliente1, // Guardar descuento del cliente
+                descuento4: descuentoCliente2, // Guardar descuento del cliente
             },
             cantidadValida
         );
         setCantidadPedida(1); // Restablece la cantidad a 1 después de agregar
     };
 
-    const isAddButtonDisabled = cantidadPedida === 0 || cantidadPedida > producto.existencia || producto.existencia === 0;
+    const isAddButtonDisabled = cantidadPedida === "" || producto.existencia === 0;
 
     return (
-        <div className="flex flex-col sm:flex-row items-stretch bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl p-3 sm:p-5 md:p-6 gap-4 sm:gap-6 border border-gray-100 transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl hover:border-blue-300 w-full max-w-full md:max-w-2xl lg:max-w-3xl mx-auto overflow-visible">
-            {/* Sección de Descripción y Precios */}
-            <div className="flex-1 flex flex-col justify-between min-w-0 text-center sm:text-left gap-2">
-                <div className="flex flex-col gap-1">
-                    <h3 className="text-base sm:text-xl md:text-2xl font-bold text-gray-800 leading-snug mb-1 break-words">
+        <div className="flex flex-col sm:flex-row items-stretch bg-white rounded-2xl shadow-lg p-4 sm:p-6 gap-4 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-[1.01] w-full mx-auto">
+            {/* Descripción y detalles */}
+            <div className="flex-1 flex flex-col gap-3 text-center sm:text-left">
+                <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mb-1">
                         {producto.descripcion}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-500 font-mono break-words">
-                        Código: <span className="font-semibold text-gray-700">{producto.id}</span>
-                    </p>
+                {/* Stock y metadata */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-lg text-gray-600 mt-2">
+                    {/* Eliminado: Stock y código */}
+                    {producto.dpto && <span className="flex items-center gap-1"><span className="font-semibold">Dpto:</span> {producto.dpto}</span>}
+                    {producto.laboratorio && <span className="flex items-center gap-1"><span className="font-semibold">Lab:</span> {producto.laboratorio}</span>}
+                    {producto.nacional && <span className="flex items-center gap-1"><span className="font-semibold">Nacional:</span> {producto.nacional}</span>}
+                    {producto.fv && <span className="flex items-center gap-1"> {producto.fv}</span>}
                 </div>
-                {/* --- SECCIÓN DE DESCUENTOS (MEJORADO) --- */}
-                {/* Desktop: todos los descuentos visibles */}
-                <div className="hidden sm:flex flex-wrap gap-2 mt-3 items-center justify-start">
-                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">Base: <span className="font-bold text-gray-800">${producto.precio.toFixed(2)}</span></span>
+                </div>
+
+                {/* Descuentos y precio (visible en pantallas grandes) */}
+                <div className="hidden sm:flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-sm text-gray-600 font-medium">
+                        Base: <span className="font-bold text-gray-800">${producto.precio.toFixed(2)}</span>
+                    </span>
                     {producto.descuento1 > 0 && (
-                        <span className="text-xs rounded-full bg-blue-100 text-blue-700 px-2.5 py-0.5 font-medium whitespace-nowrap">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
                             DL: {producto.descuento1.toFixed(2)}%
                         </span>
                     )}
                     {producto.descuento2 > 0 && (
-                        <span className="text-xs rounded-full bg-blue-100 text-blue-700 px-2.5 py-0.5 font-medium whitespace-nowrap">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
                             DE: {producto.descuento2.toFixed(2)}%
                         </span>
                     )}
                     {descuentoCliente1 > 0 && (
-                        <span className="text-xs rounded-full bg-green-100 text-green-700 px-2.5 py-0.5 font-medium whitespace-nowrap">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                             DC: {descuentoCliente1.toFixed(2)}%
                         </span>
                     )}
                     {descuentoCliente2 > 0 && (
-                        <span className="text-xs rounded-full bg-green-100 text-green-700 px-2.5 py-0.5 font-medium whitespace-nowrap">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                             PP: {descuentoCliente2.toFixed(2)}%
                         </span>
                     )}
-                    <span className="text-base sm:text-lg text-gray-800 font-bold ml-0 sm:ml-2 mt-2 sm:mt-0 whitespace-nowrap">Final: <span className="text-blue-700 font-extrabold">${precioNetoFinal}</span></span>
-                </div>
-                {/* Mobile: chip de información para descuentos */}
-                <div className="flex sm:hidden flex-col gap-2 mt-3 items-center w-full">
-                    <span className="text-xs text-gray-600 font-medium">Base: <span className="font-bold text-gray-800">${producto.precio.toFixed(2)}</span></span>
-                    <button
-                        type="button"
-                        className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-                        onClick={() => setShowDescuentos((v) => !v)}
-                        aria-label="Ver descuentos"
-                    >
-                        <AiOutlineInfoCircle className="w-4 h-4" />
-                        Ver descuentos
-                    </button>
-                    {showDescuentos && (
-                        <div className="flex flex-col gap-1 mt-2 w-full max-w-xs mx-auto">
-                            {producto.descuento1 > 0 && (
-                                <span className="text-xs rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 font-medium">DL: {producto.descuento1.toFixed(2)}%</span>
-                            )}
-                            {producto.descuento2 > 0 && (
-                                <span className="text-xs rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 font-medium">DE: {producto.descuento2.toFixed(2)}%</span>
-                            )}
-                            {descuentoCliente1 > 0 && (
-                                <span className="text-xs rounded-full bg-green-100 text-green-700 px-2 py-0.5 font-medium">DC1: {descuentoCliente1.toFixed(2)}%</span>
-                            )}
-                            {descuentoCliente2 > 0 && (
-                                <span className="text-xs rounded-full bg-green-100 text-green-700 px-2 py-0.5 font-medium">DC2: {descuentoCliente2.toFixed(2)}%</span>
-                            )}
-                        </div>
-                    )}
-                    <span className="text-xs text-gray-800 font-semibold">Final: <span className="text-blue-700 font-bold">${precioNetoFinal}</span></span>
-                </div>
-                {/* Stock info (siempre visible) */}
-                <div className="flex items-center justify-center sm:justify-start mt-2">
-                    <span className="flex items-center text-xs sm:text-sm text-gray-500 bg-gray-100 rounded px-2 py-0.5">
-                        Stock: <span className="ml-1 font-semibold text-gray-700">{producto.existencia}</span>
+                    <span className="text-base sm:text-lg font-bold text-blue-700 ml-auto flex items-center">
+                        <span className="text-gray-500 mr-1 text-sm font-normal">Precio Final:</span> ${precioNetoFinal}
                     </span>
                 </div>
-            </div>
-            {/* Sección de acciones: cantidad y botón agregar */}
-            <div className="flex flex-col justify-end items-center w-full sm:w-auto sm:min-w-[160px] gap-2 sm:gap-4 mt-2 sm:mt-0">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full">
-                    <input
-                        type="number"
-                        min={1}
-                        max={producto.existencia}
-                        value={cantidadPedida}
-                        onChange={e => setCantidadPedida(Number(e.target.value))}
-                        className="w-full sm:w-20 px-2 py-1 border border-gray-300 rounded-md text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                        aria-label="Cantidad"
-                        disabled={producto.existencia === 0}
-                    />
+
+                {/* Mobile: toggle de descuentos y precio */}
+                <div className="sm:hidden flex flex-col items-center gap-2 mt-2">
+                    <div className="text-sm text-gray-600 font-medium">
+                        Base: <span className="font-bold text-gray-800">${producto.precio.toFixed(2)}</span>
+                    </div>
                     <button
-                        onClick={handleAgregar}
-                        disabled={isAddButtonDisabled}
-                        className={`w-full sm:w-auto px-4 py-1.5 rounded-lg font-semibold text-white transition bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-sm shadow-sm`}
-                        aria-label="Agregar al carrito"
+                        className="flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full font-medium hover:bg-gray-200 transition-colors duration-200"
+                        onClick={() => setShowDescuentos(!showDescuentos)}
+                        aria-expanded={showDescuentos}
+                        aria-controls="descuentos-mobile"
                     >
-                        Agregar
+                        <AiOutlineInfoCircle className="w-4 h-4" />
+                        {showDescuentos ? "Ocultar descuentos" : "Ver descuentos"}
                     </button>
+                    {showDescuentos && (
+                        <div id="descuentos-mobile" className="flex flex-wrap justify-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg animate-fade-in-down">
+                            {producto.descuento1 > 0 && <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">DL: {producto.descuento1.toFixed(2)}%</span>}
+                            {producto.descuento2 > 0 && <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">DE: {producto.descuento2.toFixed(2)}%</span>}
+                            {descuentoCliente1 > 0 && <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">DC: {descuentoCliente1.toFixed(2)}%</span>}
+                            {descuentoCliente2 > 0 && <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">PP: {descuentoCliente2.toFixed(2)}%</span>}
+                        </div>
+                    )}
+                    <span className="text-base font-bold text-blue-700 mt-2 flex items-center">
+                        <span className="text-gray-500 mr-1 text-sm font-normal">Final:</span> ${precioNetoFinal}
+                    </span>
                 </div>
+
+            </div>
+
+            {/* Cantidad y botón de agregar */}
+            <div className="flex flex-col justify-end items-center sm:items-end w-full sm:w-auto sm:min-w-[150px] gap-3 mt-4 sm:mt-0">
+                <input
+                    type="number"
+                    min={1}
+                    value={cantidadPedida}
+                    onChange={(e) => setCantidadPedida(Number(e.target.value))}
+                    className="w-full sm:w-28 px-3 py-2 border border-gray-300 rounded-lg text-center text-base font-medium text-gray-800 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    disabled={producto.existencia === 0}
+                    aria-label="Cantidad a pedir"
+                />
+                <button
+                    onClick={handleAgregar}
+                    disabled={isAddButtonDisabled}
+                    className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-base font-semibold text-white shadow-md transition-all duration-300 ${isAddButtonDisabled
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-98"
+                        }`}
+                >
+                    Agregar al Carrito
+                </button>
             </div>
         </div>
     );

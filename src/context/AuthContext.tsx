@@ -11,11 +11,12 @@ import { NavigateFunction } from "react-router-dom";
 import axios from 'axios';
 
 // Tipos de TypeScript
-type Usuario = {
+export type Usuario = {
     id: string;
     name: string;
     email: string;
     role: 'user';
+    rif?: string; // Agregado para clientes
 };
 
 type AuthContextType = {

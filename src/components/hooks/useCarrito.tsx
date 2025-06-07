@@ -66,6 +66,7 @@ export function useCarrito() {
 
   const limpiarCarrito = () => {
     setCarrito([]);
+    localStorage.setItem("carrito", JSON.stringify([]));
   };
 
   return {

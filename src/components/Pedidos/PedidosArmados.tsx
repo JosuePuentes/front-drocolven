@@ -19,7 +19,6 @@ interface PedidoArmado {
 const PedidosArmados: React.FC = () => {
   const [pedidosArmados, setPedidosArmados] = useState<PedidoArmado[]>([]);
   const [loading, setLoading] = useState(true);
-  console.log("Usuario:", localStorage);
 
   useEffect(() => {
     const fetchPedidosArmados = async () => {
@@ -32,7 +31,7 @@ const PedidosArmados: React.FC = () => {
         }
         const data = await response.json();
         const pedidosFiltrados = data.filter(
-          (pedido: PedidoArmado) => pedido.estado === "pedido_armado"
+          (pedido: PedidoArmado) => pedido.estado === "armado"
         );
         setPedidosArmados(pedidosFiltrados);
       } catch (error) {

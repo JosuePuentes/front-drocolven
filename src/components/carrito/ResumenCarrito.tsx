@@ -16,6 +16,11 @@ interface Producto {
     descuento4: number;
     cantidad_pedida: number;
     cantidad_encontrada: number;
+    existencia?: number;
+    dpto?: string;
+    laboratorio?: string;
+    nacional?: string;
+    fv?: string;
 }
 
 interface ClienteDetalle {
@@ -112,12 +117,28 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
             return;
         }
 
+        // Validación: cliente logueado vs cliente del carrito
+        try {
+            const usuarioStr = localStorage.getItem('usuario');
+            if (usuarioStr && cliente) {
+                const usuario = JSON.parse(usuarioStr);
+                // Compara por RIF (puedes ajustar a email o id si es necesario)
+                if (usuario?.rif && usuario.rif !== cliente.rif) {
+                    alert('El cliente logueado no coincide con el cliente del pedido. Por favor, inicia sesión con el cliente correcto.');
+                    return;
+                }
+            }
+        } catch (e) {
+            alert('Error al validar el cliente logueado.');
+            return;
+        }
+
         const resumen = {
             cliente: cliente?.encargado || "Cliente no seleccionado",
             rif: cliente?.rif || "RIF no seleccionado",
             observacion,
             total: parseFloat(total.toFixed(2)),
-            estado: "pedido_creado",
+            estado: "nuevo",
             subtotal: parseFloat(subtotal.toFixed(2)),
             descuento_cliente1: cliente?.descuento1 ?? 0, // Enviar descuento1 del cliente
             descuento_cliente2: cliente?.descuento2 ?? 0, // Enviar descuento2 del cliente
@@ -188,7 +209,9 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
         localStorage.setItem("ordenes_guardadas", JSON.stringify(ordenes));
         alert("Orden guardada correctamente.");
         setObservacion("");
-        if (onTotalizar) onTotalizar();
+        if (onTotalizar) {
+            onTotalizar();
+        }
     }, [carrito, cliente, observacion, total, onTotalizar]);
 
     const handleLoadOrder = useCallback((productos: Producto[], clientDetail?: ClienteDetalle) => {
@@ -198,7 +221,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
     }, [onLoadOrder]);
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl space-y-6 max-w-sm sm:max-w-md mx-auto border border-gray-50"> {/* Ajustes en padding, rounded, shadow y border */}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl space-y-6 max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto border border-gray-50 w-full"> {/* Ajuste: max-w más grande y w-full para pantallas grandes */}
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 text-center pb-4 border-b border-gray-100">
                 {titulo}
             </h2>
@@ -237,6 +260,41 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                                         ${(producto.precio_n ?? producto.precio).toFixed(2)} c/u
                                     </span>
                                 </span>
+                                {/* NUEVA INFO: dpto, fv, laboratorio, nacional */}
+                                <div className="flex flex-wrap gap-2 mt-1 text-xs text-gray-500">
+                                    {producto.dpto && (
+                                        <span className="bg-gray-100 rounded px-2 py-0.5 font-medium order-1">Dpto: <span className="text-gray-700">{producto.dpto}</span></span>
+                                    )}
+                                    {producto.laboratorio && (
+                                        <span className="bg-gray-100 rounded px-2 py-0.5 font-medium order-2">Lab: <span className="text-gray-700">{producto.laboratorio}</span></span>
+                                    )}
+                                    {producto.nacional && (
+                                        <span className="bg-gray-100 rounded px-2 py-0.5 font-medium order-3">Nacional: <span className="text-gray-700">{producto.nacional}</span></span>
+                                    )}
+                                    {producto.fv && (
+                                        <span className="bg-gray-100 rounded px-2 py-0.5 font-medium order-4">FV: <span className="text-gray-700">{producto.fv}</span></span>
+                                    )}
+                                    {producto.descuento1 !== undefined && producto.descuento1 > 0 && (
+                                        <span className="bg-yellow-100 rounded px-2 py-0.5 font-medium order-5 text-yellow-800">
+                                            DL: <span className="text-yellow-900">{producto.descuento1}%</span>
+                                        </span>
+                                    )}
+                                    {producto.descuento2 !== undefined && producto.descuento2 > 0 && (
+                                        <span className="bg-yellow-100 rounded px-2 py-0.5 font-medium order-5 text-yellow-800">
+                                            DA: <span className="text-yellow-900">{producto.descuento2}%</span>
+                                        </span>
+                                    )}
+                                    {producto.descuento3 !== undefined && producto.descuento3 > 0 && (
+                                        <span className="bg-yellow-100 rounded px-2 py-0.5 font-medium order-5 text-yellow-800">
+                                            DC: <span className="text-yellow-900">{producto.descuento3}%</span>
+                                        </span>
+                                    )}
+                                    {producto.descuento4 !== undefined && producto.descuento4 > 0 && (
+                                        <span className="bg-yellow-100 rounded px-2 py-0.5 font-medium order-5 text-yellow-800">
+                                            PP: <span className="text-yellow-900">{producto.descuento4}%</span>
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             <div className="flex items-center gap-3 mt-2 sm:mt-0">
                                 <span className="text-base sm:text-lg font-bold text-gray-900">
@@ -301,15 +359,14 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                         </DialogHeader>
                         <OrdenesGuardadas
                             onSelectOrder={handleLoadOrder} // Ahora pasa un cliente también
+                            onClose={() => setOrdersModalOpen(false)}
                         />
                     </DialogContent>
                 </Dialog>
 
                 <button
                     onClick={() => {
-                        if (window.confirm("¿Estás seguro de que quieres limpiar todo el carrito?")) {
-                            onTotalizar && onTotalizar();
-                        }
+                        if (onTotalizar) onTotalizar();
                     }}
                     className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-300"
                     aria-label="Limpiar Carrito"
@@ -322,7 +379,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
             {confirmModalVisible && (
                 <div
                     ref={confirmOverlayRef}
-                    className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-30 backdrop-blur-sm p-4"
+                    className="fixed inset-0 flex justify-center items-center z-50 bg-white bg-opacity-30 backdrop-blur-sm p-4"
                     onClick={(e) => {
                         if (confirmOverlayRef.current && e.target === confirmOverlayRef.current) {
                             setConfirmModalVisible(false);

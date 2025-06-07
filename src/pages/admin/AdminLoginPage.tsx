@@ -23,8 +23,6 @@ const AdminLoginPage = () => {
                 usuario,
                 password,
             });
-            console.log('Respuesta de login administrativo:', response.data);
-            console.log('Token de acceso:', response.data.access_token);
             login({
                 access_token: response.data.access_token,
                 token_type: response.data.token_type,

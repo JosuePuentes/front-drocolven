@@ -9,5 +9,6 @@
 		}
 	],
 	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "frontend-drocolven"
 	}
 }

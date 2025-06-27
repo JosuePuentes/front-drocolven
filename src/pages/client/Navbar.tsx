@@ -44,7 +44,6 @@ const Navbar = () => {
         closeMenu();
     }, [location.pathname]);
 
-
     const links = [
         { to: "/", label: "Inicio" },
         { to: "/about", label: "Sobre Nosotros" },
@@ -82,7 +81,6 @@ const Navbar = () => {
             }
         `;
     };
-
 
     return (
         <nav className="bg-white text-gray-800 p-4 shadow-lg sticky top-0 z-50 border-b border-gray-100">

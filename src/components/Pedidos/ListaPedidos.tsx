@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { animate, stagger } from 'animejs';
 import { FiRefreshCw, FiMoreHorizontal } from "react-icons/fi";
-import { usePedidoArmado } from "../hooks/usePedidoArmado";
+import { EstadoPedido, usePedido } from "../hooks/usePedido";
 
 const ESTADOS = [
   { id: 'nuevo', label: 'Nuevo' },
@@ -13,7 +13,7 @@ const ESTADOS = [
 ];
 
 export default function MonitorPedidos() {
-  const { pedidos, obtenerPedidos, actualizarEstadoPedido } = usePedidoArmado();
+  const { pedidos, obtenerPedidos, actualizarEstadoPedido } = usePedido();
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(ESTADOS[0].id);
   const [search, setSearch] = useState("");
   const [fechaDesde, setFechaDesde] = useState("");
@@ -38,18 +38,21 @@ export default function MonitorPedidos() {
 
   useEffect(() => {
     if (listaRef.current) {
-      animate('.pedido-item', {
-        opacity: [0, 1],
-        translateY: [20, 0],
-        duration: 400,
-        delay: stagger(60),
-        easing: 'easeOutQuad',
-      });
+      const items = listaRef.current.querySelectorAll('.pedido-item');
+      if (items.length > 0) {
+        animate(items, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: 400,
+          delay: stagger(60),
+          easing: 'easeOutQuad',
+        });
+      }
     }
   }, [pedidosFiltrados]);
 
   const handleChangeEstado = async (id: string, nuevoEstado: string) => {
-    await actualizarEstadoPedido(id, nuevoEstado);
+    await actualizarEstadoPedido(id, nuevoEstado as EstadoPedido); // Usa el tipo correcto
     obtenerPedidos();
   };
 

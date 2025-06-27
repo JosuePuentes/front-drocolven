@@ -157,6 +157,8 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 cantidad_encontrada: prod.cantidad_encontrada,
             })),
         };
+        // Imprimir en consola el resumen antes de enviar
+        console.log("Resumen a enviar:", JSON.stringify(resumen, null, 2));
 
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/`, {

@@ -86,9 +86,9 @@ const AdminPage: React.FC = () => {
         {/* Assuming this is a distinct module for "Armar Pedidos" */}
         <HasModule module="pedidos"> {/* Use a more specific module if available */}
           <CardModule
-            bottomText="Armado de Pedidos"
+            bottomText="Picking de Pedidos"
             description="Procesa y prepara los pedidos para el envío."
-            onClick={() => navigate("armarpedidos")}
+            onClick={() => navigate("pickingpedidos")}
             logo={<PackageCheck size={48} />} /* Changed icon for better representation */
           />
         </HasModule>

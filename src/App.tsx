@@ -3,12 +3,9 @@ import ClientLayout from "./layouts/ClientLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import UploadInventory from "./components/UploadInventary";
 import MonitorPedidos from "./components/Pedidos/ListaPedidos";
-import PedidosArmados from "./components/Pedidos/PedidosArmados";
-import ArmarPedidos from "./components/Pedidos/ArmarPedidos";
 import HomePage from "./pages/client/HomePage";
 import AboutPage from "./pages/client/AboutPage";
 import NotFoundPage from "./pages/client/NotFoundPage";
-import RegisterPage from "./pages/client/RegisterPage";
 import ContactPage from "./pages/client/ContactPage";
 import AdminPage from "./pages/admin/AdminPage";
 import UsuariosPage from "./pages/admin/UsuariosPage";
@@ -19,15 +16,18 @@ import { ShoppingCartClient } from "./components/ClientCompras/CarritoComprasCli
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import { AdminCarritoCompras } from "./components/AdminCompras/AdminCarritoCompras";
 import CreateAdminUser from "./components/auth/CreateAdminUser";
-import PedidoDetalle from "./components/Pedidos/PedidoDetalle";
 import CreateClient from "./components/auth/CreateClient";
 import LoginClientPage from "./pages/client/LoginClientPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PackingPedidos from "./components/Pedidos/PackingPedidos";
 import PackingDetalle from "./components/Pedidos/PackingDetalle";
-import EnviadosPedidos from "./components/Pedidos/EnviadosPedidos";
-import EnviadoDetalle from "./components/Pedidos/EnviadoDetalle";
 import PedidoClientePage from "./pages/client/PedidoClientePage";
+import EnviadosPedidos from "./components/Pedidos/EnvioPedidos";
+import EnviadoDetalle from "./components/Pedidos/EnvioDetalle";
+import PickingDetalle from "./components/Pedidos/PickingDetalle";
+import PickingPedidos from "./components/Pedidos/PickingPedidos";
+import InfoClientePage from "./pages/client/InfoClientePage";
+import ReclamosClient from "./pages/client/ReclamosClient";
 
 function App() {
   return (
@@ -39,12 +39,21 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginClientPage />} />
-          <Route path="/registrar" element={<RegisterPage />} />
 
 
-          <Route path="/comprar" element={
+          <Route path="/catalogo" element={
             <ProtectedRoute>
               <ShoppingCartClient />
+            </ProtectedRoute>
+          } />
+          <Route path="/perfil" element={
+            <ProtectedRoute>
+              <InfoClientePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/reclamos" element={
+            <ProtectedRoute>
+              <ReclamosClient />
             </ProtectedRoute>
           } />
 
@@ -73,10 +82,9 @@ function App() {
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
-          <Route path="armarpedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><ArmarPedidos /></AdminProtectedRoute>} />
-          <Route path="pedidosarmados" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosArmados /></AdminProtectedRoute>} />
+          <Route path="pickingpedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PickingPedidos /></AdminProtectedRoute>} />
           <Route path="packingpedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PackingPedidos /></AdminProtectedRoute>} />
-          <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidoDetalle /></AdminProtectedRoute>} />
+          <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PickingDetalle /></AdminProtectedRoute>} />
           <Route path="packing/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PackingDetalle /></AdminProtectedRoute>} />
           <Route path="enviadospedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadosPedidos /></AdminProtectedRoute>} />
           <Route path="enviado/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadoDetalle /></AdminProtectedRoute>} />

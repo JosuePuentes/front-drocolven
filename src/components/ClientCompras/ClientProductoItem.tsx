@@ -81,6 +81,11 @@ export const ProductoItem: React.FC<ProductoItemProps> = ({
 
     return (
         <div className="flex flex-col sm:flex-row items-stretch bg-white rounded-2xl shadow-lg p-4 sm:p-6 gap-4 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-[1.01] w-full mx-auto">
+            {/* Espacio reservado para imagen del producto */}
+            <div className="flex-shrink-0 w-full sm:w-32 h-32 bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 text-4xl mb-2 sm:mb-0 mr-0 sm:mr-4 border border-dashed border-gray-200">
+                {/* Próximamente imagen */}
+                <span className="text-xs text-gray-400">Imagen</span>
+            </div>
             {/* Descripción y detalles */}
             <div className="flex-1 flex flex-col gap-3 text-center sm:text-left">
                 <div>

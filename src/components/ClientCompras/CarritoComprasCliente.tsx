@@ -159,11 +159,10 @@ export const CarritoComprasCliente = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 lg:p-8 font-sans antialiased">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 lg:p-8 lg:pl-56 font-sans antialiased">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Título de la Página */}
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 text-center mb-8 tracking-tight text-balance animate-in fade-in slide-in-from-top-12 duration-1000">
-                    Nuestro <span className="text-blue-600 drop-shadow-md">Catálogo</span>
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 text-center mb-8 tracking-tight text-balance animate-in fade-in slide-in-from-top-12 duration-1000"><span className="text-blue-600 drop-shadow-md">Catálogo</span>
                 </h1>
 
                 {/* Barra de Búsqueda */}
@@ -220,7 +219,7 @@ export const CarritoComprasCliente = () => {
             <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-4">
                 {/* Botón del Carrito */}
                 <button
-                    className="relative bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 animate-in fade-in zoom-in-90 duration-500 delay-100"
+                    className="relative bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 animate-in fade-in zoom-in-90 duration-500 delay-100"
                     onClick={() => setModalAbierto(true)}
                     aria-label={`Ver Carrito con ${carrito.length} productos`}
                 >

@@ -60,7 +60,7 @@ function HomePage() {
   return (
     <div className="bg-white text-gray-800">
       {/* HERO PRINCIPAL */}
-      <section className="relative min-h-[80vh] sm:min-h-[90vh] bg-black flex items-center justify-center">
+      <section className="relative min-h-[100vh] bg-black flex items-center justify-center">
         <video
           className="absolute top-0 left-0 w-full h-full object-cover opacity-40"
           src="./video-presentacion.webm"

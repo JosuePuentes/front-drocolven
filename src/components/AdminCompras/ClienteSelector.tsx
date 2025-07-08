@@ -5,6 +5,17 @@ import { AiOutlineClose } from 'react-icons/ai';
 interface Cliente {
   rif: string;
   encargado: string;
+  direccion?: string;
+  telefono?: string;
+  email?: string;
+  password?: string;
+  descripcion?: string;
+  dias_credito?: number;
+  limite_credito?: number;
+  activo?: boolean;
+  descuento1?: number;
+  descuento2?: number;
+  descuento3?: number;
   // Agrega aquí cualquier otra propiedad del cliente que uses
 }
 
@@ -18,21 +29,32 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
   const [busqueda, setBusqueda] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+  const [loadingDetalle, setLoadingDetalle] = useState(false);
 
   const clientesFiltrados = useMemo(() => {
     const texto = busqueda.toLowerCase();
     return clientes.filter(c =>
       c.encargado.toLowerCase().includes(texto) ||
-      c.rif.toLowerCase().includes(texto)
+      c.rif.toLowerCase().includes(texto) ||
+      c.direccion?.toLowerCase().includes(texto)
     );
   }, [clientes, busqueda]);
 
-  const handleSelect = (rif: string) => {
-    const cliente = clientes.find(c => c.rif === rif) || null;
-    setClienteSeleccionado(cliente);
-    onSelectClient(rif);
-    setBusqueda('');
-    setShowDropdown(false);
+  const handleSelect = async (rif: string) => {
+    setLoadingDetalle(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${rif}`);
+      const data = await res.json();
+      setClienteSeleccionado(data);
+      onSelectClient(rif);
+    } catch (err) {
+      setClienteSeleccionado(null);
+      onSelectClient(null);
+    } finally {
+      setBusqueda('');
+      setShowDropdown(false);
+      setLoadingDetalle(false);
+    }
   };
 
   const handleRemove = () => {
@@ -46,20 +68,56 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
   return (
     <div className="relative">
       {clienteSeleccionado ? (
-        <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 mb-2">
-          <span className="text-blue-800 font-medium">
-            {clienteSeleccionado.encargado} - {clienteSeleccionado.rif}
-          </span>
-          {carritoLength === 0 && (
-            <button
-              type="button"
-              className="ml-2 p-1 rounded-full hover:bg-blue-100 focus:outline-none"
-              onClick={handleRemove}
-              aria-label="Quitar cliente seleccionado"
-            >
-              <AiOutlineClose className="w-4 h-4 text-blue-600" />
-            </button>
-          )}
+        <div className="flex justify-center">
+          <div className="w-full max-w-2xl bg-white border border-blue-200 rounded-2xl shadow-md p-6 mb-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+              <span className="text-blue-800 font-semibold text-xl">
+                {clienteSeleccionado.encargado} - {clienteSeleccionado.rif}
+              </span>
+              {carritoLength === 0 && (
+                <button
+                  type="button"
+                  className="ml-2 p-1 rounded-full hover:bg-blue-100 focus:outline-none"
+                  onClick={handleRemove}
+                  aria-label="Quitar cliente seleccionado"
+                >
+                  <AiOutlineClose className="w-5 h-5 text-blue-600" />
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm text-blue-700">
+              {clienteSeleccionado.email && (
+                <div><span className="font-medium">Email:</span> {clienteSeleccionado.email}</div>
+              )}
+              {clienteSeleccionado.telefono && (
+                <div><span className="font-medium">Teléfono:</span> {clienteSeleccionado.telefono}</div>
+              )}
+              {clienteSeleccionado.direccion && (
+                <div className="md:col-span-2"><span className="font-medium">Dirección:</span> {clienteSeleccionado.direccion}</div>
+              )}
+              {clienteSeleccionado.descripcion && (
+                <div className="md:col-span-2"><span className="font-medium">Descripción:</span> {clienteSeleccionado.descripcion}</div>
+              )}
+              {typeof clienteSeleccionado.dias_credito !== 'undefined' && (
+                <div><span className="font-medium">Días de crédito:</span> {clienteSeleccionado.dias_credito}</div>
+              )}
+              {typeof clienteSeleccionado.limite_credito !== 'undefined' && (
+                <div><span className="font-medium">Límite de crédito:</span> {clienteSeleccionado.limite_credito}</div>
+              )}
+              {typeof clienteSeleccionado.activo !== 'undefined' && (
+                <div><span className="font-medium">Estado:</span> <span className={`font-semibold ${clienteSeleccionado.activo ? 'text-green-600' : 'text-red-500'}`}>{clienteSeleccionado.activo ? 'Activo' : 'Inactivo'}</span></div>
+              )}
+              {typeof clienteSeleccionado.descuento1 !== 'undefined' && (
+                <div><span className="font-medium">Descuento 1:</span> {clienteSeleccionado.descuento1}%</div>
+              )}
+              {typeof clienteSeleccionado.descuento2 !== 'undefined' && (
+                <div><span className="font-medium">Descuento 2:</span> {clienteSeleccionado.descuento2}%</div>
+              )}
+              {typeof clienteSeleccionado.descuento3 !== 'undefined' && (
+                <div><span className="font-medium">Descuento 3:</span> {clienteSeleccionado.descuento3}%</div>
+              )}
+            </div>
+          </div>
         </div>
       ) : (
         <>
@@ -83,7 +141,7 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
                   className="px-4 py-2 cursor-pointer hover:bg-blue-50 text-gray-700"
                   onClick={() => handleSelect(c.rif)}
                 >
-                  {c.encargado} - {c.rif}
+                  {c.encargado} - {c.rif} {c.direccion}
                 </li>
               ))}
             </ul>

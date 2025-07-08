@@ -5,6 +5,7 @@ export interface ClienteResumen {
   email: string;
   rif: string;
   encargado: string;
+  descuento1?: number; // Opcional, puede no estar en el resumen
 }
 
 export interface ClienteDetalle extends ClienteResumen {

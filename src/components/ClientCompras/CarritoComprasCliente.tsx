@@ -4,11 +4,11 @@ import { useCarrito } from "../hooks/useCarrito";
 import { useProductos } from "../hooks/useProductos";
 import { useClientes } from "../hooks/useClientes";
 import { ProductoItem } from "./ClientProductoItem";
-import { ResumenCarrito } from "../carrito/ResumenCarrito";
 import { OrdenesGuardadas } from "./OrdenesGuardadas";
 
 import { AiOutlineShoppingCart, AiOutlineClose, AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineSaveAlt } from "react-icons/md";
+import { ResumenCarrito } from "../AdminCompras/ResumenCarrito";
 
 // Función de utilidad para filtrar productos
 function filtrarPorMultiplesPalabrasAND<T>(

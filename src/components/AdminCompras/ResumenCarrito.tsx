@@ -3,7 +3,7 @@ import { AiOutlineDelete, AiOutlineCloseCircle, AiOutlineSave } from "react-icon
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { animate } from "animejs"; // Asegúrate de que 'animejs' esté instalado
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { OrdenesGuardadas } from '../ClientCompras/OrdenesGuardadas'; // Asume que este componente existe y está estilizado con Shadcn/Tailwind
+import { OrdenesGuardadas } from "@/components/ClientCompras/OrdenesGuardadas";
 
 interface Producto {
     id: string;
@@ -223,7 +223,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
     }, [onLoadOrder]);
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl space-y-6 max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto border border-gray-50 w-full"> {/* Ajuste: max-w más grande y w-full para pantallas grandes */}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl space-y-6 max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto border border-gray-50 w-full"> {/* Ajuste: max-w más grande y w-full para pantallas grandes */}
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 text-center pb-4 border-b border-gray-100">
                 {titulo}
             </h2>
@@ -315,66 +315,27 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 </div>
             )}
 
-            <div className="pt-6 border-t border-gray-100 space-y-3"> {/* Más padding y espacio */}
-                <div className="flex justify-between items-center text-base font-semibold text-gray-700">
-                    <span>Subtotal:</span>
-                    <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between items-center text-xl font-extrabold text-gray-900"> {/* Texto más oscuro y audaz */}
-                    <span>Total:</span>
-                    <span className="text-blue-700">${total.toFixed(2)}</span> {/* Azul más profundo */}
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-3 mt-6 p-4 rounded-xl bg-gray-50 border border-gray-100 shadow-sm"> {/* Más padding interno */}
-                <button
-                    onClick={() => setConfirmModalVisible(true)}
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    aria-label="Totalizar Pedido"
-                >
-                    Totalizar Pedido
-                </button>
-
-                <button
+            <div className="pt-6 border-t border-gray-100 space-y-3"> 
+                <div className="flex flex-wrap gap-2 justify-end">
+                  <button
+                    className="bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors"
                     onClick={guardarOrdenLocalmente}
-                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    aria-label="Guardar Orden"
-                >
-                    <AiOutlineSave className="w-5 h-5" /> Guardar Orden
-                </button>
-
-                <Dialog open={ordersModalOpen} onOpenChange={setOrdersModalOpen}>
-                    <DialogTrigger asChild>
-                        <button
-                            className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-800 hover:bg-gray-300 font-semibold px-5 py-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                            aria-label="Ver Órdenes Guardadas"
-                        >
-                            Ver Órdenes Guardadas
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-hidden p-6 rounded-2xl">
-                        <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold text-gray-900">Órdenes Guardadas</DialogTitle>
-                            <DialogDescription className="text-gray-600">
-                                Selecciona una orden guardada para cargarla en el carrito.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <OrdenesGuardadas
-                            onSelectOrder={handleLoadOrder} // Ahora pasa un cliente también
-                            onClose={() => setOrdersModalOpen(false)}
-                        />
-                    </DialogContent>
-                </Dialog>
-
-                <button
-                    onClick={() => {
-                        if (onTotalizar) onTotalizar();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-300"
-                    aria-label="Limpiar Carrito"
-                >
-                    <MdOutlineCleaningServices className="w-5 h-5" /> Limpiar Carrito
-                </button>
+                  >
+                    Guardar Orden
+                  </button>
+                  <button
+                    className="bg-green-600 text-white text-sm px-3 py-1.5 rounded-lg shadow-sm hover:bg-green-700 transition-colors"
+                    onClick={() => setConfirmModalVisible(true)}
+                  >
+                    Totalizar Pedido
+                  </button>
+                  <button
+                    className="bg-gray-200 text-gray-700 text-sm px-3 py-1.5 rounded-lg shadow-sm hover:bg-gray-300 transition-colors"
+                    onClick={() => setOrdersModalOpen(true)}
+                  >
+                    Ver Órdenes Guardadas
+                  </button>
+                </div>
             </div>
 
             {/* Modal de Confirmación para Totalizar Pedido */}

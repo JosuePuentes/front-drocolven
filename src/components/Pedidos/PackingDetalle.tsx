@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { useAdminAuth } from '@/context/AuthAdminContext';
 import { toZonedTime } from 'date-fns-tz';
 import { differenceInSeconds } from 'date-fns';
+import { PedidoArmado } from "./pedidotypes";
+import { animate } from 'animejs';
 
 const PackingDetalle: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -36,24 +38,44 @@ const PackingDetalle: React.FC = () => {
     const [elapsed, setElapsed] = useState<string>("—");
 
     useEffect(() => {
+        const fetchPedidoById = async (pedidoId: string) => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/pedido/${pedidoId}`);
+                if (!response.ok) throw new Error('No se pudo cargar el pedido');
+                const pedidoData = await response.json();
+                setPedido(pedidoData);
+            } catch (error: any) {
+                toast.error('No se pudo cargar el pedido: ' + (error.message || error));
+                setPedido(null);
+            } finally {
+                setLoading(false);
+            }
+        };
         if (id) {
-            const pedidoEncontrado = pedidos.find((p) => p._id === id);
+            const pedidoEncontrado = pedidos.find((p: PedidoArmado) => p._id === id);
             if (pedidoEncontrado) {
                 setPedido(pedidoEncontrado);
             } else {
-                // Si no está en la lista, búscalo individualmente o refresca la lista
-                // Por ahora, simplemente refrescamos toda la lista
-                fetchPedidos();
+                fetchPedidoById(id);
             }
         }
-        // Cleanup al desmontar
         return () => {
             setPedido(null);
         };
-    }, [id, pedidos, setPedido, fetchPedidos]);
+    }, [id, pedidos, setPedido]);
 
+    useEffect(() => {
+        if (pedido) {
+            animate('#packing-info', {
+                opacity: [0, 1],
+                y: [20, 0],
+                duration: 500,
+                ease: 'outQuad',
+            });
+        }
+    }, [pedido]);
 
-    // Cronómetro de packing
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
         if (pedido?.packing?.estado_packing === 'en_proceso' && pedido.packing.fechainicio_packing) {
@@ -98,7 +120,7 @@ const PackingDetalle: React.FC = () => {
         try {
             await iniciarPacking(id, admin.usuario);
             toast.success("Packing iniciado correctamente.");
-            fetchPedidos(); // Refrescar para obtener el estado actualizado
+            fetchPedidos();
         } catch (error: any) {
             toast.error(`Error al iniciar packing: ${error.message}`);
         } finally {
@@ -112,7 +134,7 @@ const PackingDetalle: React.FC = () => {
         try {
             await finalizarPacking(pedido._id);
             toast.success("Packing finalizado. Listo para enviar.");
-            navigate("/admin/enviopedidos"); // Navegar a la siguiente etapa
+            navigate("/admin/enviadospedidos");
         } catch (error: any) {
             toast.error(`Error al finalizar: ${error.message}`);
         } finally {
@@ -126,7 +148,7 @@ const PackingDetalle: React.FC = () => {
         try {
             await cancelarProceso(pedido._id, ESTADOS_PEDIDO.PACKING);
             toast.success("Packing cancelado. Pedido devuelto a 'picking'.");
-            navigate("/admin/pickingpedidos"); // Volver a la etapa anterior
+            navigate("/admin/pickingpedidos");
         } catch (error: any) {
             toast.error(`Error al cancelar: ${error.message}`);
         } finally {
@@ -174,7 +196,7 @@ const PackingDetalle: React.FC = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg">
+                    <div id="packing-info" className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Packing</p>
                             <p className="text-lg font-semibold">{pedido.packing?.usuario || 'No iniciado'}</p>
@@ -195,30 +217,6 @@ const PackingDetalle: React.FC = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Productos a Empacar</h3>
-                        <div className="space-y-4">
-                            {pedido.productos.map((prod) => {
-                                const cantidadPedida = prod.cantidad_pedida;
-                                const cantidadEncontrada = prod.cantidad_encontrada;
-                                const isMissing = cantidadEncontrada < cantidadPedida;
-
-                                return (
-                                    <div key={prod.id} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                        <div className="flex-grow">
-                                            <p className="font-semibold">{prod.descripcion}</p>
-                                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                                                <span>Pedido: <strong>{cantidadPedida}</strong></span>
-                                                <span>Encontrado: <strong>{cantidadEncontrada}</strong></span>
-                                                {isMissing && <Badge variant="destructive">Faltante</Badge>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
                         <div className="text-lg font-bold">
                             Total: ${pedido.total.toFixed(2)}
@@ -235,7 +233,7 @@ const PackingDetalle: React.FC = () => {
                             {isPackingStarted && isEditable && (
                                 <>
                                     <Button onClick={handleFinalizarPacking} disabled={loading}>
-                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing y Enviar
+                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
                                     </Button>
                                     <Button variant="destructive" onClick={handleCancelarPacking} disabled={loading}>
                                         <AiOutlineClose className="mr-2 h-4 w-4" /> Cancelar

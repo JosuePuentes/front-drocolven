@@ -113,6 +113,23 @@ const AdminPage: React.FC = () => {
           />
         </HasModule>
 
+        <HasModule module="pedidos">
+          <CardModule
+            bottomText="Dashboard de Pedidos"
+            description="Visualiza todos los pedidos, tiempos y estado actual."
+            onClick={() => navigate("pedidos-dashboard")}
+            logo={<BookA size={48} />}
+          />
+        </HasModule>
+        <HasModule module="pedidos">
+          <CardModule
+            bottomText="Crear Pedido"
+            description="Visualiza todos los pedidos, tiempos y estado actual."
+            onClick={() => navigate("crear-pedido")}
+            logo={<BookA size={48} />}
+          />
+        </HasModule>
+
       </div>
     </div>
   );

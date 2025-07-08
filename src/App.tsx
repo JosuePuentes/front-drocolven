@@ -28,6 +28,8 @@ import PickingDetalle from "./components/Pedidos/PickingDetalle";
 import PickingPedidos from "./components/Pedidos/PickingPedidos";
 import InfoClientePage from "./pages/client/InfoClientePage";
 import ReclamosClient from "./pages/client/ReclamosClient";
+import PedidosDashboard from "./pages/admin/PedidosDashboard";
+import CrearPedidoPage from "./components/Pedidos/crearPedido/crearPedidoPage";
 
 function App() {
   return (
@@ -88,6 +90,8 @@ function App() {
           <Route path="packing/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PackingDetalle /></AdminProtectedRoute>} />
           <Route path="enviadospedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadosPedidos /></AdminProtectedRoute>} />
           <Route path="enviado/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadoDetalle /></AdminProtectedRoute>} />
+          <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
+          <Route path="crear-pedido" element={<AdminProtectedRoute moduleRequired="pedidos"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="unauthorized" element={<AdminProtectedRoute moduleRequired=""><div>no estas autorizado para realizar esta operacion</div></AdminProtectedRoute>} />
         </Route>
 

@@ -11,16 +11,17 @@ import {
     AiOutlineSave,
     AiOutlineClose,
     AiOutlinePlayCircle,
-    AiOutlineSend
+    AiOutlineSend,
+    AiOutlineUser,
+    AiOutlineClockCircle,
+    AiOutlineCheckCircle
 } from 'react-icons/ai';
 import { toast } from "sonner";
 import { useAdminAuth } from '@/context/AuthAdminContext';
 import { toZonedTime } from 'date-fns-tz';
 import { differenceInSeconds } from 'date-fns';
-
-interface CantidadesInput {
-    [productoId: string]: string;
-}
+import { animate } from 'animejs';
+import { CantidadesInput } from "./pedidotypes";
 
 const PickingDetalle: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -45,17 +46,43 @@ const PickingDetalle: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            const pedidoEncontrado = pedidos.find((p) => p._id === id);
-            if (pedidoEncontrado) {
-                setPedido(pedidoEncontrado);
-            } else {
-                fetchPedidos();
-            }
+            const fetchPedidoById = async () => {
+                setLoading(true);
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/pedido/${id}`);
+                    if (!response.ok) throw new Error('No se pudo cargar el pedido');
+                    let pedidoData = await response.json();
+                    // Si no existe el objeto picking, inicialízalo con valores por defecto y usuario actual
+                    if (!pedidoData.picking) {
+                        pedidoData.picking = {
+                            usuario: admin?.usuario || '',
+                            fechainicio_picking: '',
+                            fechafin_picking: '',
+                            estado_picking: 'pendiente',
+                        };
+                    } else {
+                        // Asegura que todos los campos estén presentes y asigna usuario actual si no hay
+                        pedidoData.picking = {
+                            usuario: pedidoData.picking.usuario || admin?.usuario || '',
+                            fechainicio_picking: pedidoData.picking.fechainicio_picking || '',
+                            fechafin_picking: pedidoData.picking.fechafin_picking || '',
+                            estado_picking: pedidoData.picking.estado_picking || 'pendiente',
+                        };
+                    }
+                    setPedido(pedidoData);
+                } catch (error: any) {
+                    toast.error('No se pudo cargar el pedido: ' + (error.message || error));
+                    setPedido(null);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchPedidoById();
         }
         return () => {
             setPedido(null);
         };
-    }, [id, pedidos, setPedido, fetchPedidos]);
+    }, [id, setPedido, admin]);
 
     useEffect(() => {
         if (pedido) {
@@ -103,6 +130,17 @@ const PickingDetalle: React.FC = () => {
             setElapsed('—');
         }
         return () => { if (interval) clearInterval(interval); };
+    }, [pedido]);
+
+    useEffect(() => {
+        if (pedido) {
+            animate('#picking-info', {
+                opacity: [0, 1],
+                y: [20, 0],
+                duration: 500,
+                ease: 'outQuad',
+            });
+        }
     }, [pedido]);
 
     const handleCantidadEncontradaChange = (productoId: string, value: string) => {

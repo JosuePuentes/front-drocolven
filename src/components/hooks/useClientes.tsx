@@ -27,7 +27,7 @@ export const useClientes = () => {
     const fetchClientes = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/clientes`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/clientes`);
         const json = await res.json();
         const resumen = json.map((c: any) => ({
           id: c._id?.$oid || c._id, // Manejar tanto ObjectId como string
@@ -57,7 +57,7 @@ export const useClientes = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/clientes/${rif}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${rif}`);
       
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${res.statusText}`);

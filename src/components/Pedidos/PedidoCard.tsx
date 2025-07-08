@@ -1,48 +1,16 @@
+import { animate } from 'animejs';
 import { Card, CardContent } from '@/components/ui/card';
-import { AiOutlineFileText, AiOutlineTag, AiOutlineClockCircle, AiOutlineUser, AiOutlineCalendar } from 'react-icons/ai'; // Nuevos iconos para más detalle
-import { ReactNode, useEffect, useState, useRef } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { AiOutlineFileText, AiOutlineTag, AiOutlineCalendar, AiOutlineUser, AiOutlineClockCircle } from 'react-icons/ai';
+import { useEffect, useRef, useState } from 'react';
 import { toZonedTime } from 'date-fns-tz';
 import { differenceInSeconds } from 'date-fns';
-import { Badge } from '@/components/ui/badge'; // Importar Badge de shadcn/ui
-import { animate } from 'animejs'; // Importar animate de animejs v4
+import type { PackingInfo, PickingInfo, EnvioInfo } from './pedidotypes';
 
-export interface PedidoCardProps {
-    pedido: {
-        _id: string;
-        cliente: string;
-        rif?: string;
-        fecha: string;
-        total: number;
-        estado: string;
-        observacion?: string;
-        productos?: any[];
-        picking?: {
-            usuario?: string;
-            fechainicio_picking?: string;
-            fechafin_picking?: string;
-            estado_picking?: string;
-        };
-        packing?: {
-            usuario?: string;
-            fechainicio_packing?: string;
-            fechafin_packing?: string;
-            estado_packing?: string;
-        };
-        envio?: {
-            usuario?: string;
-            fechainicio_envio?: string;
-            fechafin_envio?: string;
-            estado_envio?: string;
-        };
-    };
-    onClick?: () => void;
-    extra?: ReactNode;
-}
-
-export const PedidoCard: React.FC<PedidoCardProps> = ({ pedido, onClick, extra }) => {
-    const packing = pedido.packing;
-    const picking = pedido.picking;
-    const envio = pedido.envio; // Añadido para consistencia con la información de envío
+export const PedidoCard: React.FC<{ pedido: any, onClick: () => void, extra?: React.ReactNode }> = ({ pedido, onClick, extra }) => {
+    const packing: PackingInfo = pedido.packing;
+    const picking: PickingInfo = pedido.picking;
+    const envio: EnvioInfo = pedido.envio;
 
     // Cronómetro de picking
     const [pickingElapsed, setPickingElapsed] = useState<string>('—');
@@ -62,7 +30,7 @@ export const PedidoCard: React.FC<PedidoCardProps> = ({ pedido, onClick, extra }
             !picking?.fechafin_picking
         ) {
             const updateElapsed = () => {
-                const inicio = toZonedTime(new Date(picking!.fechainicio_picking!), 'America/Caracas');
+                const inicio = toZonedTime(new Date(picking.fechainicio_picking!), 'America/Caracas');
                 const nowVenezuela = toZonedTime(new Date(), 'America/Caracas');
                 const diff = differenceInSeconds(nowVenezuela, inicio);
                 const hours = Math.floor(diff / 3600);
@@ -335,19 +303,16 @@ export const PedidoCard: React.FC<PedidoCardProps> = ({ pedido, onClick, extra }
                             Información de Envío
                         </h4>
                         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                            <dt className="flex items-center gap-1 text-muted-foreground"><AiOutlineUser className="h-3 w-3" /> Usuario:</dt>
-                            <dd className="font-medium text-foreground">{envio.usuario || '—'}</dd>
-
-                            <dt className="flex items-center gap-1 text-muted-foreground"><AiOutlineCalendar className="h-3 w-3" /> Inicio:</dt>
-                            <dd className="font-medium text-foreground">{formatDateTime(envio.fechainicio_envio)}</dd>
-
-                            <dt className="flex items-center gap-1 text-muted-foreground"><AiOutlineClockCircle className="h-3 w-3" /> Duración:</dt>
-                            <dd className="font-medium text-foreground">{envioElapsed}</dd>
-
-                            <dt className="flex items-center gap-1 text-muted-foreground"><AiOutlineTag className="h-3 w-3" /> Estado:</dt>
-                            <dd className={`font-semibold capitalize ${envio.estado_envio === 'en_proceso' ? 'text-destructive' : 'text-success'}`}>
-                                {envio.estado_envio ? envio.estado_envio.replace('_', ' ') : '—'}
-                            </dd>
+                            <dt className="flex items-center gap-1 text-muted-foreground">Conductor:</dt>
+                            <dd className="font-medium text-foreground">{envio?.conductor || '—'}</dd>
+                            <dt className="flex items-center gap-1 text-muted-foreground">Usuario:</dt>
+                            <dd className="font-medium text-foreground">{envio?.usuario || '—'}</dd>
+                            <dt className="flex items-center gap-1 text-muted-foreground">Inicio:</dt>
+                            <dd>{envio?.fechainicio_envio ? formatDateTime(envio.fechainicio_envio) : '—'}</dd>
+                            <dt className="flex items-center gap-1 text-muted-foreground">Fin:</dt>
+                            <dd>{envio?.fechafin_envio ? formatDateTime(envio.fechafin_envio) : '—'}</dd>
+                            <dt className="flex items-center gap-1 text-muted-foreground">Estado:</dt>
+                            <dd>{envio?.estado_envio ? envio.estado_envio.replace('_', ' ') : '—'}</dd>
                         </dl>
                     </div>
                 )}

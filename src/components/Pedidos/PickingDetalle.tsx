@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import {
     AiOutlineClose,
     AiOutlinePlayCircle,
     AiOutlineSend,
+    AiOutlineBarcode,
 } from 'react-icons/ai';
 import { toast } from "sonner";
 import { useAdminAuth } from '@/context/AuthAdminContext';
@@ -19,6 +20,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { differenceInSeconds } from 'date-fns';
 import { animate } from 'animejs';
 import { CantidadesInput } from "./pedidotypes";
+import { BuscarProductoPorCodigo } from './BuscarProductoPorCodigo';
 
 const PickingDetalle: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -39,6 +41,9 @@ const PickingDetalle: React.FC = () => {
 
     const [cantidadesInput, setCantidadesInput] = useState<CantidadesInput>({});
     const [elapsed, setElapsed] = useState<string>("—");
+
+    // refs para inputs de cantidad
+    const cantidadRefs = useRef<{ [codigo: string]: HTMLInputElement | null }>({});
 
     useEffect(() => {
         if (id) {
@@ -84,7 +89,9 @@ const PickingDetalle: React.FC = () => {
         if (pedido) {
             const initialCantidades: CantidadesInput = {};
             pedido.productos.forEach(prod => {
-                initialCantidades[prod.id] = (prod.cantidad_encontrada ?? prod.cantidad_pedida).toString();
+                if (prod.codigo) {
+                    initialCantidades[String(prod.codigo)] = (prod.cantidad_encontrada ?? prod.cantidad_pedida).toString();
+                }
             });
             setCantidadesInput(initialCantidades);
         }
@@ -139,9 +146,10 @@ const PickingDetalle: React.FC = () => {
         }
     }, [pedido]);
 
-    const handleCantidadEncontradaChange = (productoId: string, value: string) => {
+    const handleCantidadEncontradaChange = (productoCodigo: string | undefined, value: string) => {
+        if (!productoCodigo) return;
         if (/^\d*$/.test(value)) {
-            setCantidadesInput(prev => ({ ...prev, [productoId]: value }));
+            setCantidadesInput(prev => ({ ...prev, [productoCodigo]: value }));
         } else {
             toast.warning("Por favor, introduce solo números enteros.");
         }
@@ -154,6 +162,7 @@ const PickingDetalle: React.FC = () => {
             await iniciarPicking(id, admin.usuario);
             toast.success("Picking iniciado correctamente.");
             fetchPedidos();
+            window.location.reload(); // Recarga la página al iniciar picking
         } catch (error: any) {
             toast.error(`Error al iniciar picking: ${error.message}`);
         } finally {
@@ -166,7 +175,8 @@ const PickingDetalle: React.FC = () => {
 
         let hasError = false;
         const productosActualizados = pedido.productos.map(prod => {
-            const val = cantidadesInput[prod.id];
+            const codigo = String(prod.codigo);
+            const val = cantidadesInput[codigo];
             const cantidad_encontrada = parseInt(val, 10);
 
             if (val === '' || isNaN(cantidad_encontrada) || cantidad_encontrada < 0) {
@@ -201,7 +211,8 @@ const PickingDetalle: React.FC = () => {
         
         let hasError = false;
         pedido.productos.forEach((prod) => {
-            const val = cantidadesInput[prod.id];
+            const codigo = String(prod.codigo);
+            const val = cantidadesInput[codigo];
             const parsedCantidad = parseInt(val, 10);
             if (val === '' || isNaN(parsedCantidad) || parsedCantidad < 0) {
                 toast.error(`Cantidad inválida para "${prod.descripcion}".`);
@@ -238,6 +249,16 @@ const PickingDetalle: React.FC = () => {
             toast.error(`Error al cancelar: ${error.message}`);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // función para enfocar input de cantidad por código
+    const handleEncontrarPorCodigo = (codigo: string) => {
+        const ref = cantidadRefs.current[codigo];
+        if (ref) {
+            ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            ref.focus();
+            animate(ref, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
         }
     };
 
@@ -304,33 +325,49 @@ const PickingDetalle: React.FC = () => {
 
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Productos a Pickear</h3>
+                        <BuscarProductoPorCodigo
+                            productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
+                            onEncontrado={handleEncontrarPorCodigo}
+                        />
                         <div className="space-y-4">
                             {pedido.productos.map((prod) => {
-                                const cantidadPedida = prod.cantidad_pedida;
-                                const cantidadEncontrada = parseInt(cantidadesInput[prod.id] || '0', 10);
-                                const isMissing = cantidadEncontrada < cantidadPedida;
-                                const isOver = cantidadEncontrada > cantidadPedida;
+                                const codigo = String(prod.codigo);
 
                                 return (
-                                    <div key={prod.id} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                        <div className="flex-grow">
-                                            <p className="font-semibold">{prod.descripcion}</p>
-                                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                                                <span>Pedido: <strong>{cantidadPedida}</strong></span>
-                                                {isMissing && <Badge variant="destructive">Faltante</Badge>}
-                                                {isOver && <Badge variant="secondary">Sobrante</Badge>}
+                                    <div key={codigo} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <div>
+                                            <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
+                                            <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
+                                                <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
+                                                <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                             </div>
+                                            <div className="text-xs text-gray-500 mt-1">Cantidad pedida: <span className="font-medium text-gray-700">{prod.cantidad_pedida}</span></div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <label htmlFor={`cantidad-${prod.id}`} className="text-sm font-medium">Encontrado:</label>
+                                            <label htmlFor={`cantidad-${codigo}`} className="text-sm font-medium">Encontrado:</label>
                                             <Input
-                                                id={`cantidad-${prod.id}`}
+                                                id={`cantidad-${codigo}`}
                                                 type="number"
                                                 min="0"
-                                                value={cantidadesInput[prod.id] || ''}
-                                                onChange={(e) => handleCantidadEncontradaChange(prod.id, e.target.value)}
+                                                value={cantidadesInput[codigo] || ''}
+                                                onChange={(e) => handleCantidadEncontradaChange(codigo, e.target.value)}
                                                 className="w-24 text-right"
                                                 disabled={!isEditable || loading}
+                                                ref={el => { cantidadRefs.current[codigo] = el; }}
+                                                onKeyDown={(e) => {
+                                                    if (
+                                                        e.key === 'Enter' ||
+                                                        e.key === 'Tab' ||
+                                                        (e.key.length === 1 && !/\d/.test(e.key))
+                                                    ) {
+                                                        e.preventDefault();
+                                                        const barcodeInput = document.querySelector<HTMLInputElement>("input[placeholder^='Escanea']");
+                                                        if (barcodeInput) {
+                                                            barcodeInput.focus();
+                                                            animate(barcodeInput, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
+                                                        }
+                                                    }
+                                                }}
                                             />
                                         </div>
                                     </div>

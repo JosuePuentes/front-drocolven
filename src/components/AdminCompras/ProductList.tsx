@@ -20,7 +20,7 @@ export const ProductList: React.FC<ProductListProps> = ({
     <div className="grid grid-cols-1 gap-4 max-h-[70vh] overflow-y-auto">
       {productos.map((producto) => (
         <AdminProductItem
-          key={producto.id}
+          key={producto.codigo}
           producto={producto}
           onAgregar={onAgregar}
           descuentoCliente1={descuentoCliente1}

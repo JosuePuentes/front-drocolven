@@ -269,7 +269,19 @@ export const CarritoComprasCliente = () => {
                         <div className="p-6 sm:p-8">
                             {modalAbierto && (
                                 <ResumenCarrito
-                                    carrito={carrito}
+                                    carrito={carrito.map(prod => ({
+                                        codigo: prod.id,
+                                        descripcion: prod.descripcion,
+                                        precio: prod.precio,
+                                        precio_n: prod.precio_n,
+                                        descuento1: prod.descuento1,
+                                        descuento2: prod.descuento2,
+                                        descuento3: prod.descuento3,
+                                        descuento4: prod.descuento4,
+                                        cantidad_pedida: prod.cantidad_pedida,
+                                        cantidad_encontrada: prod.cantidad_encontrada,
+                                        existencia: prod.existencia,
+                                    }))}
                                     onEliminar={eliminarProducto}
                                     cliente={clienteSeleccionado}
                                     onTotalizar={limpiarCarrito}

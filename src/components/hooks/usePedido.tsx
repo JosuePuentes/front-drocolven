@@ -25,6 +25,7 @@ export const usePedido = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/obtener_pedidos/`);
       const data: PedidoArmado[] = await response.json();
+      console.log('Pedidos obtenidos (fetchPedidos):', data);
       setPedidos(data);
     } catch (error) {
       console.error("Error al obtener ventas:", error);
@@ -43,6 +44,7 @@ export const usePedido = () => {
         throw new Error("Error al obtener pedidos");
       }
       const data: PedidoArmado[] = await response.json();
+      console.log('Pedidos obtenidos (obtenerPedidos):', data);
       setPedidos(data);
     } catch (error) {
       console.error("Error al obtener pedidos:", error);

@@ -2,6 +2,7 @@
 
 export interface ProductoArmado {
   id: string;
+  codigo?: string; // Código de barra
   descripcion: string;
   cantidad_pedida: number;
   cantidad_encontrada: number;
@@ -14,6 +15,11 @@ export interface ProductoArmado {
   descuento2?: number;
   descuento3?: number;
   descuento4?: number;
+  dpto?: string;
+  nacional?: string;
+  laboratorio?: string;
+  fv?: string;
+  existencia?: number | string;
 }
 
 export interface PickingInfo {

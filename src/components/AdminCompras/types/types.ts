@@ -41,7 +41,7 @@ export interface CarritoItem {
  * @description Producto con toda la información relevante para el carrito y resumen, incluyendo cantidades, descuentos y detalles extra.
  */
 export interface CarritoProducto {
-  id: string;
+  codigo: string; // Antes era id
   descripcion: string;
   precio: number;
   precio_n?: number;

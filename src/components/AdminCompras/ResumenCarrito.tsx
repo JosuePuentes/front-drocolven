@@ -116,7 +116,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
             descuento_cliente1: cliente?.descuento1 ?? 0, // Enviar descuento1 del cliente
             descuento_cliente2: cliente?.descuento2 ?? 0, // Enviar descuento2 del cliente
             productos: carrito.map((prod: CarritoProducto) => ({
-                id: prod.id,
+                codigo: prod.codigo, // Usar codigo en vez de id
                 descripcion: prod.descripcion,
                 precio: parseFloat(prod.precio.toFixed(4)),
                 descuento1: parseFloat(prod.descuento1.toFixed(4)),
@@ -217,7 +217,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 <div className="space-y-4 max-h-80 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent"> {/* Custom scrollbar más sutil */}
                     {carrito.map((producto) => (
                         <div
-                            key={producto.id}
+                            key={producto.codigo}
                             className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-3 border-b border-gray-100 last:border-b-0 last:pb-0"
                         >
                             <div className="flex flex-col mb-1 sm:mb-0">
@@ -272,7 +272,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                                 </span>
                                 <button
                                     aria-label={`Eliminar ${producto.descripcion}`}
-                                    onClick={() => onEliminar(producto.id)}
+                                    onClick={() => onEliminar(producto.codigo)}
                                     className="p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-100"
                                 >
                                     <AiOutlineDelete className="w-5 h-5" />

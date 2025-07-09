@@ -1,10 +1,10 @@
 // src/components/ProductoItem.tsx
 import { useState } from "react";
-import { Producto } from "../hooks/useCarrito";
+import { CarritoProducto } from "./types/types";
 
 interface Props {
-  producto: Producto;
-  onAgregar: (producto: Producto) => void;
+  producto: CarritoProducto;
+  onAgregar: (producto: CarritoProducto) => void;
   descuentoCliente1: number; // Primer descuento del cliente
   descuentoCliente2: number; // Segundo descuento del cliente
 }

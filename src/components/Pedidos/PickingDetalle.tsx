@@ -12,9 +12,6 @@ import {
     AiOutlineClose,
     AiOutlinePlayCircle,
     AiOutlineSend,
-    AiOutlineUser,
-    AiOutlineClockCircle,
-    AiOutlineCheckCircle
 } from 'react-icons/ai';
 import { toast } from "sonner";
 import { useAdminAuth } from '@/context/AuthAdminContext';
@@ -31,7 +28,6 @@ const PickingDetalle: React.FC = () => {
     const {
         pedido,
         setPedido,
-        pedidos,
         fetchPedidos,
         loading,
         setLoading,

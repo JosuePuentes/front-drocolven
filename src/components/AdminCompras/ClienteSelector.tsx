@@ -41,6 +41,7 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
   }, [clientes, busqueda]);
 
   const handleSelect = async (rif: string) => {
+    loadingDetalle
     setLoadingDetalle(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${rif}`);
@@ -68,24 +69,35 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
   return (
     <div className="relative">
       {clienteSeleccionado ? (
-        <div className="flex justify-center">
-          <div className="w-full max-w-2xl bg-white border border-blue-200 rounded-2xl shadow-md p-6 mb-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
-              <span className="text-blue-800 font-semibold text-xl">
+        <div className="w-full ">
+          <div className="bg-white border border-blue-200 rounded-2xl p-6 mb-4 w-full">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2 w-full">
+              <span className="text-blue-800 font-semibold text-xl break-words">
                 {clienteSeleccionado.encargado} - {clienteSeleccionado.rif}
               </span>
-              {carritoLength === 0 && (
+              <div className="flex gap-2">
+                {carritoLength === 0 && (
+                  <button
+                    type="button"
+                    className="p-1 rounded-full hover:bg-blue-100 focus:outline-none"
+                    onClick={handleRemove}
+                    aria-label="Quitar cliente seleccionado"
+                  >
+                    <AiOutlineClose className="w-5 h-5 text-blue-600" />
+                  </button>
+                )}
                 <button
                   type="button"
-                  className="ml-2 p-1 rounded-full hover:bg-blue-100 focus:outline-none"
-                  onClick={handleRemove}
-                  aria-label="Quitar cliente seleccionado"
+                  className="px-3 py-1 rounded-xl border border-blue-300 bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition disabled:opacity-50"
+                  onClick={() => setClienteSeleccionado(null)}
+                  disabled={carritoLength > 0}
+                  aria-label="Cambiar cliente"
                 >
-                  <AiOutlineClose className="w-5 h-5 text-blue-600" />
+                  Cambiar cliente
                 </button>
-              )}
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm text-blue-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-2 text-sm text-blue-700 w-full">
               {clienteSeleccionado.email && (
                 <div><span className="font-medium">Email:</span> {clienteSeleccionado.email}</div>
               )}
@@ -121,36 +133,39 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
         </div>
       ) : (
         <>
-          <input
-            type="text"
-            placeholder="Buscar cliente por nombre o RIF..."
-            className="mb-2 p-2 border rounded-xl shadow w-full"
-            value={busqueda}
-            onChange={e => {
-              setBusqueda(e.target.value);
-              setShowDropdown(e.target.value.length > 0);
-            }}
-            onFocus={() => setShowDropdown(busqueda.length > 0)}
-            autoComplete="off"
-          />
-          {showDropdown && clientesFiltrados.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto mt-1">
-              {clientesFiltrados.map((c) => (
-                <li
-                  key={c.rif}
-                  className="px-4 py-2 cursor-pointer hover:bg-blue-50 text-gray-700"
-                  onClick={() => handleSelect(c.rif)}
-                >
-                  {c.encargado} - {c.rif} {c.direccion}
-                </li>
-              ))}
-            </ul>
-          )}
-          {showDropdown && clientesFiltrados.length === 0 && (
-            <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 px-4 py-2 text-gray-400">
-              No se encontraron clientes
-            </div>
-          )}
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Buscar cliente por nombre o RIF..."
+              className="mb-2 p-2 border rounded-xl shadow w-full text-base"
+              value={busqueda}
+              onChange={e => {
+                setBusqueda(e.target.value);
+                setShowDropdown(e.target.value.length > 0);
+              }}
+              onFocus={() => setShowDropdown(busqueda.length > 0)}
+              autoComplete="off"
+            />
+            {showDropdown && clientesFiltrados.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto mt-1 text-base">
+                {clientesFiltrados.map((c) => (
+                  <li
+                    key={c.rif}
+                    className="px-4 py-2 cursor-pointer hover:bg-blue-50 text-gray-700 truncate"
+                    onClick={() => handleSelect(c.rif)}
+                  >
+                    <span className="block md:hidden font-medium">{c.encargado}</span>
+                    <span className="hidden md:inline">{c.encargado} - {c.rif} {c.direccion}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {showDropdown && clientesFiltrados.length === 0 && (
+              <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 px-4 py-2 text-gray-400 text-base">
+                No se encontraron clientes
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>

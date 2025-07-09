@@ -2,9 +2,6 @@ import { useState } from "react";
 import {
   PedidoArmado,
   EstadoPedido,
-  PickingInfo,
-  PackingInfo,
-  EnvioInfo,
   ProductoArmado,
 } from "../Pedidos/pedidotypes";
 
@@ -332,3 +329,5 @@ export const usePedido = () => {
     fetchConductores
   };
 };
+
+export type { PedidoArmado, EstadoPedido } from "../Pedidos/pedidotypes";

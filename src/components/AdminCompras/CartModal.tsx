@@ -1,12 +1,12 @@
 // src/components/Admin/CartModal.tsx
 import React from 'react';
 import { ResumenCarrito } from './ResumenCarrito';
-import { CarritoItem } from './types/types';
+import { CarritoProducto, Cliente } from './types/types';
 
 interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
-  carrito: CarritoItem[];
+  carrito: CarritoProducto[];
   onEliminar: (idProducto: string) => void;
   cliente: Cliente | null;
   onLimpiarCarrito: () => void;

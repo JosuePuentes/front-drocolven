@@ -1,11 +1,11 @@
 // src/components/Admin/ProductList.tsx
 import React from 'react';
 import { AdminProductItem } from './AdminProductoItem';
-import { Producto } from './types/types';
+import { CarritoProducto } from './types/types';
 
 interface ProductListProps {
-  productos: Producto[];
-  onAgregar: (producto: Producto) => void;
+  productos: CarritoProducto[];
+  onAgregar: (producto: CarritoProducto) => void;
   descuentoCliente1: number;
   descuentoCliente2: number;
 }

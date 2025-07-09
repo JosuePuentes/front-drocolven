@@ -1,42 +1,16 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { AiOutlineDelete, AiOutlineCloseCircle, AiOutlineSave } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineCloseCircle } from "react-icons/ai";
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { animate } from "animejs"; // Asegúrate de que 'animejs' esté instalado
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { OrdenesGuardadas } from "@/components/ClientCompras/OrdenesGuardadas";
-
-interface Producto {
-    id: string;
-    descripcion: string;
-    precio: number;
-    precio_n?: number;
-    descuento1: number;
-    descuento2: number;
-    descuento3: number;
-    descuento4: number;
-    cantidad_pedida: number;
-    cantidad_encontrada: number;
-    existencia?: number;
-    dpto?: string;
-    laboratorio?: string;
-    nacional?: string;
-    fv?: string;
-}
-
-interface ClienteDetalle {
-    encargado: string;
-    rif: string;
-    descuento1?: number;
-    descuento2?: number;
-}
+import { CarritoProducto, Cliente } from './types/types';
 
 interface ResumenCarritoProps {
-    carrito: Producto[];
+    carrito: CarritoProducto[];
     onEliminar: (id: string) => void;
-    cliente: ClienteDetalle | null;
+    cliente: Cliente | null;
     titulo?: string;
     onTotalizar?: () => void; // Esta función debería limpiar el carrito principal
-    onLoadOrder: (productos: Producto[], clientDetail?: ClienteDetalle) => void; // Permite clientDetail opcional
+    onLoadOrder: (productos: CarritoProducto[], clientDetail?: Cliente) => void; // Permite clientDetail opcional
 }
 
 export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
@@ -45,7 +19,6 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
     cliente,
     titulo = "RESUMEN DEL PEDIDO",
     onTotalizar,
-    onLoadOrder,
 }) => {
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
     const [ordersModalOpen, setOrdersModalOpen] = useState(false);
@@ -142,7 +115,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
             subtotal: parseFloat(subtotal.toFixed(2)),
             descuento_cliente1: cliente?.descuento1 ?? 0, // Enviar descuento1 del cliente
             descuento_cliente2: cliente?.descuento2 ?? 0, // Enviar descuento2 del cliente
-            productos: carrito.map((prod: Producto) => ({
+            productos: carrito.map((prod: CarritoProducto) => ({
                 id: prod.id,
                 descripcion: prod.descripcion,
                 precio: parseFloat(prod.precio.toFixed(4)),
@@ -216,11 +189,6 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
         }
     }, [carrito, cliente, observacion, total, onTotalizar]);
 
-    const handleLoadOrder = useCallback((productos: Producto[], clientDetail?: ClienteDetalle) => {
-        setOrdersModalOpen(false); // Cierra el modal de órdenes
-        onLoadOrder(productos, clientDetail); // Llama a la nueva función para cargar la orden
-        setObservacion(""); // Limpia observación
-    }, [onLoadOrder]);
 
     return (
         <div className="bg-white p-4 sm:p-6 rounded-2xl space-y-6 max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto border border-gray-50 w-full"> {/* Ajuste: max-w más grande y w-full para pantallas grandes */}

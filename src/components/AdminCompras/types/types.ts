@@ -35,3 +35,25 @@ export interface CarritoItem {
   // descripcion: string;
   // precioUnitario: number;
 }
+
+/**
+ * @interface CarritoProducto
+ * @description Producto con toda la información relevante para el carrito y resumen, incluyendo cantidades, descuentos y detalles extra.
+ */
+export interface CarritoProducto {
+  id: string;
+  descripcion: string;
+  precio: number;
+  precio_n?: number;
+  descuento1: number;
+  descuento2: number;
+  descuento3: number;
+  descuento4: number;
+  cantidad_pedida: number;
+  cantidad_encontrada: number;
+  existencia?: number;
+  dpto?: string;
+  laboratorio?: string;
+  nacional?: string;
+  fv?: string;
+}

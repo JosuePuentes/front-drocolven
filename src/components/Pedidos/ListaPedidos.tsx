@@ -28,7 +28,7 @@ export default function MonitorPedidos() {
     pedidos.filter(p => {
       const matchEstado = p.estado === estadoSeleccionado;
       const matchSearch = p.cliente.toLowerCase().includes(search.toLowerCase());
-      const fechaISO = new Date(p.fecha).toISOString().split('T')[0];
+      const fechaISO = new Date(p.fecha_creacion ?? 0).toISOString().split('T')[0];
       const matchDesde = fechaDesde ? fechaISO >= fechaDesde : true;
       const matchHasta = fechaHasta ? fechaISO <= fechaHasta : true;
       return matchEstado && matchSearch && matchDesde && matchHasta;
@@ -126,7 +126,7 @@ export default function MonitorPedidos() {
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold text-gray-900">Cliente: {p.cliente}</h3>
                   <p className="text-sm text-gray-500">RIF: {p.rif}</p>
-                  <p className="text-sm text-gray-500">Fecha: {new Date(p.fecha).toLocaleString()}</p>
+                  <p className="text-sm text-gray-500">Fecha: {p.fecha_creacion ? new Date(p.fecha_creacion).toLocaleString() : 'Sin fecha'}</p>
                   <p className="text-sm text-gray-500">Estado: <span className="font-medium">{p.estado}</span></p>
                   {p.observacion && (
                     <p className="text-sm text-gray-500">Observación: {p.observacion}</p>

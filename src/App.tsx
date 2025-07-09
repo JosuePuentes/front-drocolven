@@ -29,7 +29,6 @@ import PickingPedidos from "./components/Pedidos/PickingPedidos";
 import InfoClientePage from "./pages/client/InfoClientePage";
 import ReclamosClient from "./pages/client/ReclamosClient";
 import PedidosDashboard from "./pages/admin/PedidosDashboard";
-import CrearPedidoPage from "./components/Pedidos/crearPedido/crearPedidoPage";
 
 function App() {
   return (

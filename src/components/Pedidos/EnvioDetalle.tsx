@@ -9,7 +9,6 @@ import {
     AiOutlineArrowLeft,
     AiOutlineClose,
     AiOutlinePlayCircle,
-    AiOutlineSend,
     AiOutlineCheckCircle
 } from 'react-icons/ai';
 import { toast } from "sonner";

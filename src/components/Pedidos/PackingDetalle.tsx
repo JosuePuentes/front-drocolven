@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import {
     AiOutlineLoading3Quarters,
     AiOutlineArrowLeft,
-    AiOutlineClose,
     AiOutlinePlayCircle,
     AiOutlineSend,
     AiOutlineBarcode
@@ -35,7 +34,6 @@ const PackingDetalle: React.FC = () => {
         setLoading,
         iniciarPacking,
         finalizarPacking,
-        cancelarProceso,
     } = usePedido();
 
     const [elapsed, setElapsed] = useState<string>("—");

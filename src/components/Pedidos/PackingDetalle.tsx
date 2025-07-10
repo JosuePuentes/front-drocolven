@@ -149,20 +149,6 @@ const PackingDetalle: React.FC = () => {
         }
     };
 
-    const handleCancelarPacking = async () => {
-        if (!pedido) return;
-        setLoading(true);
-        try {
-            await cancelarProceso(pedido._id, ESTADOS_PEDIDO.PACKING);
-            toast.success("Packing cancelado. Pedido devuelto a 'picking'.");
-            navigate("/admin/pickingpedidos");
-        } catch (error: any) {
-            toast.error(`Error al cancelar: ${error.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     if (loading && !pedido) {
         return (
             <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
@@ -195,7 +181,8 @@ const PackingDetalle: React.FC = () => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle>Packing de Pedido #{pedido._id.slice(-6)}</CardTitle>
-                            <CardDescription>Cliente: {pedido.cliente} - RIF: {pedido.rif}</CardDescription>
+                            <CardDescription>Cliente: {pedido.cliente}</CardDescription>
+                            <CardDescription>RIF: {pedido.rif}</CardDescription>
                         </div>
                         <Badge variant={pedido.estado === 'packing' ? 'default' : 'secondary'}>
                             {pedido.estado.toUpperCase()}
@@ -203,17 +190,17 @@ const PackingDetalle: React.FC = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div id="packing-info" className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg">
+                    <div id="packing-info" className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-2 p-2 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Packing</p>
                             <p className="text-lg font-semibold">{pedido.packing?.usuario || 'No iniciado'}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Inicio Packing</p>
-                            <p className="text-lg font-semibold">{pedido.packing?.fechainicio_packing ? new Date(pedido.packing.fechainicio_packing).toLocaleString() : '—'}</p>
+                            <p className="text-sm font-semibold">{pedido.packing?.fechainicio_packing ? new Date(pedido.packing.fechainicio_packing).toLocaleString() : '—'}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Tiempo Transcurrido</p>
+                            <p className="text-sm font-medium text-gray-500">Tiempo</p>
                             <p className="text-lg font-semibold">{elapsed}</p>
                         </div>
                         <div>
@@ -224,48 +211,22 @@ const PackingDetalle: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
-                        <div className="text-lg font-bold">
-                            Total: ${pedido.total.toFixed(2)}
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-                            <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
-                                <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
-                            </Button>
-                            {!isPackingStarted && isEditable && (
-                                <Button onClick={handleIniciarPacking} disabled={loading}>
-                                    <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Packing
-                                </Button>
-                            )}
-                            {isPackingStarted && isEditable && (
-                                <>
-                                    <Button onClick={handleFinalizarPacking} disabled={loading}>
-                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
-                                    </Button>
-                                    <Button variant="destructive" onClick={handleCancelarPacking} disabled={loading}>
-                                        <AiOutlineClose className="mr-2 h-4 w-4" /> Cancelar
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="mt-8">
-                        <h3 className="text-lg font-bold mb-4 text-gray-800">Productos del Pedido</h3>
-                        <BuscarProductoPorCodigo
-                            productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
-                            onEncontrado={(codigo) => {
-                                setFiltroCodigo(codigo);
-                                const hayMatch = pedido.productos.some(producto => String(producto.codigo).includes(codigo));
-                                if (!hayMatch && codigo) {
-                                    setNoMatch(true);
-                                    setTimeout(() => setNoMatch(false), 2000);
-                                } else {
-                                    setNoMatch(false);
-                                }
-                            }}
-                            placeholder="Buscar o escanear código de barras..."
-                        />
+                    <h3 className="text-lg text-center font-bold mb-1 text-gray-800">Productos del Pedido</h3>
+                    <BuscarProductoPorCodigo
+                        productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
+                        onEncontrado={(codigo) => {
+                            setFiltroCodigo(codigo);
+                            const hayMatch = pedido.productos.some(producto => String(producto.codigo).includes(codigo));
+                            if (!hayMatch && codigo) {
+                                setNoMatch(true);
+                                setTimeout(() => setNoMatch(false), 2000);
+                            } else {
+                                setNoMatch(false);
+                            }
+                        }}
+                        placeholder="Buscar o escanear código de barras..."
+                    />
+                    <div className="mt-1 sm:max-h-screen max-h-96 overflow-y-auto">
                         <div className={`space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
                                 if (noMatch && el) {
@@ -281,7 +242,7 @@ const PackingDetalle: React.FC = () => {
                                 const confirmado = confirmados[codigo];
                                 return (
                                     <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-2 md:mb-0">
+                                        <div className="flex items-center flex-col gap-3 mb-2 md:mb-0">
                                             <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
                                             <div>
                                                 <div className="font-semibold text-gray-900 text-base md:text-lg">{producto.descripcion}</div>
@@ -289,10 +250,18 @@ const PackingDetalle: React.FC = () => {
                                                     <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                     <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                                 </div>
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                    Cantidad pedida: <span className="font-bold text-lg text-gray-700">{producto.cantidad_pedida}</span>
+                                                <div className="text-gray-500 mt-1 text-xl">
+                                                    Cantidad pedida: <span className="font-bold text-gray-700">{producto.cantidad_pedida}</span>
                                                     <span className="mx-2 text-gray-400">|</span>
-                                                    Encontrada: <span className="font-bold text-2xl text-blue-700">{producto.cantidad_encontrada ?? 0}</span>
+                                                    {(() => {
+                                                        const encontrada = producto.cantidad_encontrada ?? 0;
+                                                        let color = 'text-yellow-500';
+                                                        if (encontrada > producto.cantidad_pedida) color = 'text-red-600';
+                                                        else if (encontrada === producto.cantidad_pedida) color = 'text-green-600';
+                                                        return (
+                                                            <span className={`font-bold text-2xl ${color}`}>{encontrada}</span>
+                                                        );
+                                                    })()}
                                                 </div>
                                             </div>
                                         </div>
@@ -331,6 +300,29 @@ const PackingDetalle: React.FC = () => {
                                     </div>
                                 );
                             })}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
+                        <div className="text-lg font-bold">
+                            Total: ${pedido.total.toFixed(2)}
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
+                            <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
+                                <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
+                            </Button>
+                            {!isPackingStarted && isEditable && (
+                                <Button onClick={handleIniciarPacking} disabled={loading}>
+                                    <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Packing
+                                </Button>
+                            )}
+                            {isPackingStarted && isEditable && (
+                                <>
+                                    <Button onClick={handleFinalizarPacking} disabled={loading}>
+                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </CardContent>

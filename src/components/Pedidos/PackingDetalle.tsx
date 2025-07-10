@@ -209,7 +209,6 @@ const PackingDetalle: React.FC = () => {
                         </div>
                     </div>
 
-                    <h3 className="text-lg text-center font-bold mb-1 text-gray-800">Productos del Pedido</h3>
                     <BuscarProductoPorCodigo
                         productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                         onEncontrado={(codigo) => {
@@ -224,6 +223,7 @@ const PackingDetalle: React.FC = () => {
                         }}
                         placeholder="Buscar o escanear código de barras..."
                     />
+                        <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Pedido</h3>
                     <div className="mt-1 sm:max-h-screen max-h-96 overflow-y-auto">
                         <div className={`space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
@@ -240,10 +240,10 @@ const PackingDetalle: React.FC = () => {
                                 const confirmado = confirmados[codigo];
                                 return (
                                     <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm">
-                                        <div className="flex items-center flex-col gap-3 mb-2 md:mb-0">
+                                        <div className="flex items-center flex-row gap-3 mb-2 md:mb-0">
                                             <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
                                             <div>
-                                                <div className="font-semibold text-gray-900 text-base md:text-lg">{producto.descripcion}</div>
+                                                <div className="font-semibold text-black text-base md:text-lg">{producto.descripcion}</div>
                                                 <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
                                                     <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                     <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
@@ -264,7 +264,7 @@ const PackingDetalle: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="mt-2 md:mt-0 text-right flex flex-col items-end gap-2">
-                                            <span className="text-base font-bold text-gray-900">${(producto.precio_n ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
+                                            <span className="text-base font-bold text-black">${(producto.precio_n ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
                                             <Button
                                                 type="button"
                                                 className={`w-8 h-8 p-0 rounded-full border-2 ${confirmado ? 'bg-green-500 border-green-600 text-white' : 'bg-red-100 border-red-400 text-red-600'} transition-colors`}

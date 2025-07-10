@@ -29,7 +29,9 @@ export const BuscarProductoPorCodigo: React.FC<BuscarProductoPorCodigoProps> = (
       }
     } else {
       setError('Producto no encontrado en el pedido');
+      onEncontrado(codigo.trim()); // Selecciona el código introducido aunque no esté en la lista
       if (inputRef.current) {
+        inputRef.current.select(); // Subraya el texto del input
         animate(inputRef.current, { scale: [1, 1.05, 1], backgroundColor: ['#fff', '#fee2e2', '#fff'], duration: 500, ease: 'outCubic' });
       }
     }

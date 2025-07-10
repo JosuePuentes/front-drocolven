@@ -90,7 +90,7 @@ const PickingDetalle: React.FC = () => {
             const initialCantidades: CantidadesInput = {};
             pedido.productos.forEach(prod => {
                 if (prod.codigo) {
-                    initialCantidades[String(prod.codigo)] = (prod.cantidad_encontrada ?? prod.cantidad_pedida).toString();
+                    initialCantidades[String(prod.codigo)] = '';
                 }
             });
             setCantidadesInput(initialCantidades);
@@ -208,24 +208,27 @@ const PickingDetalle: React.FC = () => {
 
     const handleFinalizarPicking = async () => {
         if (!pedido) return;
-        
         let hasError = false;
+        let firstErrorCodigo: string | null = null;
         pedido.productos.forEach((prod) => {
             const codigo = String(prod.codigo);
             const val = cantidadesInput[codigo];
             const parsedCantidad = parseInt(val, 10);
             if (val === '' || isNaN(parsedCantidad) || parsedCantidad < 0) {
-                toast.error(`Cantidad inválida para "${prod.descripcion}".`);
+                if (!firstErrorCodigo) firstErrorCodigo = codigo;
                 hasError = true;
             }
         });
-        if (hasError) {
+        if (hasError && firstErrorCodigo) {
+            const ref = cantidadRefs.current[firstErrorCodigo];
+            if (ref) {
+                ref.focus();
+                animate(ref, { backgroundColor: ['#fff', '#fee2e2', '#fff'], duration: 700, ease: 'outCubic' });
+            }
             toast.warning("Corrige los errores en las cantidades antes de finalizar.");
             return;
         }
-        
         await handleGuardarCantidades();
-
         setLoading(true);
         try {
             await finalizarPicking(pedido._id);
@@ -329,19 +332,21 @@ const PickingDetalle: React.FC = () => {
                             productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                             onEncontrado={handleEncontrarPorCodigo}
                         />
-                        <div className="space-y-4">
-                            {pedido.productos.map((prod) => {
+                        <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                            {pedido.productos.map((prod, idx) => {
                                 const codigo = String(prod.codigo);
-
                                 return (
                                     <div key={codigo} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                        <div>
-                                            <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
-                                            <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
-                                                <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
-                                                <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
+                                        <div className="flex items-center gap-3 mb-2 md:mb-0">
+                                            <span className=" w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
+                                            <div>
+                                                <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
+                                                <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
+                                                    <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
+                                                    <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
+                                                </div>
+                                                <div className="text-xs text-gray-500 mt-1">Cantidad pedida: <span className="font-medium text-gray-700">{prod.cantidad_pedida}</span></div>
                                             </div>
-                                            <div className="text-xs text-gray-500 mt-1">Cantidad pedida: <span className="font-medium text-gray-700">{prod.cantidad_pedida}</span></div>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <label htmlFor={`cantidad-${codigo}`} className="text-sm font-medium">Encontrado:</label>
@@ -361,11 +366,13 @@ const PickingDetalle: React.FC = () => {
                                                         (e.key.length === 1 && !/\d/.test(e.key))
                                                     ) {
                                                         e.preventDefault();
-                                                        const barcodeInput = document.querySelector<HTMLInputElement>("input[placeholder^='Escanea']");
-                                                        if (barcodeInput) {
-                                                            barcodeInput.focus();
-                                                            animate(barcodeInput, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
-                                                        }
+                                                        setTimeout(() => {
+                                                            const barcodeInput = document.querySelector<HTMLInputElement>("input[placeholder^='Escanea']");
+                                                            if (barcodeInput) {
+                                                                barcodeInput.focus();
+                                                                animate(barcodeInput, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
+                                                            }
+                                                        }, 10);
                                                     }
                                                 }}
                                             />

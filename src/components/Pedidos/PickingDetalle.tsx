@@ -331,7 +331,7 @@ const PickingDetalle: React.FC = () => {
                             onEncontrado={handleEncontrarPorCodigo}
                         />
                         <h3 className="text-md text-center font-semibold mb-2">Productos del Picking</h3>
-                        <div className="space-y-2 max-h-[35vh] overflow-y-auto scrollbar-thin">
+                        <div className="space-y-2 max-h-[60vh] overflow-y-auto scrollbar-thin">
                             {pedido.productos.map((prod, idx) => {
                                 const codigo = String(prod.codigo);
                                 return (

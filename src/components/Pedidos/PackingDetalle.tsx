@@ -171,18 +171,19 @@ const PackingDetalle: React.FC = () => {
     const isPackingStarted = pedido.packing?.estado_packing === 'en_proceso';
     const isPackingFinalizado = pedido.packing?.estado_packing === 'finalizado';
     const isEditable = pedido.estado === ESTADOS_PEDIDO.PACKING && !isPackingFinalizado;
+    const allConfirmed = pedido.productos.every(producto => confirmados[String(producto.codigo)]);
 
     return (
-        <div className="container mx-auto p-1.5">
-            <Card className="pt-0 px-1">
+        <div className="container mx-auto p-1.5 max-h-screen">
+            <Card className="pt-0 px-1 ">
                 <CardHeader className="p-1">
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle className="text-sm">Picking de Pedido #{pedido._id.slice(-6)}</CardTitle>
+                            <CardTitle className="text-sm">Packing de Pedido #{pedido._id.slice(-6)}</CardTitle>
                             <CardDescription className="text-sm">Cliente: {pedido.cliente}</CardDescription>
                             <CardDescription className="text-sm">RIF: {pedido.rif}</CardDescription>
                         </div>
-                        <Badge variant={pedido.estado === 'picking' ? 'default' : 'secondary'}>
+                        <Badge variant={pedido.estado === 'packing' ? 'default' : 'secondary'}>
                             {pedido.estado.toUpperCase()}
                         </Badge>
                     </div>
@@ -224,8 +225,8 @@ const PackingDetalle: React.FC = () => {
                         placeholder="Buscar o escanear código de barras..."
                     />
                     <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Packing</h3>
-                    <div className="mt-1 sm:max-h-screen max-h-96 overflow-y-auto">
-                        <div className={`space-y-4 max-h-[40vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
+                    <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
+                        <div className={`space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
                                 if (noMatch && el) {
                                     animate(el, { backgroundColor: ['#fff', '#fee2e2', '#fff'], duration: 2000, ease: 'outCubic' });
@@ -239,7 +240,7 @@ const PackingDetalle: React.FC = () => {
                                 const codigo = String(producto.codigo);
                                 const confirmado = confirmados[codigo];
                                 return (
-                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm">
+                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh]">
                                         <div className="flex flex-row gap-2 mb-2 md:mb-0 items-center">
                                             <div className="border p-2 rounded-lg flex-1">
                                                 <div className="flex justify-center items-center">
@@ -249,8 +250,8 @@ const PackingDetalle: React.FC = () => {
                                                     <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                     <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                                 </div>
-                                                <div className="font-semibold text-black text-base md:text-lg mt-1">{producto.descripcion}</div>
-                                                <span className="font-semibold text-green-600 text-base md:text-lg mt-1">$ {(producto.precio ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
+                                                <div className="font-semibold text-black text-xl md:text-lg mt-1">{producto.descripcion}</div>
+                                                <span className="font-semibold text-green-600 text-lg mt-1">$ {(producto.precio ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
                                                 <div className="flex text-gray-500 mt-1 text-xl justify-between">
                                                     <div>
                                                         Cantidad pedida: <span className="font-bold text-gray-700">{producto.cantidad_pedida}</span>
@@ -320,7 +321,7 @@ const PackingDetalle: React.FC = () => {
                             )}
                             {isPackingStarted && isEditable && (
                                 <>
-                                    <Button onClick={handleFinalizarPacking} disabled={loading}>
+                                    <Button onClick={handleFinalizarPacking} disabled={loading || !allConfirmed}>
                                         <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
                                     </Button>
                                 </>

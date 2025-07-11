@@ -305,7 +305,7 @@ const PickingDetalle: React.FC = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 p-4 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Picking</p>
                             <p className="text-lg font-semibold">{pedido.picking?.usuario || 'No iniciado'}</p>
@@ -327,55 +327,86 @@ const PickingDetalle: React.FC = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-lg font-semibold mb-2">Productos a Pickear</h3>
                         <BuscarProductoPorCodigo
                             productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                             onEncontrado={handleEncontrarPorCodigo}
                         />
-                        <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                        <h3 className="text-lg text-center font-semibold mb-2">Productos a Pickear</h3>
+                        <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
                             {pedido.productos.map((prod, idx) => {
                                 const codigo = String(prod.codigo);
                                 return (
-                                    <div key={codigo} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                        <div className="flex items-center gap-3 mb-2 md:mb-0">
-                                            <span className=" w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
-                                            <div>
-                                                <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
-                                                <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
-                                                    <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
-                                                    <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
-                                                </div>
-                                                <div className="text-xs text-gray-500 mt-1">Cantidad pedida: <span className="font-medium text-gray-700">{prod.cantidad_pedida}</span></div>
-                                            </div>
+                                    <div className="flex flex-row" key={codigo}>
+                                        <div className={`flex items-center justify-between ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} rounded-lg p-4 border border-gray-100 shadow-sm`}>
+                                            <span className="w-7 h-7 rounded-full text-black font-bold flex items-center justify-center text-base">{idx + 1}</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <label htmlFor={`cantidad-${codigo}`} className="text-sm font-medium">Encontrado:</label>
-                                            <Input
-                                                id={`cantidad-${codigo}`}
-                                                type="number"
-                                                min="0"
-                                                value={cantidadesInput[codigo] || ''}
-                                                onChange={(e) => handleCantidadEncontradaChange(codigo, e.target.value)}
-                                                className="w-24 text-right"
-                                                disabled={!isEditable || loading}
-                                                ref={el => { cantidadRefs.current[codigo] = el; }}
-                                                onKeyDown={(e) => {
-                                                    if (
-                                                        e.key === 'Enter' ||
-                                                        e.key === 'Tab' ||
-                                                        (e.key.length === 1 && !/\d/.test(e.key))
-                                                    ) {
-                                                        e.preventDefault();
-                                                        setTimeout(() => {
-                                                            const barcodeInput = document.querySelector<HTMLInputElement>("input[placeholder^='Escanea']");
-                                                            if (barcodeInput) {
-                                                                barcodeInput.focus();
-                                                                animate(barcodeInput, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
-                                                            }
-                                                        }, 10);
-                                                    }
-                                                }}
-                                            />
+                                        <div key={codigo} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                            <div className="flex items-center gap-3 mb-2 md:mb-0">
+                                                <div>
+                                                    <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
+                                                        <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
+                                                        <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
+                                                    </div>
+                                                    <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
+                                                    
+                                                    <div className="flex justify-between">
+
+                                                        <div
+                                                            className={`text-lg max-w-fit mt-2`}
+                                                        >
+                                                            PEDIDO:{" "}
+                                                            <span
+                                                                className={`font-medium rounded-full px-1.5 w-fit
+                                                            ${cantidadesInput[codigo] === undefined || cantidadesInput[codigo] === ""
+                                                                        ? "bg-black text-white"
+                                                                        : parseInt(cantidadesInput[codigo], 10) === prod.cantidad_pedida
+                                                                            ? "bg-green-500 text-white"
+                                                                            : parseInt(cantidadesInput[codigo], 10) > prod.cantidad_pedida
+                                                                                ? "bg-red-500 text-white"
+                                                                                : parseInt(cantidadesInput[codigo], 10) < prod.cantidad_pedida
+                                                                                    ? "bg-yellow-400 text-black"
+                                                                                    : "bg-black text-white"
+                                                                    }
+                                                        `}
+                                                            >
+                                                                {prod.cantidad_pedida}
+                                                            </span>
+
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <label htmlFor={`cantidad-${codigo}`} className="text-sm font-medium"></label>
+                                                            <Input
+                                                                id={`cantidad-${codigo}`}
+                                                                placeholder={`0`}
+                                                                type="number"
+                                                                min="0"
+                                                                value={cantidadesInput[codigo] || ''}
+                                                                onChange={(e) => handleCantidadEncontradaChange(codigo, e.target.value)}
+                                                                className="w-24 text-right"
+                                                                disabled={!isEditable || loading}
+                                                                ref={el => { cantidadRefs.current[codigo] = el; }}
+                                                                onKeyDown={(e) => {
+                                                                    if (
+                                                                        e.key === 'Enter' ||
+                                                                        e.key === 'Tab' ||
+                                                                        (e.key.length === 1 && !/\d/.test(e.key))
+                                                                    ) {
+                                                                        e.preventDefault();
+                                                                        setTimeout(() => {
+                                                                            const barcodeInput = document.querySelector<HTMLInputElement>("input[placeholder^='Escanea']");
+                                                                            if (barcodeInput) {
+                                                                                barcodeInput.focus();
+                                                                                animate(barcodeInput, { scale: [1, 1.1, 1], duration: 350, ease: 'outCubic' });
+                                                                            }
+                                                                        }, 10);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
                                     </div>
                                 );
@@ -384,8 +415,8 @@ const PickingDetalle: React.FC = () => {
                     </div>
 
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
-                        <div className="text-lg font-bold">
-                            Total: ${pedido.total.toFixed(2)}
+                        <div className="text-lg font-bold text-green-600">
+                            Total: $ {pedido.total.toFixed(2)}
                         </div>
                         <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
                             <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
@@ -401,7 +432,7 @@ const PickingDetalle: React.FC = () => {
                                     <Button variant="secondary" onClick={handleGuardarCantidades} disabled={loading}>
                                         <AiOutlineSave className="mr-2 h-4 w-4" /> Guardar
                                     </Button>
-                                    <Button onClick={handleFinalizarPicking} disabled={loading}>
+                                    <Button className="bg-black text-white" onClick={handleFinalizarPicking} disabled={loading}>
                                         <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Picking
                                     </Button>
                                     <Button variant="destructive" onClick={handleCancelarPicking} disabled={loading}>

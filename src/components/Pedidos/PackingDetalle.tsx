@@ -241,7 +241,7 @@ const PackingDetalle: React.FC = () => {
                                 return (
                                     <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm">
                                         <div className="flex items-center flex-row gap-3 mb-2 md:mb-0">
-                                            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
+                                            <span className="w-7 h-7 rounded-full bg-black text-white font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
                                             <div>
                                                 <div className="font-semibold text-black text-base md:text-lg">{producto.descripcion}</div>
                                                 <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
@@ -303,7 +303,7 @@ const PackingDetalle: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
                         <div className="text-lg font-bold">
-                            Total: ${pedido.total.toFixed(2)}
+                            Total: $ {pedido.total.toFixed(2)}
                         </div>
                         <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
                             <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>

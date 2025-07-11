@@ -53,7 +53,7 @@ export const BuscarProductoPorCodigo: React.FC<BuscarProductoPorCodigoProps> = (
       </div>
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-4 py-2 rounded-lg shadow text-base font-semibold"
+        className="bg-black hover:bg-gray-500 transition-colors text-white px-4 py-2 rounded-lg shadow text-base font-semibold"
         aria-label="Buscar producto por código"
       >
         <AiOutlineSearch className="w-5 h-5" />

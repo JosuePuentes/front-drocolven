@@ -37,7 +37,6 @@ const PackingDetalle: React.FC = () => {
     } = usePedido();
 
     const [elapsed, setElapsed] = useState<string>("—");
-    const [filtroCodigo, setFiltroCodigo] = useState<string>('');
     const [noMatch, setNoMatch] = useState(false);
     const [modalOpen, setModalOpen] = useState<string | null>(null);
     const [confirmados, setConfirmados] = useState<{ [codigo: string]: boolean }>({});
@@ -139,7 +138,7 @@ const PackingDetalle: React.FC = () => {
         try {
             await finalizarPacking(pedido._id);
             toast.success("Packing finalizado. Listo para enviar.");
-            navigate("/admin/enviadospedidos");
+            navigate("/admin");
         } catch (error: any) {
             toast.error(`Error al finalizar: ${error.message}`);
         } finally {
@@ -209,17 +208,16 @@ const PackingDetalle: React.FC = () => {
                     </div>
                 </CardHeader >
 
-                    <CardContent>
+                <CardContent>
                     <BuscarProductoPorCodigo
                         productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                         onEncontrado={(codigo) => {
-                            setFiltroCodigo(codigo);
-                            const hayMatch = pedido.productos.some(producto => String(producto.codigo).includes(codigo));
-                            if (!hayMatch && codigo) {
+                            const productoEncontrado = pedido.productos.find(producto => String(producto.codigo) === codigo);
+                            if (productoEncontrado) {
+                                setModalOpen(codigo);
+                            } else {
                                 setNoMatch(true);
                                 setTimeout(() => setNoMatch(false), 2000);
-                            } else {
-                                setNoMatch(false);
                             }
                         }}
                         placeholder="Buscar o escanear código de barras..."
@@ -233,10 +231,7 @@ const PackingDetalle: React.FC = () => {
                                 }
                             }}
                         >
-                            {(pedido.productos.some(producto => !filtroCodigo || String(producto.codigo).includes(filtroCodigo))
-                                ? pedido.productos.filter(producto => !filtroCodigo || String(producto.codigo).includes(filtroCodigo))
-                                : pedido.productos
-                            ).map((producto, idx) => {
+                            {pedido.productos.map((producto, idx) => {
                                 const codigo = String(producto.codigo);
                                 const confirmado = confirmados[codigo];
                                 return (
@@ -314,17 +309,17 @@ const PackingDetalle: React.FC = () => {
                             <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
                                 <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
                             </Button>
+                            {isPackingStarted && isEditable && (
+                                <>
+                                    <Button onClick={handleFinalizarPacking} disabled={loading || !allConfirmed} className="bg-black text-white">
+                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
+                                    </Button>
+                                </>
+                            )}
                             {!isPackingStarted && isEditable && (
                                 <Button onClick={handleIniciarPacking} disabled={loading}>
                                     <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Packing
                                 </Button>
-                            )}
-                            {isPackingStarted && isEditable && (
-                                <>
-                                    <Button onClick={handleFinalizarPacking} disabled={loading || !allConfirmed}>
-                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Packing
-                                    </Button>
-                                </>
                             )}
                         </div>
                     </div>

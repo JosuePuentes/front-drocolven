@@ -336,10 +336,8 @@ const PickingDetalle: React.FC = () => {
                                 const codigo = String(prod.codigo);
                                 return (
                                     <div className="flex flex-row pb-3" key={codigo}>
-                                        <div key={codigo} className="p-2 border rounded-lg flex flex-col items-center md:flex-row md:items-center md:justify-between">
-                                        <div className={`flex items-center justify-between border border-gray-100 `}>
+                                        <div key={codigo} className="p-2 border rounded-lg flex flex-col items-center ">
                                             <span className="text-black font-bold flex items-center justify-center text-base">{idx + 1}</span>
-                                        </div>
                                             <div className="flex items-center mb-2 md:mb-0">
                                                 <div>
                                                     <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
@@ -381,8 +379,8 @@ const PickingDetalle: React.FC = () => {
                                                                 min="0"
                                                                 value={cantidadesInput[codigo] || ''}
                                                                 onChange={(e) => handleCantidadEncontradaChange(codigo, e.target.value)}
-                                                                className="w-24 text-right"
-                                                                disabled={!isEditable || loading}
+                                                                className="w-16 h-16 text-center text-2xl"
+                                                                disabled={pedido.picking?.estado_picking !== 'en_proceso' || loading}
                                                                 ref={el => { cantidadRefs.current[codigo] = el; }}
                                                                 onKeyDown={(e) => {
                                                                     if (

@@ -42,15 +42,15 @@ const ProductoConfirmModal: React.FC<ProductoConfirmModalProps> = ({ open, onClo
                     <div className="text-base font-semibold text-gray-800">{producto.descripcion}</div>
                     <div className="flex flex-row justify-between items-center gap-4 w-full bg-gray-50 rounded-lg p-4 shadow-sm">
                         <div className="flex flex-col items-center flex-1">
-                            <span className="text-sm text-gray-500">Pedida</span>
+                            <span className="text-sm text-gray-500">Pedido</span>
                             <span className="text-2xl font-bold text-blue-700">{producto.cantidad_pedida}</span>
                         </div>
                         <div className="flex flex-col items-center flex-1 border-l border-gray-200">
-                            <span className="text-sm text-gray-500">Encontrada</span>
+                            <span className="text-sm text-gray-500">Picking</span>
                             <span className="text-2xl font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span>
                         </div>
                         <div className="flex flex-col items-center flex-1 border-l border-gray-200">
-                            <span className="text-sm text-gray-500 mb-1">A confirmar</span>
+                            <span className="text-sm text-gray-500 mb-1">Packing</span>
                             <input
                                 type="number"
                                 min={0}
@@ -59,16 +59,17 @@ const ProductoConfirmModal: React.FC<ProductoConfirmModalProps> = ({ open, onClo
                                 onChange={handleInputChange}
                                 className="w-20 px-2 py-1 border border-primary/30 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/40 text-right bg-white font-semibold text-gray-800 shadow"
                                 aria-label="Cantidad a confirmar"
+                                tabIndex={1}
                             />
                         </div>
                     </div>
                 </div>
                 <DialogFooter className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={onClose} type="button">Cancelar</Button>
+                    <Button onClick={onConfirm} type="button" className="bg-green-600 hover:bg-green-700 text-white" disabled={!isConfirmEnabled} tabIndex={2}>Confirmar</Button>
                     {onUnconfirm && (
-                        <Button onClick={onUnconfirm} type="button" className="bg-red-100 hover:bg-red-200 text-red-700 border border-red-300">Desconfirmar</Button>
+                        <Button onClick={onUnconfirm} type="button" className="bg-red-100 hover:bg-red-200 text-red-700 border border-red-300" tabIndex={3}>Desconfirmar</Button>
                     )}
-                    <Button onClick={onConfirm} type="button" className="bg-green-600 hover:bg-green-700 text-white" disabled={!isConfirmEnabled}>Confirmar</Button>
+                    <Button variant="outline" onClick={onClose} type="button" tabIndex={4}>Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

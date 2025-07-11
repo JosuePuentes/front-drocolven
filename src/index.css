@@ -160,3 +160,16 @@
 .badge-green {
   @apply text-xs bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full font-medium;
 }
+
+/* Oculta las flechas en todos los navegadores modernos */
+input[type="number"] {
+  /* Para Firefox */
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  /* Para Chrome, Safari, Edge y Opera */
+  -webkit-appearance: none;
+  margin: 0;
+}

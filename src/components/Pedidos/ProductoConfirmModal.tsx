@@ -34,7 +34,7 @@ const ProductoConfirmModal: React.FC<ProductoConfirmModalProps> = ({ open, onClo
 
     return (
         <Dialog open={open} onOpenChange={open => !open ? onClose() : undefined}>
-            <DialogContent className="max-w-xs md:max-w-md bg-white">
+            <DialogContent className="fixed top-70 bg-white">
                 <DialogHeader>
                     <DialogTitle className="text-lg font-bold text-gray-900">Confirmar producto</DialogTitle>
                 </DialogHeader>

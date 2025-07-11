@@ -281,7 +281,7 @@ const PackingDetalle: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="mt-2 md:mt-0 text-right flex flex-col items-end gap-2">
+                                        <div className="relative flex mt-2 md:mt-0">
                                             <ProductoConfirmModal
                                                 open={modalOpen === codigo}
                                                 onClose={() => setModalOpen(null)}

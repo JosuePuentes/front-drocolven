@@ -69,11 +69,12 @@ const PedidoMiniCard: React.FC<PedidoMiniCardProps> = ({ pedido, onClick, size =
         const m = Math.floor((diff % 3600) / 60);
         const s = diff % 60;
         setTiempo(h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`);
-        // Color logic para todos los estados
+        // Color logic considerando horas y minutos
         if (minColorAplica(pedido)) {
-          if (m < 25) {
+          const totalMin = h * 60 + m;
+          if (totalMin < 25) {
             setTimerColor('text-green-600');
-          } else if (m < 40) {
+          } else if (totalMin < 40) {
             setTimerColor('text-yellow-500');
           } else {
             setTimerColor('text-red-600');

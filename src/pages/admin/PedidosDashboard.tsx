@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
 import { usePedido, ESTADOS_PEDIDO } from '../../components/hooks/usePedido';
 import PedidoMiniCard from '../../components/Pedidos/PedidoMiniCard';
-import { AiOutlineReload } from 'react-icons/ai';
-import { Button } from '@/components/ui/button';
 
 const PedidosDashboard: React.FC = () => {
   const { pedidos, fetchPedidos, loading } = usePedido();
 
   useEffect(() => {
     fetchPedidos();
+    const interval = setInterval(() => {
+      fetchPedidos();
+    }, 480000); // Actualiza cada 8 minutos (480,000 ms)
+    return () => clearInterval(interval);
   }, []);
 
   // Filtrar pedidos en picking, packing o enviado
@@ -34,10 +36,7 @@ const PedidosDashboard: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-foreground">Dashboard de Pedidos</h1>
-        <Button onClick={fetchPedidos} variant="outline" disabled={loading}>
-          <AiOutlineReload className="mr-2 h-4 w-4 animate-spin" />
-          Actualizar
-        </Button>
+        {/* Botón de actualización manual eliminado, ya que la actualización es automática */}
       </div>
       <div className="flex flex-col gap-10">
         {/* Lista de Picking */}

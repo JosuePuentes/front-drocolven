@@ -9,7 +9,6 @@ import {
     AiOutlineLoading3Quarters,
     AiOutlineArrowLeft,
     AiOutlineSave,
-    AiOutlineClose,
     AiOutlinePlayCircle,
     AiOutlineSend,
     AiOutlineBarcode,
@@ -36,7 +35,6 @@ const PickingDetalle: React.FC = () => {
         iniciarPicking,
         guardarPicking,
         finalizarPicking,
-        cancelarProceso,
     } = usePedido();
 
     const [cantidadesInput, setCantidadesInput] = useState<CantidadesInput>({});
@@ -241,19 +239,19 @@ const PickingDetalle: React.FC = () => {
         }
     };
 
-    const handleCancelarPicking = async () => {
-        if (!pedido) return;
-        setLoading(true);
-        try {
-            await cancelarProceso(pedido._id, ESTADOS_PEDIDO.PICKING);
-            toast.success("Picking cancelado. Pedido devuelto a 'nuevo'.");
-            navigate("/admin/pickingpedidos");
-        } catch (error: any) {
-            toast.error(`Error al cancelar: ${error.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const handleCancelarPicking = async () => {
+    //     if (!pedido) return;
+    //     setLoading(true);
+    //     try {
+    //         await cancelarProceso(pedido._id, ESTADOS_PEDIDO.PICKING);
+    //         toast.success("Picking cancelado. Pedido devuelto a 'nuevo'.");
+    //         navigate("/admin/pickingpedidos");
+    //     } catch (error: any) {
+    //         toast.error(`Error al cancelar: ${error.message}`);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     // función para enfocar input de cantidad por código
     const handleEncontrarPorCodigo = (codigo: string) => {
@@ -291,7 +289,7 @@ const PickingDetalle: React.FC = () => {
     const isEditable = pedido.estado === ESTADOS_PEDIDO.PICKING && !isPickingFinalizado;
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-2">
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
@@ -304,43 +302,43 @@ const PickingDetalle: React.FC = () => {
                         </Badge>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 p-4 border rounded-lg">
+                <CardContent className="px-1.5">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-4 p-2 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Picking</p>
                             <p className="text-lg font-semibold">{pedido.picking?.usuario || 'No iniciado'}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Inicio Picking</p>
-                            <p className="text-lg font-semibold">{pedido.picking?.fechainicio_picking ? new Date(pedido.picking.fechainicio_picking).toLocaleString() : '—'}</p>
+                            <p className="text-sm font-semibold">{pedido.picking?.fechainicio_picking ? new Date(pedido.picking.fechainicio_picking).toLocaleString() : '—'}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Tiempo Transcurrido</p>
+                            <p className="text-sm font-medium text-gray-500">Tiempo</p>
                             <p className="text-lg font-semibold">{elapsed}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Estado Picking</p>
+                            <p className="text-sm font-medium text-gray-500">Estado</p>
                             <p className={`text-lg font-semibold ${isPickingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
                                 {pedido.picking?.estado_picking?.replace('_', ' ') || 'Pendiente'}
                             </p>
                         </div>
                     </div>
 
-                    <div>
+                    <div >
                         <BuscarProductoPorCodigo
                             productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                             onEncontrado={handleEncontrarPorCodigo}
                         />
-                        <h3 className="text-lg text-center font-semibold mb-2">Productos a Pickear</h3>
-                        <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                        <h3 className="text-lg text-center font-semibold mb-2">Productos del Picking</h3>
+                        <div className="space-y-2 max-h-[30vh] overflow-y-auto scrollbar-thin">
                             {pedido.productos.map((prod, idx) => {
                                 const codigo = String(prod.codigo);
                                 return (
                                     <div className="flex flex-row" key={codigo}>
-                                        <div className={`flex items-center justify-between ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} rounded-lg p-4 border border-gray-100 shadow-sm`}>
-                                            <span className="w-7 h-7 rounded-full text-black font-bold flex items-center justify-center text-base">{idx + 1}</span>
+                                        <div className={`flex items-center justify-between ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} rounded-lg p-2 border border-gray-100 shadow-sm`}>
+                                            <span className="text-black font-bold flex items-center justify-center text-base">{idx + 1}</span>
                                         </div>
-                                        <div key={codigo} className="p-4 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <div key={codigo} className="p-2 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between">
                                             <div className="flex items-center gap-3 mb-2 md:mb-0">
                                                 <div>
                                                     <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
@@ -418,28 +416,27 @@ const PickingDetalle: React.FC = () => {
                         <div className="text-lg font-bold text-green-600">
                             Total: $ {pedido.total.toFixed(2)}
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-                            <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
-                                <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
-                            </Button>
-                            {!isPickingStarted && isEditable && (
-                                <Button onClick={handleIniciarPicking} disabled={loading}>
-                                    <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Picking
+                        <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0 w-full">
+                            <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+                                <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
+                                    <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
                                 </Button>
-                            )}
-                            {isPickingStarted && isEditable && (
-                                <>
-                                    <Button variant="secondary" onClick={handleGuardarCantidades} disabled={loading}>
-                                        <AiOutlineSave className="mr-2 h-4 w-4" /> Guardar
+                                {!isPickingStarted && isEditable && (
+                                    <Button onClick={handleIniciarPicking} disabled={loading}>
+                                        <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Picking
                                     </Button>
-                                    <Button className="bg-black text-white" onClick={handleFinalizarPicking} disabled={loading}>
-                                        <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Picking
-                                    </Button>
-                                    <Button variant="destructive" onClick={handleCancelarPicking} disabled={loading}>
-                                        <AiOutlineClose className="mr-2 h-4 w-4" /> Cancelar
-                                    </Button>
-                                </>
-                            )}
+                                )}
+                                {isPickingStarted && isEditable && (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <Button variant="secondary" onClick={handleGuardarCantidades} disabled={loading}>
+                                            <AiOutlineSave className="mr-2 h-4 w-4" /> Guardar
+                                        </Button>
+                                        <Button className="bg-black text-white" onClick={handleFinalizarPicking} disabled={loading}>
+                                            <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Picking
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </CardContent>

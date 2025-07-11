@@ -179,8 +179,7 @@ const PackingDetalle: React.FC = () => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle>Packing de Pedido #{pedido._id.slice(-6)}</CardTitle>
-                            <CardDescription>Cliente: {pedido.cliente}</CardDescription>
-                            <CardDescription>RIF: {pedido.rif}</CardDescription>
+                            <CardDescription>Cliente: {pedido.cliente} - RIF: {pedido.rif}</CardDescription>
                         </div>
                         <Badge variant={pedido.estado === 'packing' ? 'default' : 'secondary'}>
                             {pedido.estado.toUpperCase()}
@@ -202,7 +201,7 @@ const PackingDetalle: React.FC = () => {
                             <p className="text-lg font-semibold">{elapsed}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Estado Packing</p>
+                            <p className="text-sm font-medium text-gray-500">Estado</p>
                             <p className={`text-lg font-semibold ${isPackingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
                                 {pedido.packing?.estado_packing?.replace('_', ' ') || 'Pendiente'}
                             </p>
@@ -223,7 +222,7 @@ const PackingDetalle: React.FC = () => {
                         }}
                         placeholder="Buscar o escanear código de barras..."
                     />
-                        <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Pedido</h3>
+                    <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Packing</h3>
                     <div className="mt-1 sm:max-h-screen max-h-96 overflow-y-auto">
                         <div className={`space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
@@ -239,44 +238,46 @@ const PackingDetalle: React.FC = () => {
                                 const codigo = String(producto.codigo);
                                 const confirmado = confirmados[codigo];
                                 return (
-                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm">
-                                        <div className="flex items-center flex-row gap-3 mb-2 md:mb-0">
-                                            <span className="w-7 h-7 rounded-full bg-black text-white font-bold flex items-center justify-center text-base shadow-sm">{idx + 1}</span>
-                                            <div>
-                                                <div className="font-semibold text-black text-base md:text-lg">{producto.descripcion}</div>
-                                                <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
+                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm">
+                                        <div className="flex flex-row gap-2 mb-2 md:mb-0 items-center">
+                                            <span className="text-black font-bold text-base">{idx + 1}</span>
+                                            <div className="border p-2 rounded-lg flex-1">
+                                                <div className="flex justify-between items-center gap-2 text-gray-700 text-sm mt-1">
                                                     <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                     <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                                 </div>
-                                                <div className="text-gray-500 mt-1 text-xl">
-                                                    Cantidad pedida: <span className="font-bold text-gray-700">{producto.cantidad_pedida}</span>
-                                                    <span className="mx-2 text-gray-400">|</span>
-                                                    {(() => {
-                                                        const encontrada = producto.cantidad_encontrada ?? 0;
-                                                        let color = 'text-yellow-500';
-                                                        if (encontrada > producto.cantidad_pedida) color = 'text-red-600';
-                                                        else if (encontrada === producto.cantidad_pedida) color = 'text-green-600';
-                                                        return (
-                                                            <span className={`font-bold text-2xl ${color}`}>{encontrada}</span>
-                                                        );
-                                                    })()}
+                                                <div className="font-semibold text-black text-base md:text-lg mt-1">{producto.descripcion}</div>
+                                                <span className="font-semibold text-green-600 text-base md:text-lg mt-1">$ {(producto.precio ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
+                                                <div className="flex text-gray-500 mt-1 text-xl justify-between">
+                                                    <div>
+                                                        Cantidad pedida: <span className="font-bold text-gray-700">{producto.cantidad_pedida}</span>
+                                                        <span className="mx-2 text-gray-400">|</span>
+                                                        {(() => {
+                                                            const encontrada = producto.cantidad_encontrada ?? 0;
+                                                            let color = 'text-yellow-500';
+                                                            if (encontrada > producto.cantidad_pedida) color = 'text-red-600';
+                                                            else if (encontrada === producto.cantidad_pedida) color = 'text-green-600';
+                                                            return (
+                                                                <span className={`font-bold text-2xl ${color}`}>{encontrada}</span>
+                                                            );
+                                                        })()}
+                                                    </div>
+                                                    <Button
+                                                        type="button"
+                                                        className={`w-8 h-8 p-0 rounded-full border-2 ${confirmado ? 'bg-green-500 border-green-600 text-white' : 'bg-red-100 border-red-400 text-red-600'} transition-colors`}
+                                                        onClick={() => setModalOpen(codigo)}
+                                                        aria-label={confirmado ? 'Producto confirmado' : 'Confirmar producto'}
+                                                    >
+                                                        {confirmado ? (
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                                        ) : (
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8" /></svg>
+                                                        )}
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="mt-2 md:mt-0 text-right flex flex-col items-end gap-2">
-                                            <span className="text-base font-bold text-black">${(producto.precio_n ?? producto.precio_unitario ?? 0).toFixed(2)}</span>
-                                            <Button
-                                                type="button"
-                                                className={`w-8 h-8 p-0 rounded-full border-2 ${confirmado ? 'bg-green-500 border-green-600 text-white' : 'bg-red-100 border-red-400 text-red-600'} transition-colors`}
-                                                onClick={() => setModalOpen(codigo)}
-                                                aria-label={confirmado ? 'Producto confirmado' : 'Confirmar producto'}
-                                            >
-                                                {confirmado ? (
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                                ) : (
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h8" /></svg>
-                                                )}
-                                            </Button>
                                             <ProductoConfirmModal
                                                 open={modalOpen === codigo}
                                                 onClose={() => setModalOpen(null)}

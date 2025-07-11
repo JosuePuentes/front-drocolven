@@ -289,24 +289,23 @@ const PickingDetalle: React.FC = () => {
     const isEditable = pedido.estado === ESTADOS_PEDIDO.PICKING && !isPickingFinalizado;
 
     return (
-        <div className="container mx-auto p-2">
-            <Card>
-                <CardHeader>
+        <div className="container mx-auto p-1.5">
+            <Card className="pt-0 px-1">
+                <CardHeader className="p-1">
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle>Picking de Pedido #{pedido._id.slice(-6)}</CardTitle>
-                            <CardDescription>Cliente: {pedido.cliente} - RIF: {pedido.rif}</CardDescription>
+                            <CardTitle className="text-sm">Picking de Pedido #{pedido._id.slice(-6)}</CardTitle>
+                            <CardDescription className="text-sm">Cliente: {pedido.cliente}</CardDescription>
+                            <CardDescription className="text-sm">RIF: {pedido.rif}</CardDescription>
                         </div>
                         <Badge variant={pedido.estado === 'picking' ? 'default' : 'secondary'}>
                             {pedido.estado.toUpperCase()}
                         </Badge>
                     </div>
-                </CardHeader>
-                <CardContent className="px-1.5">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-4 p-2 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Picking</p>
-                            <p className="text-lg font-semibold">{pedido.picking?.usuario || 'No iniciado'}</p>
+                            <p className="text-sm font-semibold">{pedido.picking?.usuario || 'No iniciado'}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Inicio Picking</p>
@@ -314,43 +313,45 @@ const PickingDetalle: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Tiempo</p>
-                            <p className="text-lg font-semibold">{elapsed}</p>
+                            <p className="text-sm font-semibold">{elapsed}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Estado</p>
-                            <p className={`text-lg font-semibold ${isPickingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
+                            <p className={`text-sm font-semibold ${isPickingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
                                 {pedido.picking?.estado_picking?.replace('_', ' ') || 'Pendiente'}
                             </p>
                         </div>
                     </div>
+                </CardHeader>
+                <CardContent className="px-1.5">
 
                     <div >
                         <BuscarProductoPorCodigo
                             productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                             onEncontrado={handleEncontrarPorCodigo}
                         />
-                        <h3 className="text-lg text-center font-semibold mb-2">Productos del Picking</h3>
-                        <div className="space-y-2 max-h-[30vh] overflow-y-auto scrollbar-thin">
+                        <h3 className="text-md text-center font-semibold mb-2">Productos del Picking</h3>
+                        <div className="space-y-2 max-h-[35vh] overflow-y-auto scrollbar-thin">
                             {pedido.productos.map((prod, idx) => {
                                 const codigo = String(prod.codigo);
                                 return (
-                                    <div className="flex flex-row" key={codigo}>
-                                        <div className={`flex items-center justify-between ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} rounded-lg p-2 border border-gray-100 shadow-sm`}>
+                                    <div className="flex flex-row pb-3" key={codigo}>
+                                        <div key={codigo} className="p-2 border rounded-lg flex flex-col items-center md:flex-row md:items-center md:justify-between">
+                                        <div className={`flex items-center justify-between border border-gray-100 `}>
                                             <span className="text-black font-bold flex items-center justify-center text-base">{idx + 1}</span>
                                         </div>
-                                        <div key={codigo} className="p-2 border rounded-lg flex flex-col md:flex-row md:items-center md:justify-between">
-                                            <div className="flex items-center gap-3 mb-2 md:mb-0">
+                                            <div className="flex items-center mb-2 md:mb-0">
                                                 <div>
                                                     <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
                                                         <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                         <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                                     </div>
-                                                    <div className="font-semibold text-gray-900 text-base md:text-lg">{prod.descripcion}</div>
-                                                    
+                                                    <div className="font-semibold text-gray-900 text-xl md:text-lg">{prod.descripcion}</div>
+
                                                     <div className="flex justify-between">
 
                                                         <div
-                                                            className={`text-lg max-w-fit mt-2`}
+                                                            className={`text-2xl max-w-fit mt-2`}
                                                         >
                                                             PEDIDO:{" "}
                                                             <span
@@ -413,11 +414,11 @@ const PickingDetalle: React.FC = () => {
                     </div>
 
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
-                        <div className="text-lg font-bold text-green-600">
-                            Total: $ {pedido.total.toFixed(2)}
-                        </div>
-                        <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0 w-full">
+                        <div className="flex flex-col items-center justify-center gap-1 mt-1 w-full">
                             <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+                                <div className="text-lg font-bold text-green-600">
+                                    Total: $ {pedido.total.toFixed(2)}
+                                </div>
                                 <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
                                     <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
                                 </Button>

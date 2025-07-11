@@ -173,24 +173,23 @@ const PackingDetalle: React.FC = () => {
     const isEditable = pedido.estado === ESTADOS_PEDIDO.PACKING && !isPackingFinalizado;
 
     return (
-        <div className="container mx-auto p-4">
-            <Card>
-                <CardHeader>
+        <div className="container mx-auto p-1.5">
+            <Card className="pt-0 px-1">
+                <CardHeader className="p-1">
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle>Packing de Pedido #{pedido._id.slice(-6)}</CardTitle>
-                            <CardDescription>Cliente: {pedido.cliente} - RIF: {pedido.rif}</CardDescription>
+                            <CardTitle className="text-sm">Picking de Pedido #{pedido._id.slice(-6)}</CardTitle>
+                            <CardDescription className="text-sm">Cliente: {pedido.cliente}</CardDescription>
+                            <CardDescription className="text-sm">RIF: {pedido.rif}</CardDescription>
                         </div>
-                        <Badge variant={pedido.estado === 'packing' ? 'default' : 'secondary'}>
+                        <Badge variant={pedido.estado === 'picking' ? 'default' : 'secondary'}>
                             {pedido.estado.toUpperCase()}
                         </Badge>
                     </div>
-                </CardHeader>
-                <CardContent>
                     <div id="packing-info" className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-2 p-2 border rounded-lg">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Usuario Packing</p>
-                            <p className="text-lg font-semibold">{pedido.packing?.usuario || 'No iniciado'}</p>
+                            <p className="text-sm font-semibold">{pedido.packing?.usuario || 'No iniciado'}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Inicio Packing</p>
@@ -198,16 +197,18 @@ const PackingDetalle: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Tiempo</p>
-                            <p className="text-lg font-semibold">{elapsed}</p>
+                            <p className="text-sm font-semibold">{elapsed}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-500">Estado</p>
-                            <p className={`text-lg font-semibold ${isPackingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
+                            <p className={`text-sm font-semibold ${isPackingStarted ? 'text-blue-600' : 'text-gray-600'}`}>
                                 {pedido.packing?.estado_packing?.replace('_', ' ') || 'Pendiente'}
                             </p>
                         </div>
                     </div>
+                </CardHeader >
 
+                    <CardContent>
                     <BuscarProductoPorCodigo
                         productos={pedido.productos.filter(p => typeof p.codigo === 'string').map(p => ({ codigo: String(p.codigo), descripcion: p.descripcion }))}
                         onEncontrado={(codigo) => {
@@ -224,7 +225,7 @@ const PackingDetalle: React.FC = () => {
                     />
                     <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Packing</h3>
                     <div className="mt-1 sm:max-h-screen max-h-96 overflow-y-auto">
-                        <div className={`space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
+                        <div className={`space-y-4 max-h-[40vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
                                 if (noMatch && el) {
                                     animate(el, { backgroundColor: ['#fff', '#fee2e2', '#fff'], duration: 2000, ease: 'outCubic' });
@@ -240,9 +241,11 @@ const PackingDetalle: React.FC = () => {
                                 return (
                                     <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm">
                                         <div className="flex flex-row gap-2 mb-2 md:mb-0 items-center">
-                                            <span className="text-black font-bold text-base">{idx + 1}</span>
                                             <div className="border p-2 rounded-lg flex-1">
-                                                <div className="flex justify-between items-center gap-2 text-gray-700 text-sm mt-1">
+                                                <div className="flex justify-center items-center">
+                                                    <span className="text-black font-bold text-base text-center">{idx + 1}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
                                                     <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
                                                     <span className="font-mono tracking-widest">{codigo ?? '—'}</span>
                                                 </div>

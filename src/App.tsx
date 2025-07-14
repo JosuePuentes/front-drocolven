@@ -82,15 +82,15 @@ function App() {
           <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
-          <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
-          <Route path="pickingpedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PickingPedidos /></AdminProtectedRoute>} />
-          <Route path="packingpedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><PackingPedidos /></AdminProtectedRoute>} />
-          <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PickingDetalle /></AdminProtectedRoute>} />
-          <Route path="packing/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><PackingDetalle /></AdminProtectedRoute>} />
-          <Route path="enviadospedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadosPedidos /></AdminProtectedRoute>} />
-          <Route path="enviado/:id" element={<AdminProtectedRoute moduleRequired="pedidos"><EnviadoDetalle /></AdminProtectedRoute>} />
-          <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
           <Route path="crear-pedido" element={<AdminProtectedRoute moduleRequired="pedidos"><AdminCarritoCompras /></AdminProtectedRoute>} />
+          <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
+          <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="admin-pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
+          <Route path="pickingpedidos" element={<AdminProtectedRoute moduleRequired="picking"><PickingPedidos /></AdminProtectedRoute>} />
+          <Route path="packingpedidos" element={<AdminProtectedRoute moduleRequired="packing"><PackingPedidos /></AdminProtectedRoute>} />
+          <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="picking"><PickingDetalle /></AdminProtectedRoute>} />
+          <Route path="packing/:id" element={<AdminProtectedRoute moduleRequired="packing"><PackingDetalle /></AdminProtectedRoute>} />
+          <Route path="enviadospedidos" element={<AdminProtectedRoute moduleRequired="envios"><EnviadosPedidos /></AdminProtectedRoute>} />
+          <Route path="enviado/:id" element={<AdminProtectedRoute moduleRequired="envios"><EnviadoDetalle /></AdminProtectedRoute>} />
           <Route path="unauthorized" element={<AdminProtectedRoute moduleRequired=""><div>no estas autorizado para realizar esta operacion</div></AdminProtectedRoute>} />
         </Route>
 

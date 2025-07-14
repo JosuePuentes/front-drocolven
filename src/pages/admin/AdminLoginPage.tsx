@@ -6,6 +6,7 @@ const AdminLoginPage = () => {
     const [usuario, setUsuario] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const { isAuthenticated, login } = useAdminAuth();
 
@@ -17,7 +18,7 @@ const AdminLoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setLoading(true);
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/login/admin/`, {
                 usuario,
@@ -28,11 +29,12 @@ const AdminLoginPage = () => {
                 token_type: response.data.token_type,
                 usuario: response.data.usuario,
                 modulos: response.data.modulos,
-            }
-            ); // Usa el token para autenticar
+            });
         } catch (err) {
             setError((err as any).response?.data?.detail || 'Error al iniciar sesión como administrador');
             console.error('Error al iniciar sesión:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -74,9 +76,17 @@ const AdminLoginPage = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+                        className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        disabled={loading}
                     >
-                        Iniciar sesión
+                        {loading ? (
+                            <>
+                                <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Cargando...
+                            </>
+                        ) : (
+                            'Iniciar sesión'
+                        )}
                     </button>
                 </form>
             </div>

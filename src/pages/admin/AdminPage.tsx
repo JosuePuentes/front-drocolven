@@ -2,6 +2,7 @@ import { BookA, SquareChartGantt, User, LayoutDashboard, PackageCheck } from "lu
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import HasModule from "../../components/auth/HasModule";
+import { useAdminAuth } from "../../context/AuthAdminContext";
 
 // If CardModule is not a Shadcn Card, we'll redefine it to use Shadcn's Card structure
 // Otherwise, ensure CardModule accepts props that map to Shadcn Card props
@@ -39,11 +40,12 @@ const CardModule: React.FC<CardModuleProps> = ({ bottomText, topText, onClick, l
 
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
+  const { logout } = useAdminAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 flex flex-col items-center">
       {/* Title Section */}
-      <div className="text-center mb-12 mt-8 animate-in fade-in slide-in-from-top-6 duration-700">
+      <div className="text-center mb-12 mt-8 animate-in fade-in slide-in-from-top-6 duration-700 relative">
         <LayoutDashboard className="w-24 h-24 text-blue-700 mx-auto mb-4 drop-shadow-md" />
         <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-sm leading-tight">
           Panel de Administración
@@ -51,6 +53,12 @@ const AdminPage: React.FC = () => {
         <p className="text-lg text-gray-600 mt-3 max-w-xl mx-auto">
           Selecciona una de las opciones para gestionar tu plataforma.
         </p>
+        <button
+          onClick={logout}
+          className="absolute top-0 right-0 mt-2 mr-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow transition font-medium text-sm"
+        >
+          Cerrar sesión
+        </button>
       </div>
 
       {/* Modules Grid */}
@@ -84,7 +92,7 @@ const AdminPage: React.FC = () => {
         </HasModule>
 
         {/* Assuming this is a distinct module for "Armar Pedidos" */}
-        <HasModule module="pedidos"> {/* Use a more specific module if available */}
+        <HasModule module="picking"> {/* Use a more specific module if available */}
           <CardModule
             bottomText="Picking de Pedidos"
             description="Procesa y prepara los pedidos para el envío."
@@ -94,7 +102,7 @@ const AdminPage: React.FC = () => {
         </HasModule>
 
         {/* Módulo para Packing de Pedidos */}
-        <HasModule module="pedidos">
+        <HasModule module="packing">
           <CardModule
             bottomText="Packing de Pedidos"
             description="Gestiona y envía los pedidos ya armados."
@@ -104,7 +112,7 @@ const AdminPage: React.FC = () => {
         </HasModule>
 
         {/* Módulo para Pedidos Enviados */}
-        <HasModule module="pedidos">
+        <HasModule module="envios">
           <CardModule
             bottomText="Pedidos Enviados"
             description="Consulta el historial de pedidos enviados."

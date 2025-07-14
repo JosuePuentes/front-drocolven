@@ -10,14 +10,16 @@ const CreateAdminUser = () => {
   const [modulosDisponibles, setModulosDisponibles] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [nombreCompleto, setNombreCompleto] = useState('');
+  const [identificador, setIdentificador] = useState('');
 
   useEffect(() => {
     const fetchModulos = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/modulos/admin/`);
-        setModulosDisponibles(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/modulos/`);
+        setModulosDisponibles(response.data.map((m: any) => m.nombre || m));
       } catch (error) {
-        setError('No se pudieron cargar los módulos disponibles');
+        setModulosDisponibles([]);
       }
     };
     fetchModulos();
@@ -36,13 +38,13 @@ const CreateAdminUser = () => {
     setError('');
     setSuccess('');
 
-    if (!usuario || !password || !rol || modulos.length === 0) {
+    if (!usuario || !password || !rol || modulos.length === 0 || !nombreCompleto || !identificador) {
       setError('Todos los campos son obligatorios');
       return;
     }
 
     try {
-      const newUser = { usuario, password, rol, modulos };
+      const newUser = { usuario, password, rol, modulos, nombreCompleto, identificador };
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/register/admin/`, newUser);
 
       setSuccess(response.data.message);
@@ -50,6 +52,8 @@ const CreateAdminUser = () => {
       setPassword('');
       setRol('');
       setModulos([]);
+      setNombreCompleto('');
+      setIdentificador('');
     } catch (error: any) {
       setError(error.response?.data?.detail || 'Error al registrar el usuario');
     }
@@ -73,7 +77,6 @@ const CreateAdminUser = () => {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700">Contraseña</label>
           <input
@@ -84,7 +87,6 @@ const CreateAdminUser = () => {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700">Rol</label>
           <input
@@ -95,24 +97,47 @@ const CreateAdminUser = () => {
             required
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Nombre Completo</label>
+          <input
+            type="text"
+            value={nombreCompleto}
+            onChange={(e) => setNombreCompleto(e.target.value)}
+            className="mt-1 block w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Identificador</label>
+          <input
+            type="text"
+            value={identificador}
+            onChange={(e) => setIdentificador(e.target.value)}
+            className="mt-1 block w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Módulos Permitidos</label>
           <div className="flex flex-wrap gap-2">
-            {modulosDisponibles.map((modulo) => {
-              const selected = modulos.includes(modulo);
+            {modulosDisponibles.map((modulo: any, idx) => {
+              // Si modulo es objeto, usa un campo único como key, si es string usa el string
+              const key = typeof modulo === 'object' && modulo !== null && modulo._id ? modulo._id : (typeof modulo === 'object' ? JSON.stringify(modulo) : modulo);
+              const nombreModulo = typeof modulo === 'object' && modulo !== null ? (modulo.nombre || modulo.name || modulo._id || idx) : modulo;
+              const selected = modulos.includes(nombreModulo);
               return (
                 <button
                   type="button"
-                  key={modulo}
-                  onClick={() => toggleModulo(modulo)}
+                  key={key}
+                  onClick={() => toggleModulo(nombreModulo)}
                   className={`px-3 py-1 rounded-full border transition-all flex items-center gap-1
                     ${selected
                       ? 'bg-blue-500 text-white border-blue-600 shadow'
                       : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
                 >
                   {selected ? <Check size={16} /> : <X size={16} className="opacity-40" />}
-                  <span className="text-sm">{modulo}</span>
+                  <span className="text-sm">{typeof modulo === 'object' && modulo !== null ? (modulo.name || modulo.nombre || modulo._id || idx) : modulo}</span>
                 </button>
               );
             })}

@@ -76,7 +76,7 @@ const UsuariosPage = () => {
                     />
                 </HasModule>
 
-                <HasModule module="crear-cliente">
+                <HasModule module="crear-clientes">
                     <CardModule
                         bottomText="Crear Cliente"
                         description="Registra nuevos clientes para el sistema de ventas."

@@ -138,6 +138,16 @@ const AdminPage: React.FC = () => {
           />
         </HasModule>
 
+        {/* Módulo para Facturación de Pedidos */}
+        <HasModule module="facturacion">
+          <CardModule
+            bottomText="Facturación de Pedidos"
+            description="Gestiona y factura los pedidos listos para facturación."
+            onClick={() => navigate("facturacionpedidos")}
+            logo={<BookA size={48} />}
+          />
+        </HasModule>
+
       </div>
     </div>
   );

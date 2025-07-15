@@ -11,7 +11,9 @@ export const ESTADOS_PEDIDO = {
   PACKING: "packing",
   ENVIADO: "enviado",
   ENTREGADO: "entregado",
-  CANCELADO: "cancelado"
+  CANCELADO: "cancelado",
+  PARA_FACTURAR: "para_facturar",
+  FACTURANDO: "facturando"
 } as const;
 
 export const usePedido = () => {

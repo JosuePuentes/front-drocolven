@@ -51,7 +51,9 @@ export type EstadoPedido =
   | 'packing'
   | 'enviado'
   | 'entregado'
-  | 'cancelado';
+  | 'cancelado'
+  | 'para_facturar'
+  | 'facturando';
 
 export interface PedidoArmado {
   _id: string;

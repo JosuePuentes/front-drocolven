@@ -78,7 +78,7 @@ function App() {
           <Route path="usuarios" element={<AdminProtectedRoute moduleRequired="usuarios"><UsuariosPage /></AdminProtectedRoute>} />
           <Route path="usuarios/create" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
           <Route path="usuarios/editar" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateAdminUser /></AdminProtectedRoute>} />
-          <Route path="usuarios/crearcliente" element={<AdminProtectedRoute moduleRequired="clientes"><CreateClient /></AdminProtectedRoute>} />
+          <Route path="usuarios/crearcliente" element={<AdminProtectedRoute moduleRequired="crear-cliente"><CreateClient /></AdminProtectedRoute>} />
           <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />

@@ -169,7 +169,7 @@ export const usePedido = () => {
 
   const finalizarPacking = async (pedidoId: string) => {
     const datos = {
-      estado: ESTADOS_PEDIDO.ENVIADO,
+      estado: ESTADOS_PEDIDO.PARA_FACTURAR,
       packing: {
         usuario: pedido?.packing?.usuario || '',
         fechainicio_packing: pedido?.packing?.fechainicio_packing || null,
@@ -309,6 +309,54 @@ export const usePedido = () => {
     }
   };
 
+  // --- FACTURACIÓN ---
+  // Obtener pedidos para facturación
+  const obtenerPedidosParaFacturar = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/para_facturar/`);
+      if (!response.ok) throw new Error('Error al obtener pedidos para facturación');
+      const data: PedidoArmado[] = await response.json();
+      setPedidos(data);
+    } catch (error) {
+      console.error('Error al obtener pedidos para facturación:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cambiar estado a 'facturando'
+  const actualizarEstadoFacturacion = async (pedidoId: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_facturacion/${pedidoId}`, {
+        method: 'PUT',
+      });
+      if (!response.ok) throw new Error('Error al actualizar estado a facturando');
+      await obtenerPedidosParaFacturar();
+    } catch (error) {
+      console.error('Error al actualizar estado a facturando:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Finalizar facturación (cambia a 'enviado')
+  const finalizarFacturacion = async (pedidoId: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/finalizar_facturacion/${pedidoId}`, {
+        method: 'PUT',
+      });
+      if (!response.ok) throw new Error('Error al finalizar facturación');
+      await obtenerPedidosParaFacturar();
+    } catch (error) {
+      console.error('Error al finalizar facturación:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     pedido,
     pedidos,
@@ -330,7 +378,10 @@ export const usePedido = () => {
     cancelarProceso,
     setPedido,
     conductores,
-    fetchConductores
+    fetchConductores,
+    obtenerPedidosParaFacturar,
+    actualizarEstadoFacturacion,
+    finalizarFacturacion,
   };
 };
 

@@ -45,6 +45,13 @@ export interface EnvioInfo {
   tracking?: string;
 }
 
+export interface FacturacionInfo {
+  usuario: string;
+  fechainicio_facturacion: string | null;
+  fechafin_facturacion: string | null;
+  estado_facturacion: 'pendiente' | 'en_proceso' | 'finalizado' | 'cancelado' | '';
+}
+
 export type EstadoPedido =
   | 'nuevo'
   | 'picking'
@@ -69,6 +76,7 @@ export interface PedidoArmado {
   fecha_actualizacion?: string;
   observacion?: string;
   armado_por?: string;
+  facturacion?: FacturacionInfo;
 }
 
 export interface CantidadesInput {

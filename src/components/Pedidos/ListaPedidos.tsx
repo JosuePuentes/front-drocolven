@@ -158,8 +158,10 @@ export default function MonitorPedidos() {
                     precioConDescuentos *= (1 - d3 / 100);
                     precioConDescuentos *= (1 - d4 / 100);
                     const subtotalConDescuentos = precioConDescuentos * cantidad;
+                    // Clave única: usa prod.id si existe, si no usa idx
+                    const key = prod._id ? String(prod._id) : `prod-${idx}`;
                     return (
-                      <li key={prod.id + idx} className="py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                      <li key={key} className="py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div className="flex-1">
                           <span className="font-medium text-gray-900">{prod.descripcion}</span>
                           <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-3">

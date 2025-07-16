@@ -9,11 +9,7 @@ const PedidosDashboard: React.FC = () => {
     fetchPedidos();
     const interval = setInterval(() => {
       fetchPedidos();
-<<<<<<< HEAD
     }, 20000); // Actualiza cada 30 segundos (30,000 ms)
-=======
-    }, 20000); // Actualiza cada 8 minutos (480,000 ms)
->>>>>>> 66a5760c1265abd45f2fc0069f887185956e89c4
     return () => clearInterval(interval);
   }, []);
 

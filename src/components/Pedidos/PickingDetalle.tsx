@@ -168,8 +168,8 @@ const PickingDetalle: React.FC = () => {
         }
     };
 
-    const handleGuardarCantidades = async () => {
-        if (!pedido) return;
+    const handleGuardarCantidades = async (): Promise<boolean> => {
+        if (!pedido) return false;
 
         let hasError = false;
         const productosActualizados = pedido.productos.map(prod => {
@@ -190,15 +190,56 @@ const PickingDetalle: React.FC = () => {
             return { ...prod, cantidad_encontrada };
         });
 
-        if (hasError) return;
+        if (hasError) return false;
 
         setLoading(true);
         try {
-            await guardarPicking(pedido._id, productosActualizados);
+            const result = await guardarPicking(pedido._id, productosActualizados);
+            console.log('Resultado guardarPicking:', result);
+            console.log('Productos actualizados:', productosActualizados);
             toast.success("Cantidades guardadas.");
             fetchPedidos();
+            return true;
         } catch (error: any) {
             toast.error(`Error al guardar: ${error.message}`);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Nueva función: guarda cantidades y finaliza picking en un solo paso
+    const guardarYFinalizarPicking = async (): Promise<boolean> => {
+        if (!pedido) return false;
+
+        let hasError = false;
+        const productosActualizados = pedido.productos.map(prod => {
+            const codigo = String(prod.codigo);
+            const val = cantidadesInput[codigo];
+            const cantidad_encontrada = parseInt(val, 10);
+
+            if (val === '' || isNaN(cantidad_encontrada) || cantidad_encontrada < 0) {
+                hasError = true;
+                return prod;
+            }
+            if (cantidad_encontrada > prod.cantidad_pedida) {
+                hasError = true;
+                return prod;
+            }
+            return { ...prod, cantidad_encontrada };
+        });
+
+        if (hasError) return false;
+
+        setLoading(true);
+        try {
+            await finalizarPicking(pedido._id, productosActualizados);
+            toast.success("Picking finalizado. Listo para empacar.");
+            navigate("/admin");
+            return true;
+        } catch (error: any) {
+            toast.error(`Error al finalizar picking: ${error.message}`);
+            return false;
         } finally {
             setLoading(false);
         }
@@ -226,12 +267,13 @@ const PickingDetalle: React.FC = () => {
             toast.warning("Corrige los errores en las cantidades antes de finalizar.");
             return;
         }
-        await handleGuardarCantidades();
         setLoading(true);
         try {
-            await finalizarPicking(pedido._id);
-            toast.success("Picking finalizado. Listo para empacar.");
-            navigate("/admin/packingpedidos");
+            const finalizadoOk = await guardarYFinalizarPicking();
+            if (!finalizadoOk) {
+                setLoading(false);
+                return;
+            }
         } catch (error: any) {
             toast.error(`Error al finalizar: ${error.message}`);
         } finally {

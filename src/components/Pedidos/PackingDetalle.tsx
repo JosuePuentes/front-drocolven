@@ -224,7 +224,7 @@ const PackingDetalle: React.FC = () => {
                     />
                     <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos del Packing</h3>
                     <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
-                        <div className={`space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
+                        <div className={`flex flex-col gap-12 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${noMatch ? 'bg-red-100 transition-colors duration-500' : ''}`}
                             ref={el => {
                                 if (noMatch && el) {
                                     animate(el, { backgroundColor: ['#fff', '#fee2e2', '#fff'], duration: 2000, ease: 'outCubic' });
@@ -235,8 +235,8 @@ const PackingDetalle: React.FC = () => {
                                 const codigo = String(producto.codigo);
                                 const confirmado = confirmados[codigo];
                                 return (
-                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh]">
-                                        <div className="flex flex-row gap-2 mb-2 md:mb-0 items-center">
+                                    <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm min-h-[120px] md:min-h-[100px]">
+                                        <div className="flex flex-row gap-2 mb-2  items-center">
                                             <div className="border p-2 rounded-lg flex-1">
                                                 <div className="flex justify-center items-center">
                                                     <span className="text-black font-bold text-base text-center">{idx + 1}</span>

@@ -106,7 +106,7 @@ const PedidoMiniCard: React.FC<PedidoMiniCardProps> = ({ pedido, onClick, size =
   return (
     <Card
       ref={cardRef}
-      className={`bg-card rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border animate-in fade-in slide-in-from-bottom-5 w-full max-w-md mx-auto ${size === 'lg' ? 'p-2 md:p-4' : 'p-2'}`}
+      className={`bg-card rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border animate-in fade-in slide-in-from-bottom-5 w-full max-w-md mx-auto ${size === 'lg' ? 'p-0 md:p-0' : 'p-0'}`}
       onClick={onClick}
       tabIndex={0}
       aria-label={`Ver detalles del pedido ${pedido._id}`}

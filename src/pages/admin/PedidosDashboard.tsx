@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { usePedido, ESTADOS_PEDIDO } from '../../components/hooks/usePedido';
 import PedidoMiniCard from '../../components/Pedidos/PedidoMiniCard';
+import PedidoNuevoCard from '../../components/Pedidos/PedidoNuevoCard';
 
 const PedidosDashboard: React.FC = () => {
   const { pedidos, fetchPedidos, loading } = usePedido();
@@ -9,16 +10,23 @@ const PedidosDashboard: React.FC = () => {
     fetchPedidos();
     const interval = setInterval(() => {
       fetchPedidos();
-    }, 20000); // Actualiza cada 30 segundos (30,000 ms)
+    }, 20000); // Actualiza cada 20 segundos (20,000 ms)
     return () => clearInterval(interval);
   }, []);
 
-  // Filtrar pedidos en picking, packing o enviado
+  useEffect(() => {
+    if (pedidos && pedidos.length > 0) {
+      console.log('Pedidos nuevos:', pedidos.filter((p) => p.estado === ESTADOS_PEDIDO.NUEVO));
+    }
+  }, [pedidos]);
+
+  // Filtrar pedidos en picking, packing, enviado o nuevo
   const pedidosFiltrados = pedidos.filter(
     (pedido) =>
       pedido.estado === ESTADOS_PEDIDO.PICKING ||
       pedido.estado === ESTADOS_PEDIDO.PACKING ||
-      pedido.estado === ESTADOS_PEDIDO.ENVIADO
+      pedido.estado === ESTADOS_PEDIDO.ENVIADO ||
+      pedido.estado === ESTADOS_PEDIDO.NUEVO
   );
 
   // Separar pedidos por estado
@@ -31,6 +39,9 @@ const PedidosDashboard: React.FC = () => {
   const pedidosEnviando = pedidosFiltrados.filter(
     (p) => p.estado === ESTADOS_PEDIDO.ENVIADO
   );
+  const pedidosNuevos = pedidosFiltrados.filter(
+    (p) => p.estado === ESTADOS_PEDIDO.NUEVO
+  );
 
   return (
     <div className="container mx-auto p-4">
@@ -39,6 +50,24 @@ const PedidosDashboard: React.FC = () => {
         {/* Botón de actualización manual eliminado, ya que la actualización es automática */}
       </div>
       <div className="flex flex-col gap-10">
+        {/* Lista de Nuevos */}
+        <div>
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 pl-1">
+            Nuevos
+          </h2>
+          <ul className="flex flex-row gap-6">
+            {pedidosNuevos.length === 0 && !loading && (
+              <li className="text-center text-muted-foreground py-8">
+                No hay pedidos nuevos.
+              </li>
+            )}
+            {pedidosNuevos.map((pedido) => (
+              <li key={pedido._id}>
+                <PedidoNuevoCard pedido={pedido} onClick={() => {}} />
+              </li>
+            ))}
+          </ul>
+        </div>
         {/* Lista de Picking */}
         <div>
           <h2 className="text-lg font-semibold text-blue-700 mb-3 pl-1">

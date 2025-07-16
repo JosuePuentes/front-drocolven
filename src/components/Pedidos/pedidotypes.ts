@@ -72,6 +72,7 @@ export interface PedidoArmado {
   picking: PickingInfo;
   packing: PackingInfo;
   envio: EnvioInfo;
+  fecha?: string;
   fecha_creacion?: string;
   fecha_actualizacion?: string;
   observacion?: string;

@@ -20,13 +20,15 @@ const PedidosDashboard: React.FC = () => {
     }
   }, [pedidos]);
 
-  // Filtrar pedidos en picking, packing, enviado o nuevo
+  // Filtrar pedidos en picking, packing, enviado, nuevo y facturación
   const pedidosFiltrados = pedidos.filter(
     (pedido) =>
       pedido.estado === ESTADOS_PEDIDO.PICKING ||
       pedido.estado === ESTADOS_PEDIDO.PACKING ||
       pedido.estado === ESTADOS_PEDIDO.ENVIADO ||
-      pedido.estado === ESTADOS_PEDIDO.NUEVO
+      pedido.estado === ESTADOS_PEDIDO.NUEVO ||
+      pedido.estado === ESTADOS_PEDIDO.FACTURANDO ||
+      pedido.estado === ESTADOS_PEDIDO.PARA_FACTURAR
   );
 
   // Separar pedidos por estado
@@ -41,6 +43,11 @@ const PedidosDashboard: React.FC = () => {
   );
   const pedidosNuevos = pedidosFiltrados.filter(
     (p) => p.estado === ESTADOS_PEDIDO.NUEVO
+  );
+  const pedidosFacturacion = pedidosFiltrados.filter(
+    (p) =>
+      p.estado === ESTADOS_PEDIDO.FACTURANDO ||
+      p.estado === ESTADOS_PEDIDO.PARA_FACTURAR
   );
 
   return (
@@ -64,6 +71,24 @@ const PedidosDashboard: React.FC = () => {
             {pedidosNuevos.map((pedido) => (
               <li key={pedido._id}>
                 <PedidoNuevoCard pedido={pedido} onClick={() => {}} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Lista de Facturación */}
+        <div>
+          <h2 className="text-lg font-semibold text-green-700 mb-3 pl-1">
+            En Facturación
+          </h2>
+          <ul className="flex flex-row gap-6">
+            {pedidosFacturacion.length === 0 && !loading && (
+              <li className="text-center text-muted-foreground py-8">
+                No hay pedidos en facturación.
+              </li>
+            )}
+            {pedidosFacturacion.map((pedido) => (
+              <li key={pedido._id}>
+                <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
               </li>
             ))}
           </ul>

@@ -52,9 +52,8 @@ const PedidosDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Dashboard de Pedidos</h1>
-        {/* Botón de actualización manual eliminado, ya que la actualización es automática */}
+      <div className="flex items-center justify-center mb-4">
+        <h1 className="text-2xl font-bold text-foreground text-center w-full">Dashboard de Pedidos</h1>
       </div>
       <div className="flex flex-col gap-10">
         {/* Lista de Nuevos */}

@@ -15,6 +15,7 @@ const estadoLabels: Record<string, string> = {
   picking: 'Picking',
   packing: 'Packing',
   enviado: 'Envío',
+  facturando: 'Facturación',
 };
 
 const getUsuarioActual = (pedido: PedidoArmado): string => {
@@ -25,6 +26,8 @@ const getUsuarioActual = (pedido: PedidoArmado): string => {
       return pedido.packing?.usuario || '—';
     case 'enviado':
       return pedido.envio?.conductor || pedido.envio?.usuario || '—';
+    case 'facturando':
+      return pedido.facturacion?.usuario || '—';
     default:
       return '—';
   }
@@ -38,6 +41,8 @@ const getTiempoInicio = (pedido: PedidoArmado): string | null => {
       return pedido.packing?.fechainicio_packing || null;
     case 'enviado':
       return pedido.envio?.fechainicio_envio || null;
+    case 'facturando':
+      return pedido.facturacion?.fechainicio_facturacion || null;
     default:
       return null;
   }
@@ -79,6 +84,8 @@ const PedidoMiniCard: React.FC<PedidoMiniCardProps> = ({ pedido, onClick, size =
           } else {
             setTimerColor('text-red-600');
           }
+        } else if (pedido.estado === 'facturando') {
+          setTimerColor('text-blue-600');
         } else {
           setTimerColor('text-gray-700');
         }
@@ -90,7 +97,8 @@ const PedidoMiniCard: React.FC<PedidoMiniCardProps> = ({ pedido, onClick, size =
     const enCurso =
       (pedido.estado === 'picking' && pedido.picking?.estado_picking === 'en_proceso') ||
       (pedido.estado === 'packing' && pedido.packing?.estado_packing === 'en_proceso') ||
-      (pedido.estado === 'enviado' && pedido.envio?.estado_envio === 'en_proceso');
+      (pedido.estado === 'enviado' && pedido.envio?.estado_envio === 'en_proceso') ||
+      (pedido.estado === 'facturando' && pedido.facturacion?.estado_facturacion === 'en_proceso');
     update();
     if (enCurso) {
       interval = setInterval(update, 1000);

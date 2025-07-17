@@ -74,24 +74,6 @@ const PedidosDashboard: React.FC = () => {
             ))}
           </ul>
         </div>
-        {/* Lista de Facturación */}
-        <div>
-          <h2 className="text-lg font-semibold text-green-700 mb-3 pl-1">
-            En Facturación
-          </h2>
-          <ul className="flex flex-row gap-6">
-            {pedidosFacturacion.length === 0 && !loading && (
-              <li className="text-center text-muted-foreground py-8">
-                No hay pedidos en facturación.
-              </li>
-            )}
-            {pedidosFacturacion.map((pedido) => (
-              <li key={pedido._id}>
-                <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
-              </li>
-            ))}
-          </ul>
-        </div>
         {/* Lista de Picking */}
         <div>
           <h2 className="text-lg font-semibold text-blue-700 mb-3 pl-1">
@@ -122,6 +104,24 @@ const PedidosDashboard: React.FC = () => {
               </li>
             )}
             {pedidosPacking.map((pedido) => (
+              <li key={pedido._id}>
+                <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Lista de Facturación */}
+        <div>
+          <h2 className="text-lg font-semibold text-green-700 mb-3 pl-1">
+            En Facturación
+          </h2>
+          <ul className="flex flex-row gap-6">
+            {pedidosFacturacion.length === 0 && !loading && (
+              <li className="text-center text-muted-foreground py-8">
+                No hay pedidos en facturación.
+              </li>
+            )}
+            {pedidosFacturacion.map((pedido) => (
               <li key={pedido._id}>
                 <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
               </li>

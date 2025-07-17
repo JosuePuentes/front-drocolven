@@ -303,6 +303,10 @@ const PickingDetalle: React.FC = () => {
       );
       return;
     }
+    // Confirmación antes de finalizar
+    if (!window.confirm("¿Estás seguro de que deseas finalizar el picking? Esta acción no se puede deshacer.")) {
+      return;
+    }
     setLoading(true);
     try {
       const finalizadoOk = await guardarYFinalizarPicking();

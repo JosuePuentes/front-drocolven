@@ -326,11 +326,13 @@ export const usePedido = () => {
   };
 
   // Cambiar estado a 'facturando'
-  const actualizarEstadoFacturacion = async (pedidoId: string) => {
+  const actualizarEstadoFacturacion = async (pedidoId: string, facturacion: any) => {
     setLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/actualizar_facturacion/${pedidoId}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(facturacion),
       });
       if (!response.ok) throw new Error('Error al actualizar estado a facturando');
       await obtenerPedidosParaFacturar();

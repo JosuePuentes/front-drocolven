@@ -13,11 +13,13 @@ import {
 } from "react-icons/ai";
 import { animate } from 'animejs';
 import { ProductoArmado } from "../Pedidos/pedidotypes";
+import { useAdminAuth } from "@/context/AuthAdminContext";
 
 const FacturacionDetalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { pedido, setPedido, loading, finalizarFacturacion, actualizarEstadoFacturacion } = usePedido();
+  const { admin } = useAdminAuth();
   const detalleRef = useRef<HTMLDivElement>(null);
   const codigoRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [codigoIndex, setCodigoIndex] = useState<number>(0);
@@ -138,13 +140,13 @@ const FacturacionDetalle: React.FC = () => {
     try {
       // Crear subobjeto de facturacion si no existe
       const facturacion = pedido.facturacion || {
-        usuario: '',
+        usuario: admin?.usuario || '',
         fechainicio_facturacion: new Date().toISOString(),
         fechafin_facturacion: null,
         estado_facturacion: 'en_proceso',
       };
       // Actualizar el pedido con el subestado de facturación
-      await actualizarEstadoFacturacion(pedido._id);
+      await actualizarEstadoFacturacion(pedido._id, facturacion);
       toast.success("Facturación iniciada correctamente.");
       setPedido({ ...pedido, estado: ESTADOS_PEDIDO.FACTURANDO, facturacion });
     } catch (error: any) {

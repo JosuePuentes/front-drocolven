@@ -421,7 +421,6 @@ const PackingDetalle: React.FC = () => {
                           setModalOpen(null);
                         }}
                         producto={producto}
-                        disabled={!isPackingStarted}
                       />
                     </div>
                   </div>

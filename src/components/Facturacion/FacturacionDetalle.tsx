@@ -127,7 +127,14 @@ const FacturacionDetalle: React.FC = () => {
   const handleFinalizar = async () => {
     if (!pedido) return;
     try {
-      await finalizarFacturacion(pedido._id);
+      // Enviar el objeto facturacion al backend
+      const facturacion = {
+        ...pedido.facturacion,
+        fechafin_facturacion: new Date().toISOString(),
+        estado_facturacion: 'finalizado',
+        usuario: pedido.facturacion?.usuario || admin?.usuario || '',
+      };
+      await finalizarFacturacion(pedido._id, facturacion);
       toast.success("Facturación finalizada. Pedido enviado.");
       navigate('/admin/facturacionpedidos');
     } catch (error) {

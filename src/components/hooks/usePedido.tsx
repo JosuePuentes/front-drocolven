@@ -344,11 +344,13 @@ export const usePedido = () => {
   };
 
   // Finalizar facturación (cambia a 'enviado')
-  const finalizarFacturacion = async (pedidoId: string) => {
+  const finalizarFacturacion = async (pedidoId: string, facturacion: any) => {
     setLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/finalizar_facturacion/${pedidoId}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(facturacion),
       });
       if (!response.ok) throw new Error('Error al finalizar facturación');
       await obtenerPedidosParaFacturar();

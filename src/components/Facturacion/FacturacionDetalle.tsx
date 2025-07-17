@@ -33,12 +33,18 @@ const FacturacionDetalle: React.FC = () => {
     if (e.ctrlKey && e.key.toLowerCase() === 'q') {
       e.preventDefault();
       if (!productosRef.current.length) return;
-      const nextIndex = codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
+      let nextIndex = codigoIndex;
+      if (e.shiftKey) {
+        // Ctrl+Shift+Q: subir
+        nextIndex = codigoIndex > 0 ? codigoIndex - 1 : productosRef.current.length - 1;
+      } else {
+        // Ctrl+Q: bajar
+        nextIndex = codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
+      }
       setCodigoIndex(nextIndex);
       setTimeout(() => {
         const ref = codigoRefs.current[nextIndex];
         if (ref) {
-          // Selecciona el texto del span
           const range = document.createRange();
           range.selectNodeContents(ref);
           const sel = window.getSelection();
@@ -46,7 +52,6 @@ const FacturacionDetalle: React.FC = () => {
             sel.removeAllRanges();
             sel.addRange(range);
           }
-          // Scroll automático para mostrar el código seleccionado
           ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, 50);
@@ -245,7 +250,23 @@ const FacturacionDetalle: React.FC = () => {
                         <span
                           ref={el => { codigoRefs.current[idx] = el ?? null; }}
                           tabIndex={-1}
-                          className={`font-mono tracking-widest text-xs text-gray-500 mb-2 ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
+                          className={`font-mono tracking-widest text-xs text-gray-500 mb-2 cursor-pointer ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
+                          onClick={() => {
+                            setCodigoIndex(idx);
+                            setTimeout(() => {
+                              const ref = codigoRefs.current[idx];
+                              if (ref) {
+                                const range = document.createRange();
+                                range.selectNodeContents(ref);
+                                const sel = window.getSelection();
+                                if (sel) {
+                                  sel.removeAllRanges();
+                                  sel.addRange(range);
+                                }
+                                ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }, 50);
+                          }}
                         >{producto.codigo ?? '—'}</span>
                         <span className="text-gray-700 mb-1">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
                         {/* Precio con descuentos 1 y 2 aplicados */}

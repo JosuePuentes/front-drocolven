@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -19,6 +19,46 @@ const FacturacionDetalle: React.FC = () => {
   const navigate = useNavigate();
   const { pedido, setPedido, loading, finalizarFacturacion, actualizarEstadoFacturacion } = usePedido();
   const detalleRef = useRef<HTMLDivElement>(null);
+  const codigoRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [codigoIndex, setCodigoIndex] = useState<number>(0);
+  // Maneja Ctrl+Q para seleccionar el código de cada producto uno a uno
+  // Definimos productos aquí para que esté disponible en todo el componente
+  const productos: ProductoArmado[] = pedido?.productos || [];
+  const productosRef = useRef<ProductoArmado[]>(productos);
+  productosRef.current = productos;
+  // Estadísticas y productos
+  // productos solo se declara aquí y se usa en todo el componente
+  productosRef.current = productos;
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key.toLowerCase() === 'q') {
+      e.preventDefault();
+      if (!productosRef.current.length) return;
+      const nextIndex = codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
+      setCodigoIndex(nextIndex);
+      setTimeout(() => {
+        const ref = codigoRefs.current[nextIndex];
+        if (ref) {
+          // Selecciona el texto del span
+          const range = document.createRange();
+          range.selectNodeContents(ref);
+          const sel = window.getSelection();
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+          // Scroll automático para mostrar el código seleccionado
+          ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+    }
+  }, [codigoIndex]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
   const [elapsed, setElapsed] = useState<string>("—");
 
   useEffect(() => {
@@ -129,8 +169,8 @@ const FacturacionDetalle: React.FC = () => {
   }
 
   // Estadísticas y productos
-  const productos: ProductoArmado[] = pedido.productos || [];
-  const montoTotal = productos.reduce((acc, p) => acc + ((p.cantidad_pedida || 0) * (p.precio_unitario || 0)), 0);
+  // productos ya está declarado arriba
+  const montoTotal = productos.reduce((acc: number, p: ProductoArmado) => acc + ((p.cantidad_pedida || 0) * (p.precio_unitario || 0)), 0);
   const usuarioFacturo = "-";
   const fechaInicio = pedido.fecha_creacion ? new Date(pedido.fecha_creacion).toLocaleString() : "-";
 
@@ -171,32 +211,57 @@ const FacturacionDetalle: React.FC = () => {
           <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos de la Facturación</h3>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
             <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
-              {productos.map((producto, idx) => {
+              {productos.map((producto: ProductoArmado, idx: number) => {
                 const codigo = String(producto.codigo ?? idx);
                 return (
-                  <div key={codigo} className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh]">
-                    <div className="flex flex-row gap-2 mb-2 md:mb-0 items-center w-full">
-                      <div className="border p-2 rounded-lg flex-1 w-full">
-                        <div className="flex justify-between items-center">
-                          <span className="text-black font-bold text-base">{idx + 1}</span>
-                          <span className="font-mono tracking-widest text-xs text-gray-500">{producto.codigo ?? '—'}</span>
-                        </div>
-                        <div className="font-semibold text-black text-xl md:text-lg mt-1">{producto.descripcion}</div>
-                        <div className="flex flex-wrap gap-2 mt-1 text-sm">
-                          <span className="text-gray-700">Precio: <span className="font-semibold text-green-600">$ {(producto.precio ?? producto.precio_unitario ?? 0).toFixed(2)}</span></span>
+                  <div
+                    key={codigo}
+                    className="flex flex-col md:flex-col bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh] md:mb-8 mb-4"
+                  >
+                    {/* Índice arriba */}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-black font-bold text-base">{idx + 1}</span>
+                    </div>
+                    <div className="flex flex-col md:flex-row w-full gap-4">
+                      {/* Columna izquierda: descripción y demás */}
+                      <div className="flex-1">
+                        <div className="font-semibold text-black text-xl md:text-lg mb-1">{producto.descripcion}</div>
+                        <div className="flex flex-wrap gap-2 mb-1 text-sm">
                           <span className="text-gray-700">Subtotal: <span className="font-semibold">$ {(producto.subtotal ?? (producto.cantidad_pedida * (producto.precio_unitario || 0))).toFixed(2)}</span></span>
                         </div>
-                        <div className="flex flex-wrap gap-4 mt-1 text-xs">
+                        <div className="flex flex-wrap gap-4 mb-1 text-xs">
                           <span className="text-gray-500">Descuento1: <span className="font-bold text-blue-700">{producto.descuento1 ?? 0}%</span></span>
                           <span className="text-gray-500">Descuento2: <span className="font-bold text-blue-700">{producto.descuento2 ?? 0}%</span></span>
                           <span className="text-gray-500">Descuento3: <span className="font-bold text-blue-700">{producto.descuento3 ?? 0}%</span></span>
                           <span className="text-gray-500">Descuento4: <span className="font-bold text-blue-700">{producto.descuento4 ?? 0}%</span></span>
                         </div>
-                        <div className="flex flex-wrap gap-4 mt-1 text-xs">
+                        <div className="flex flex-wrap gap-4 mb-1 text-xs">
                           <span className="text-gray-700">Cantidad pedida: <span className="font-bold">{producto.cantidad_pedida}</span></span>
-                          <span className="text-gray-700">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
                           <span className="text-gray-700">Existencia real: <span className="font-bold text-purple-700">{producto.existencia ?? '-'}</span></span>
                         </div>
+                      </div>
+                      {/* Columna derecha: información seleccionada */}
+                      <div className="flex flex-col items-start justify-center min-w-[140px] md:min-w-[180px] md:pl-4 border-l border-gray-200">
+                        <span
+                          ref={el => { codigoRefs.current[idx] = el ?? null; }}
+                          tabIndex={-1}
+                          className={`font-mono tracking-widest text-xs text-gray-500 mb-2 ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
+                        >{producto.codigo ?? '—'}</span>
+                        <span className="text-gray-700 mb-1">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
+                        {/* Precio con descuentos 1 y 2 aplicados */}
+                        {(() => {
+                          const base = producto.precio ?? producto.precio_unitario ?? 0;
+                          const d1 = producto.descuento1 ?? 0;
+                          const d2 = producto.descuento2 ?? 0;
+                          const precioD1 = base * (1 - d1 / 100);
+                          const precioFinal = precioD1 * (1 - d2 / 100);
+                          return (
+                            <>
+                              <span className="text-gray-700">Precio original: <span className="font-semibold text-gray-600">$ {base.toFixed(2)}</span></span>
+                              <span className="text-gray-700">Precio c/desc. <span className="font-semibold text-green-600">$ {precioFinal.toFixed(2)}</span></span>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>

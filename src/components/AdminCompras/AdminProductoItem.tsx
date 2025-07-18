@@ -9,19 +9,29 @@ interface Props {
   descuentoCliente2: number; // Segundo descuento del cliente
 }
 
-const AdminProductoItem = ({ producto, onAgregar, descuentoCliente1, descuentoCliente2 }: Props) => {
+const AdminProductoItem = ({
+  producto,
+  onAgregar,
+  descuentoCliente1,
+  descuentoCliente2,
+}: Props) => {
   const [cantidadPedida, setCantidadPedida] = useState(0);
-  const calcularPrecioNeto = () => {
+
+  // Precio base tras aplicar solo DL y DE
+  const calcularPrecioBaseDLDE = () => {
     const { precio, descuento1, descuento2 } = producto;
+    return precio * (1 - descuento1 / 100) * (1 - descuento2 / 100);
+  };
+
+  const calcularPrecioNeto = () => {
     return (
-      precio *
-      (1 - descuento1 / 100) *
-      (1 - descuento2 / 100) *
-      (1 - descuentoCliente1 / 100) * // Aplicar el descuento del cliente como tercer descuento
-      (1 - descuentoCliente2 / 100)   // Aplicar el descuento del cliente como cuarto descuento
+      calcularPrecioBaseDLDE() *
+      (1 - descuentoCliente1 / 100) *
+      (1 - descuentoCliente2 / 100)
     );
   };
 
+  const precioBaseDLDE = calcularPrecioBaseDLDE();
   const precioNeto = calcularPrecioNeto();
 
   const handleAgregar = () => {
@@ -37,18 +47,35 @@ const AdminProductoItem = ({ producto, onAgregar, descuentoCliente1, descuentoCl
     });
     setCantidadPedida(0); // Reset después de agregar
   };
-  
+
   return (
     <div className="border rounded-2xl shadow p-4 flex flex-col md:flex-row justify-between items-center bg-white gap-4">
       <div className="flex-1">
         <h3 className="text-lg font-bold">{producto.descripcion}</h3>
         <div className="flex flex-row flex-wrap gap-1 mt-2 items-center">
-          <p className="text-sm text-gray-500">Precio base: ${producto.precio.toFixed(2)}</p>
-          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">DL: {producto.descuento1.toFixed(2)}%</p>
-          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">DE: {producto.descuento2.toFixed(2)}%</p>
-          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">DC: {descuentoCliente1.toFixed(2)}%</p>
-          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">PP: {descuentoCliente2.toFixed(2)}%</p>
-          <p className="text-sm text-gray-800 font-semibold">Neto: ${precioNeto.toFixed(2)}</p>
+          <p className="text-sm text-gray-500">
+            Precio base: ${producto.precio.toFixed(2)}
+          </p>
+          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">
+            DL: {producto.descuento1.toFixed(2)}%
+          </p>
+          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">
+            DE: {producto.descuento2.toFixed(2)}%
+          </p>
+          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">
+            DC: {descuentoCliente1.toFixed(2)}%
+          </p>
+          <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">
+            PP: {descuentoCliente2.toFixed(2)}%
+          </p>
+          <div>
+            <p className="text-sm text-green-500">
+              Base DL+DE: ${precioBaseDLDE.toFixed(2)}
+            </p>
+            <p className="text-sm text-black font-semibold">
+              Neto: ${precioNeto.toFixed(2)}
+            </p>
+          </div>
         </div>
       </div>
       <div className="flex items-center gap-2">

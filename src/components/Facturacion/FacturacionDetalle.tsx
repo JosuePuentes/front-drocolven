@@ -32,15 +32,15 @@ const FacturacionDetalle: React.FC = () => {
   // productos solo se declara aquí y se usa en todo el componente
   productosRef.current = productos;
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key.toLowerCase() === 'q') {
+    if (e.ctrlKey && e.key.toLowerCase() === 'k') {
       e.preventDefault();
       if (!productosRef.current.length) return;
       let nextIndex = codigoIndex;
       if (e.shiftKey) {
-        // Ctrl+Shift+Q: subir
+        // Ctrl+Shift+K: subir
         nextIndex = codigoIndex > 0 ? codigoIndex - 1 : productosRef.current.length - 1;
       } else {
-        // Ctrl+Q: bajar
+        // Ctrl+K: bajar
         nextIndex = codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
       }
       setCodigoIndex(nextIndex);
@@ -239,7 +239,12 @@ const FacturacionDetalle: React.FC = () => {
                     <div className="flex flex-col md:flex-row w-full gap-4">
                       {/* Columna izquierda: descripción y demás */}
                       <div className="flex-1">
-                        <div className="font-semibold text-black text-xl md:text-lg mb-1">{producto.descripcion}</div>
+                        <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
+                          {producto.descripcion}
+                          {producto.nacional && (
+                            <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">Nacional</span>
+                          )}
+                        </div>
                         <div className="flex flex-wrap gap-2 mb-1 text-sm">
                           <span className="text-gray-700">Subtotal: <span className="font-semibold">$ {(producto.subtotal ?? (producto.cantidad_pedida * (producto.precio_unitario || 0))).toFixed(2)}</span></span>
                         </div>

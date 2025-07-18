@@ -70,6 +70,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
         };
     }, []);
 
+
     const total = useMemo(() => {
         return carrito.reduce((acc, prod) => {
             const precioNeto = prod.precio_n ?? prod.precio;
@@ -81,6 +82,14 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
         return carrito.reduce((acc, prod) => {
             const precio = prod.precio;
             return acc + (precio * prod.cantidad_pedida);
+        }, 0);
+    }, [carrito]);
+
+    // Total solo con descuento 1 y 2
+    const totalDLDE = useMemo(() => {
+        return carrito.reduce((acc, prod) => {
+            const precioDLDE = prod.precio * (1 - (prod.descuento1 ?? 0) / 100) * (1 - (prod.descuento2 ?? 0) / 100);
+            return acc + (precioDLDE * prod.cantidad_pedida);
         }, 0);
     }, [carrito]);
 
@@ -283,7 +292,26 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 </div>
             )}
 
-            <div className="pt-6 border-t border-gray-100 space-y-3"> 
+            <div className="pt-6 border-t border-gray-100 space-y-3">
+                {/* Totales del carrito */}
+                <div className="flex flex-col items-end gap-1 text-base font-medium text-gray-700 mb-2">
+                  <div className="flex gap-4">
+                    <span className="text-gray-500">Subtotal:</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span className="text-gray-500">Total DL+DE:</span>
+                    <span>${totalDLDE.toFixed(2)}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span className="text-gray-500">Descuento:</span>
+                    <span>- ${(subtotal - total).toFixed(2)}</span>
+                  </div>
+                  <div className="flex gap-4 text-lg font-bold">
+                    <span className="text-gray-800">Total:</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-2 justify-end">
                   <button
                     className="bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors"

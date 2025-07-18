@@ -114,31 +114,35 @@ const PedidoMiniCard: React.FC<PedidoMiniCardProps> = ({ pedido, onClick, size =
   return (
     <Card
       ref={cardRef}
-      className={`bg-card rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border animate-in fade-in slide-in-from-bottom-5 w-full max-w-md mx-auto ${size === 'lg' ? 'p-0 md:p-0' : 'p-0'}`}
+      className={`bg-card rounded-none shadow-none border-0 w-full p-0 m-0 ${size === 'lg' ? '' : ''}`}
       onClick={onClick}
       tabIndex={0}
       aria-label={`Ver detalles del pedido ${pedido._id}`}
     >
-      <CardContent className={`flex flex-col gap-2 ${size === 'lg' ? 'p-4' : 'p-3'}`}>
-        <div className="flex items-center justify-between">
-          <Badge variant="secondary" className={`capitalize text-xs px-2 py-0.5 ${size === 'lg' ? 'text-base' : ''}`}>
+      <CardContent className="flex flex-row items-center gap-4 w-full p-0">
+        {/* Estado y ID */}
+        <div className="flex flex-col items-start min-w-[120px]">
+          <Badge variant="secondary" className={`capitalize text-xs px-2 py-0.5 ${size === 'lg' ? 'text-base' : ''}`}> 
             {estadoLabels[pedido.estado] || pedido.estado}
           </Badge>
           <span className={`text-xs text-muted-foreground ${size === 'lg' ? 'text-base' : ''}`}>#{pedido._id.slice(-5)}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <AiOutlineIdcard className="w-6 h-6 text-green-600" />
-          <span className="text-base text-gray-500 font-semibold">Cliente:</span>
-          <span className="text-lg text-gray-800 font-semibold truncate max-w-[160px]">{pedido.cliente}</span>
+        {/* Cliente */}
+        <div className="flex items-center gap-2 flex-1 min-w-[180px]">
+          <AiOutlineIdcard className="w-5 h-5 text-green-600" />
+          <span className="text-base text-gray-500 font-semibold hidden md:inline">Cliente:</span>
+          <span className="text-lg text-gray-800 font-semibold break-words leading-snug line-clamp-2 whitespace-normal">{pedido.cliente}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <AiOutlineClockCircle className="w-6 h-6 text-gray-500" />
-          <span className={`text-2xl font-mono font-bold ${timerColor}`}>{tiempo}</span>
+        {/* Tiempo */}
+        <div className="flex items-center gap-2 min-w-[120px]">
+          <AiOutlineClockCircle className="w-5 h-5 text-gray-500" />
+          <span className={`text-xl font-mono font-bold ${timerColor}`}>{tiempo}</span>
         </div>
-        <div className="flex items-center gap-2 mt-2">
-          <AiOutlineUser className="w-6 h-6 text-blue-600" />
-          <span className="text-base text-gray-500 font-semibold">Usuario:</span>
-          <span className="text-xl font-bold text-foreground truncate max-w-[160px]">{getUsuarioActual(pedido)}</span>
+        {/* Usuario */}
+        <div className="flex items-center gap-2 min-w-[160px]">
+          <AiOutlineUser className="w-5 h-5 text-blue-600" />
+          <span className="text-base text-gray-500 font-semibold hidden md:inline">Usuario:</span>
+          <span className="text-base text-gray-800 font-medium truncate max-w-[120px]">{getUsuarioActual(pedido)}</span>
         </div>
       </CardContent>
     </Card>

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { ChipFiltroNacional } from "../Pedidos/FiltroItemNacional";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
 import {
@@ -38,6 +39,13 @@ const FacturacionDetalle: React.FC = () => {
   // Maneja Ctrl+Q para seleccionar el código de cada producto uno a uno
   // Definimos productos aquí para que esté disponible en todo el componente
   const productos: ProductoArmado[] = pedido?.productos || [];
+  const [filtroNacional, setFiltroNacional] = useState<"todos" | "nacional" | "no_nacional">("todos");
+  const productosFiltrados = productos.filter((p) => {
+    if (filtroNacional === "todos") return true;
+    if (filtroNacional === "nacional") return p.nacional === "SI";
+    if (filtroNacional === "no_nacional") return p.nacional !== "SI";
+    return true;
+  });
   const productosRef = useRef<ProductoArmado[]>(productos);
   productosRef.current = productos;
   // Estadísticas y productos
@@ -205,7 +213,7 @@ const FacturacionDetalle: React.FC = () => {
 
   // Estadísticas y productos
   // productos ya está declarado arriba
-  const montoTotal = productos.reduce(
+  const montoTotal = productosFiltrados.reduce(
     (acc: number, p: ProductoArmado) =>
       acc + (p.cantidad_pedida || 0) * (p.precio_unitario || 0),
     0
@@ -280,13 +288,16 @@ const FacturacionDetalle: React.FC = () => {
           <h3 className="text-lg text-center font-bold mb-2 text-gray-800">
             Productos de la Facturación
           </h3>
+          <div className="flex justify-end mb-2">
+            <ChipFiltroNacional onChange={setFiltroNacional} initialFiltro="todos" />
+          </div>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
             {(() => {
               // Separar productos con cantidad_encontrada === 0
-              const productosConCantidad = productos.filter(
+              const productosConCantidad = productosFiltrados.filter(
                 (p) => (p.cantidad_encontrada ?? 0) > 0
               );
-              const productosSinCantidad = productos.filter(
+              const productosSinCantidad = productosFiltrados.filter(
                 (p) => (p.cantidad_encontrada ?? 0) === 0
               );
               const productosOrdenados = [
@@ -323,10 +334,13 @@ const FacturacionDetalle: React.FC = () => {
                                 <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
                                   {producto.descripcion}
                                   <div>
-                                    nacional
-                                    {producto.nacional && (
+                                    {producto.nacional == "SI" ? (
                                       <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">
                                         Nacional
+                                      </span>
+                                    ) : (
+                                      <span className="bg-red-100 text-red-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">
+                                        Importado
                                       </span>
                                     )}
                                   </div>

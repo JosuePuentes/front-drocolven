@@ -137,6 +137,10 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 subtotal: parseFloat((prod.precio * prod.cantidad_pedida).toFixed(4)),
                 cantidad_pedida: prod.cantidad_pedida,
                 cantidad_encontrada: prod.cantidad_encontrada,
+                laboratorio: prod.laboratorio ?? null,
+                fv: prod.fv ?? null,
+                nacional: prod.nacional ?? null,
+                dpto: prod.dpto ?? null,
             })),
         };
         // Imprimir en consola el resumen antes de enviar

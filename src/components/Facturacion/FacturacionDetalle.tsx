@@ -224,85 +224,104 @@ const FacturacionDetalle: React.FC = () => {
         <CardContent>
           <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos de la Facturación</h3>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
-            <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
-              {productos.map((producto: ProductoArmado, idx: number) => {
-                const codigo = String(producto.codigo ?? idx);
-                return (
-                  <div
-                    key={codigo}
-                    className="flex flex-col md:flex-col bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh] md:mb-8 mb-4"
-                  >
-                    {/* Índice arriba */}
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-black font-bold text-base">{idx + 1}</span>
-                    </div>
-                    <div className="flex flex-col md:flex-row w-full gap-4">
-                      {/* Columna izquierda: descripción y demás */}
-                      <div className="flex-1">
-                        <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
-                          {producto.descripcion}
-                          {producto.nacional && (
-                            <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">Nacional</span>
-                          )}
+            {(() => {
+              // Separar productos con cantidad_encontrada === 0
+              const productosConCantidad = productos.filter(
+                (p) => (p.cantidad_encontrada ?? 0) > 0
+              );
+              const productosSinCantidad = productos.filter(
+                (p) => (p.cantidad_encontrada ?? 0) === 0
+              );
+              const productosOrdenados = [...productosConCantidad, ...productosSinCantidad];
+              const divisionIndex = productosConCantidad.length;
+              return (
+                <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                  {productosOrdenados.map((producto: ProductoArmado, idx: number) => {
+                    const codigo = String(producto.codigo ?? idx);
+                    // Insertar línea divisoria antes del primer producto con cantidad_encontrada === 0
+                    const showDivider = divisionIndex > 0 && idx === divisionIndex;
+                    return (
+                      <React.Fragment key={codigo}>
+                        {showDivider && (
+                          <div className="w-full border-t-2 border-red-500 my-2" aria-label="Separador productos sin encontrar" />
+                        )}
+                        <div
+                          className="flex flex-col md:flex-col bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh] md:mb-8 mb-4"
+                        >
+                          {/* Índice arriba */}
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-black font-bold text-base">{idx + 1}</span>
+                          </div>
+                          <div className="flex flex-col md:flex-row w-full gap-4">
+                            {/* Columna izquierda: descripción y demás */}
+                            <div className="flex-1">
+                              <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
+                                {producto.descripcion}
+                                {producto.nacional && (
+                                  <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">Nacional</span>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-2 mb-1 text-sm">
+                                <span className="text-gray-700">Subtotal: <span className="font-semibold">$ {(producto.subtotal ?? (producto.cantidad_pedida * (producto.precio_unitario || 0))).toFixed(2)}</span></span>
+                              </div>
+                              <div className="flex flex-wrap gap-4 mb-1 text-xs">
+                                <span className="text-gray-500">Descuento1: <span className="font-bold text-blue-700">{producto.descuento1 ?? 0}%</span></span>
+                                <span className="text-gray-500">Descuento2: <span className="font-bold text-blue-700">{producto.descuento2 ?? 0}%</span></span>
+                                <span className="text-gray-500">Descuento3: <span className="font-bold text-blue-700">{producto.descuento3 ?? 0}%</span></span>
+                                <span className="text-gray-500">Descuento4: <span className="font-bold text-blue-700">{producto.descuento4 ?? 0}%</span></span>
+                              </div>
+                              <div className="flex flex-wrap gap-4 mb-1 text-xs">
+                                <span className="text-gray-700">Cantidad pedida: <span className="font-bold">{producto.cantidad_pedida}</span></span>
+                                <span className="text-gray-700">Existencia real: <span className="font-bold text-purple-700">{producto.existencia ?? '-'}</span></span>
+                              </div>
+                            </div>
+                            {/* Columna derecha: información seleccionada */}
+                            <div className="flex flex-col items-start justify-center min-w-[140px] md:min-w-[180px] md:pl-4 border-l border-gray-200">
+                              <span
+                                ref={el => { codigoRefs.current[idx] = el ?? null; }}
+                                tabIndex={-1}
+                                className={`font-mono tracking-widest text-xs text-gray-500 mb-2 cursor-pointer ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
+                                onClick={() => {
+                                  setCodigoIndex(idx);
+                                  setTimeout(() => {
+                                    const ref = codigoRefs.current[idx];
+                                    if (ref) {
+                                      const range = document.createRange();
+                                      range.selectNodeContents(ref);
+                                      const sel = window.getSelection();
+                                      if (sel) {
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                      }
+                                      ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }
+                                  }, 50);
+                                }}
+                              >{producto.codigo ?? '—'}</span>
+                              <span className="text-gray-700 mb-1">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
+                              {/* Precio con descuentos 1 y 2 aplicados */}
+                              {(() => {
+                                const base = producto.precio ?? producto.precio_unitario ?? 0;
+                                const d1 = producto.descuento1 ?? 0;
+                                const d2 = producto.descuento2 ?? 0;
+                                const precioD1 = base * (1 - d1 / 100);
+                                const precioFinal = precioD1 * (1 - d2 / 100);
+                                return (
+                                  <>
+                                    <span className="text-gray-700">Precio original: <span className="font-semibold text-gray-600">$ {base.toFixed(2)}</span></span>
+                                    <span className="text-gray-700">Precio c/desc. <span className="font-semibold text-green-600">$ {precioFinal.toFixed(2)}</span></span>
+                                  </>
+                                );
+                              })()}
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-2 mb-1 text-sm">
-                          <span className="text-gray-700">Subtotal: <span className="font-semibold">$ {(producto.subtotal ?? (producto.cantidad_pedida * (producto.precio_unitario || 0))).toFixed(2)}</span></span>
-                        </div>
-                        <div className="flex flex-wrap gap-4 mb-1 text-xs">
-                          <span className="text-gray-500">Descuento1: <span className="font-bold text-blue-700">{producto.descuento1 ?? 0}%</span></span>
-                          <span className="text-gray-500">Descuento2: <span className="font-bold text-blue-700">{producto.descuento2 ?? 0}%</span></span>
-                          <span className="text-gray-500">Descuento3: <span className="font-bold text-blue-700">{producto.descuento3 ?? 0}%</span></span>
-                          <span className="text-gray-500">Descuento4: <span className="font-bold text-blue-700">{producto.descuento4 ?? 0}%</span></span>
-                        </div>
-                        <div className="flex flex-wrap gap-4 mb-1 text-xs">
-                          <span className="text-gray-700">Cantidad pedida: <span className="font-bold">{producto.cantidad_pedida}</span></span>
-                          <span className="text-gray-700">Existencia real: <span className="font-bold text-purple-700">{producto.existencia ?? '-'}</span></span>
-                        </div>
-                      </div>
-                      {/* Columna derecha: información seleccionada */}
-                      <div className="flex flex-col items-start justify-center min-w-[140px] md:min-w-[180px] md:pl-4 border-l border-gray-200">
-                        <span
-                          ref={el => { codigoRefs.current[idx] = el ?? null; }}
-                          tabIndex={-1}
-                          className={`font-mono tracking-widest text-xs text-gray-500 mb-2 cursor-pointer ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
-                          onClick={() => {
-                            setCodigoIndex(idx);
-                            setTimeout(() => {
-                              const ref = codigoRefs.current[idx];
-                              if (ref) {
-                                const range = document.createRange();
-                                range.selectNodeContents(ref);
-                                const sel = window.getSelection();
-                                if (sel) {
-                                  sel.removeAllRanges();
-                                  sel.addRange(range);
-                                }
-                                ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                              }
-                            }, 50);
-                          }}
-                        >{producto.codigo ?? '—'}</span>
-                        <span className="text-gray-700 mb-1">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
-                        {/* Precio con descuentos 1 y 2 aplicados */}
-                        {(() => {
-                          const base = producto.precio ?? producto.precio_unitario ?? 0;
-                          const d1 = producto.descuento1 ?? 0;
-                          const d2 = producto.descuento2 ?? 0;
-                          const precioD1 = base * (1 - d1 / 100);
-                          const precioFinal = precioD1 * (1 - d2 / 100);
-                          return (
-                            <>
-                              <span className="text-gray-700">Precio original: <span className="font-semibold text-gray-600">$ {base.toFixed(2)}</span></span>
-                              <span className="text-gray-700">Precio c/desc. <span className="font-semibold text-green-600">$ {precioFinal.toFixed(2)}</span></span>
-                            </>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
             <div className="text-lg font-bold">

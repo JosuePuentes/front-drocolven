@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ChipFiltroNacional } from "./FiltroItemNacional";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
 import {
@@ -43,6 +44,14 @@ const PackingDetalle: React.FC = () => {
   } = usePedido();
 
   const [elapsed, setElapsed] = useState<string>("—");
+  const [filtroNacional, setFiltroNacional] = useState<"todos" | "nacional" | "no_nacional">("todos");
+  // Filtrar productos según filtro nacional
+  const productosFiltrados = pedido?.productos?.filter((p) => {
+    if (filtroNacional === "todos") return true;
+    if (filtroNacional === "nacional") return p.nacional === "SI";
+    if (filtroNacional === "no_nacional") return p.nacional !== "SI";
+    return true;
+  }) || [];
   const [noMatch, setNoMatch] = useState(false);
   const [modalOpen, setModalOpen] = useState<string | null>(null);
   const [confirmados, setConfirmados] = useState<{ [codigo: string]: boolean }>(
@@ -278,16 +287,16 @@ const PackingDetalle: React.FC = () => {
             }}
             placeholder="Buscar o escanear código de barras..."
           />
-          <h3 className="text-lg text-center font-bold mb-2 text-gray-800">
-            Productos del Packing
-          </h3>
+          <div className="flex justify-end mb-2">
+            <ChipFiltroNacional onChange={setFiltroNacional} initialFiltro="todos" />
+          </div>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
             {(() => {
               // Separar productos con cantidad_encontrada === 0
-              const productosConCantidad = pedido.productos.filter(
+              const productosConCantidad = productosFiltrados.filter(
                 (p) => (p.cantidad_encontrada ?? 0) > 0
               );
-              const productosSinCantidad = pedido.productos.filter(
+              const productosSinCantidad = productosFiltrados.filter(
                 (p) => (p.cantidad_encontrada ?? 0) === 0
               );
               const productosOrdenados = [...productosConCantidad, ...productosSinCantidad];

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import ClientLayout from "./layouts/ClientLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import UploadInventory from "./components/UploadInventary";
@@ -33,6 +34,16 @@ import FacturacionPedidos from "./components/Facturacion/FacturacionPedidos";
 import FacturacionDetalle from "./components/Facturacion/FacturacionDetalle";
 
 function App() {
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   return (
     <Router>
       <Routes>

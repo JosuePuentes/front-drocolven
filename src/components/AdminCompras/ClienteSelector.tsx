@@ -25,11 +25,12 @@ interface ClientSelectorProps {
   carritoLength: number;
 }
 
+
 export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSelectClient, carritoLength }) => {
   const [busqueda, setBusqueda] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
-  const [loadingDetalle, setLoadingDetalle] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const clientesFiltrados = useMemo(() => {
     const texto = busqueda.toLowerCase();
@@ -41,8 +42,6 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
   }, [clientes, busqueda]);
 
   const handleSelect = async (rif: string) => {
-    loadingDetalle
-    setLoadingDetalle(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${rif}`);
       const data = await res.json();
@@ -54,7 +53,7 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
     } finally {
       setBusqueda('');
       setShowDropdown(false);
-      setLoadingDetalle(false);
+      setSelectedIndex(-1);
     }
   };
 
@@ -64,6 +63,7 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
     onSelectClient(null);
     setBusqueda('');
     setShowDropdown(false);
+    setSelectedIndex(-1);
   };
 
   return (
@@ -133,7 +133,7 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
         </div>
       ) : (
         <>
-          <div className="relative w-full">
+          <div className="relative w-[95vw]">
             <input
               type="text"
               placeholder="Buscar cliente por nombre o RIF..."
@@ -142,16 +142,39 @@ export const ClientSelector: React.FC<ClientSelectorProps> = ({ clientes, onSele
               onChange={e => {
                 setBusqueda(e.target.value);
                 setShowDropdown(e.target.value.length > 0);
+                setSelectedIndex(-1);
               }}
               onFocus={() => setShowDropdown(busqueda.length > 0)}
+              onKeyDown={e => {
+                if (!showDropdown || clientesFiltrados.length === 0) return;
+                if (e.key === 'Tab') {
+                  e.preventDefault();
+                  if (e.shiftKey) {
+                    setSelectedIndex(prev => prev <= 0 ? clientesFiltrados.length - 1 : prev - 1);
+                  } else {
+                    setSelectedIndex(prev => prev >= clientesFiltrados.length - 1 ? 0 : prev + 1);
+                  }
+                } else if (e.key === 'Enter' && selectedIndex >= 0 && selectedIndex < clientesFiltrados.length) {
+                  e.preventDefault();
+                  handleSelect(clientesFiltrados[selectedIndex].rif);
+                }
+              }}
               autoComplete="off"
             />
             {showDropdown && clientesFiltrados.length > 0 && (
-              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto mt-1 text-base">
-                {clientesFiltrados.map((c) => (
+              <ul
+                className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto mt-1 text-base"
+                id="clientes-dropdown-list"
+              >
+                {clientesFiltrados.map((c, idx) => (
                   <li
                     key={c.rif}
-                    className="px-4 py-2 cursor-pointer hover:bg-blue-50 text-gray-700 truncate"
+                    ref={el => {
+                      if (selectedIndex === idx && el) {
+                        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                      }
+                    }}
+                    className={`px-4 py-2 cursor-pointer hover:bg-blue-50 text-gray-700 truncate ${selectedIndex === idx ? 'bg-blue-100 text-blue-800 font-semibold' : ''}`}
                     onClick={() => handleSelect(c.rif)}
                   >
                     <span className="block md:hidden font-medium">{c.encargado}</span>

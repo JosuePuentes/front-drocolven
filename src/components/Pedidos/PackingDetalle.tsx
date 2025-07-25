@@ -282,151 +282,171 @@ const PackingDetalle: React.FC = () => {
             Productos del Packing
           </h3>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
-            <div
-              className={`flex flex-col gap-12 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${
-                noMatch ? "bg-red-100 transition-colors duration-500" : ""
-              }`}
-              ref={(el) => {
-                if (noMatch && el) {
-                  animate(el, {
-                    backgroundColor: ["#fff", "#fee2e2", "#fff"],
-                    duration: 2000,
-                    ease: "outCubic",
-                  });
-                }
-              }}
-            >
-              {pedido.productos.map((producto, idx) => {
-                const codigo = String(producto.codigo);
-                const confirmado = confirmados[codigo];
-                return (
-                  <div
-                    key={codigo}
-                    className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm min-h-[120px] md:min-h-[100px]"
-                  >
-                    <div className="flex flex-row gap-2 mb-2  items-center">
-                      <div className="border p-2 rounded-lg flex-1">
-                        <div className="flex justify-center items-center">
-                          <span className="text-black font-bold text-base text-center">
-                            {idx + 1}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
-                          <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
-                          <span className="font-mono tracking-widest">
-                            {codigo ?? "—"}
-                          </span>
-                        </div>
-                        <div className="font-semibold text-black text-xl md:text-lg mt-1">
-                          {producto.descripcion}
-                        </div>
-                        <span className="font-semibold text-green-600 text-lg mt-1">
-                          ${" "}
-                          {(
-                            producto.precio ??
-                            producto.precio_unitario ??
-                            0
-                          ).toFixed(2)}
-                        </span>
-                        <div className="flex text-gray-500 mt-1 text-xl justify-between">
-                          <div>
-                            Cantidad pedida:{" "}
-                            <span className="font-bold text-gray-700">
-                              {producto.cantidad_pedida}
-                            </span>
-                            <span className="mx-2 text-gray-400">|</span>
-                            {(() => {
-                              const encontrada =
-                                producto.cantidad_encontrada ?? 0;
-                              let color = "text-yellow-500";
-                              if (encontrada > producto.cantidad_pedida)
-                                color = "text-red-600";
-                              else if (encontrada === producto.cantidad_pedida)
-                                color = "text-green-600";
-                              return (
-                                <span className={`font-bold text-2xl ${color}`}>
-                                  {encontrada}
+            {(() => {
+              // Separar productos con cantidad_encontrada === 0
+              const productosConCantidad = pedido.productos.filter(
+                (p) => (p.cantidad_encontrada ?? 0) > 0
+              );
+              const productosSinCantidad = pedido.productos.filter(
+                (p) => (p.cantidad_encontrada ?? 0) === 0
+              );
+              const productosOrdenados = [...productosConCantidad, ...productosSinCantidad];
+              const divisionIndex = productosConCantidad.length;
+              return (
+                <div
+                  className={`flex flex-col gap-12 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 ${
+                    noMatch ? "bg-red-100 transition-colors duration-500" : ""
+                  }`}
+                  ref={(el) => {
+                    if (noMatch && el) {
+                      animate(el, {
+                        backgroundColor: ["#fff", "#fee2e2", "#fff"],
+                        duration: 2000,
+                        ease: "outCubic",
+                      });
+                    }
+                  }}
+                >
+                  {productosOrdenados.map((producto, idx) => {
+                    const codigo = String(producto.codigo);
+                    const confirmado = confirmados[codigo];
+                    // Insertar línea divisoria antes del primer producto con cantidad_encontrada === 0
+                    const showDivider = divisionIndex > 0 && idx === divisionIndex;
+                    return (
+                      <>
+                        {showDivider && (
+                          <div className="w-full border-t-2 border-red-500 my-2" aria-label="Separador productos sin encontrar" />
+                        )}
+                        <div
+                          key={codigo}
+                          className="flex flex-col md:flex-row md:items-center justify-start bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm min-h-[120px] md:min-h-[100px]"
+                        >
+                          <div className="flex flex-row gap-2 mb-2  items-center">
+                            <div className="border p-2 rounded-lg flex-1">
+                              <div className="flex justify-center items-center">
+                                <span className="text-black font-bold text-base text-center">
+                                  {idx + 1}
                                 </span>
-                              );
-                            })()}
+                              </div>
+                              <div className="flex items-center gap-2 text-gray-700 text-sm mt-1">
+                                <AiOutlineBarcode className="w-5 h-5 text-gray-500" />
+                                <span className="font-mono tracking-widest">
+                                  {codigo ?? "—"}
+                                </span>
+                              </div>
+                              <div className="font-semibold text-black text-xl md:text-lg mt-1">
+                                {producto.descripcion}
+                              </div>
+                              <span className="font-semibold text-green-600 text-lg mt-1">
+                                ${" "}
+                                {(
+                                  producto.precio ??
+                                  producto.precio_unitario ??
+                                  0
+                                ).toFixed(2)}
+                              </span>
+                              <div className="flex text-gray-500 mt-1 text-xl justify-between">
+                                <div>
+                                  Cantidad pedida: {" "}
+                                  <span className="font-bold text-gray-700">
+                                    {producto.cantidad_pedida}
+                                  </span>
+                                  <span className="mx-2 text-gray-400">|</span>
+                                  {(() => {
+                                    const encontrada =
+                                      producto.cantidad_encontrada ?? 0;
+                                    let color = "text-yellow-500";
+                                    if (encontrada > producto.cantidad_pedida)
+                                      color = "text-red-600";
+                                    else if (encontrada === producto.cantidad_pedida)
+                                      color = "text-green-600";
+                                    return (
+                                      <span className={`font-bold text-2xl ${color}`}>
+                                        {encontrada}
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                                <Button
+                                  type="button"
+                                  className={`w-8 h-8 p-0 rounded-full border-2 ${
+                                    confirmado
+                                      ? "bg-green-500 border-green-600 text-white"
+                                      : "bg-red-100 border-red-400 text-red-600"
+                                  } transition-colors`}
+                                  onClick={() =>
+                                    isPackingStarted ? setModalOpen(codigo) : null
+                                  }
+                                  aria-label={
+                                    confirmado
+                                      ? "Producto confirmado"
+                                      : "Confirmar producto"
+                                  }
+                                  disabled={!isPackingStarted}
+                                >
+                                  {confirmado ? (
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <circle cx="12" cy="12" r="10" />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M8 12h8"
+                                      />
+                                    </svg>
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
                           </div>
-                          <Button
-                            type="button"
-                            className={`w-8 h-8 p-0 rounded-full border-2 ${
-                              confirmado
-                                ? "bg-green-500 border-green-600 text-white"
-                                : "bg-red-100 border-red-400 text-red-600"
-                            } transition-colors`}
-                            onClick={() =>
-                              isPackingStarted ? setModalOpen(codigo) : null
-                            }
-                            aria-label={
-                              confirmado
-                                ? "Producto confirmado"
-                                : "Confirmar producto"
-                            }
-                            disabled={!isPackingStarted}
-                          >
-                            {confirmado ? (
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                            ) : (
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M8 12h8"
-                                />
-                              </svg>
-                            )}
-                          </Button>
+                          <div className="relative flex mt-2 md:mt-0">
+                            <ProductoConfirmModal
+                              open={modalOpen === codigo && isPackingStarted}
+                              onClose={() => setModalOpen(null)}
+                              onConfirm={() => {
+                                setConfirmados((prev) => ({
+                                  ...prev,
+                                  [codigo]: true,
+                                }));
+                                setModalOpen(null);
+                              }}
+                              onUnconfirm={() => {
+                                setConfirmados((prev) => {
+                                  const nuevo = { ...prev };
+                                  delete nuevo[codigo];
+                                  return nuevo;
+                                });
+                                setModalOpen(null);
+                              }}
+                              producto={producto}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="relative flex mt-2 md:mt-0">
-                      <ProductoConfirmModal
-                        open={modalOpen === codigo && isPackingStarted}
-                        onClose={() => setModalOpen(null)}
-                        onConfirm={() => {
-                          setConfirmados((prev) => ({
-                            ...prev,
-                            [codigo]: true,
-                          }));
-                          setModalOpen(null);
-                        }}
-                        onUnconfirm={() => {
-                          setConfirmados((prev) => {
-                            const nuevo = { ...prev };
-                            delete nuevo[codigo];
-                            return nuevo;
-                          });
-                          setModalOpen(null);
-                        }}
-                        producto={producto}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                      </>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">

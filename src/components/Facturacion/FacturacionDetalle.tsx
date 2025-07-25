@@ -1,24 +1,36 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   AiOutlineLoading3Quarters,
   AiOutlineArrowLeft,
   AiOutlineSend,
-  AiOutlinePlayCircle
+  AiOutlinePlayCircle,
 } from "react-icons/ai";
-import { animate } from 'animejs';
+import { animate } from "animejs";
 import { ProductoArmado } from "../Pedidos/pedidotypes";
 import { useAdminAuth } from "@/context/AuthAdminContext";
 
 const FacturacionDetalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { pedido, setPedido, loading, finalizarFacturacion, actualizarEstadoFacturacion } = usePedido();
+  const {
+    pedido,
+    setPedido,
+    loading,
+    finalizarFacturacion,
+    actualizarEstadoFacturacion,
+  } = usePedido();
   const { admin } = useAdminAuth();
   const detalleRef = useRef<HTMLDivElement>(null);
   const codigoRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -31,39 +43,44 @@ const FacturacionDetalle: React.FC = () => {
   // Estadísticas y productos
   // productos solo se declara aquí y se usa en todo el componente
   productosRef.current = productos;
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key.toLowerCase() === 'k') {
-      e.preventDefault();
-      if (!productosRef.current.length) return;
-      let nextIndex = codigoIndex;
-      if (e.shiftKey) {
-        // Ctrl+Shift+K: subir
-        nextIndex = codigoIndex > 0 ? codigoIndex - 1 : productosRef.current.length - 1;
-      } else {
-        // Ctrl+K: bajar
-        nextIndex = codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
-      }
-      setCodigoIndex(nextIndex);
-      setTimeout(() => {
-        const ref = codigoRefs.current[nextIndex];
-        if (ref) {
-          const range = document.createRange();
-          range.selectNodeContents(ref);
-          const sel = window.getSelection();
-          if (sel) {
-            sel.removeAllRanges();
-            sel.addRange(range);
-          }
-          ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (!productosRef.current.length) return;
+        let nextIndex = codigoIndex;
+        if (e.shiftKey) {
+          // Ctrl+Shift+K: subir
+          nextIndex =
+            codigoIndex > 0 ? codigoIndex - 1 : productosRef.current.length - 1;
+        } else {
+          // Ctrl+K: bajar
+          nextIndex =
+            codigoIndex < productosRef.current.length - 1 ? codigoIndex + 1 : 0;
         }
-      }, 50);
-    }
-  }, [codigoIndex]);
+        setCodigoIndex(nextIndex);
+        setTimeout(() => {
+          const ref = codigoRefs.current[nextIndex];
+          if (ref) {
+            const range = document.createRange();
+            range.selectNodeContents(ref);
+            const sel = window.getSelection();
+            if (sel) {
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+            ref.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 50);
+      }
+    },
+    [codigoIndex]
+  );
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
   const [elapsed, setElapsed] = useState<string>("—");
@@ -71,12 +88,14 @@ const FacturacionDetalle: React.FC = () => {
   useEffect(() => {
     const fetchPedidoById = async (pedidoId: string) => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/pedido/${pedidoId}`);
-        if (!response.ok) throw new Error('No se pudo cargar el pedido');
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/pedido/${pedidoId}`
+        );
+        if (!response.ok) throw new Error("No se pudo cargar el pedido");
         const pedidoData = await response.json();
         setPedido(pedidoData);
       } catch (error: any) {
-        toast.error('No se pudo cargar el pedido: ' + (error.message || error));
+        toast.error("No se pudo cargar el pedido: " + (error.message || error));
         setPedido(null);
       }
     };
@@ -94,7 +113,7 @@ const FacturacionDetalle: React.FC = () => {
         opacity: [0, 1],
         y: [20, 0],
         duration: 500,
-        ease: 'outQuad',
+        ease: "outQuad",
       });
     }
   }, [pedido]);
@@ -119,9 +138,11 @@ const FacturacionDetalle: React.FC = () => {
       updateElapsed();
       interval = setInterval(updateElapsed, 1000);
     } else {
-      setElapsed('—');
+      setElapsed("—");
     }
-    return () => { if (interval) clearInterval(interval); };
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [pedido]);
 
   const handleFinalizar = async () => {
@@ -131,12 +152,12 @@ const FacturacionDetalle: React.FC = () => {
       const facturacion = {
         ...pedido.facturacion,
         fechafin_facturacion: new Date().toISOString(),
-        estado_facturacion: 'finalizado',
-        usuario: pedido.facturacion?.usuario || admin?.usuario || '',
+        estado_facturacion: "finalizado",
+        usuario: pedido.facturacion?.usuario || admin?.usuario || "",
       };
       await finalizarFacturacion(pedido._id, facturacion);
       toast.success("Facturación finalizada. Pedido enviado.");
-      navigate('/admin/facturacionpedidos');
+      navigate("/admin/facturacionpedidos");
     } catch (error) {
       toast.error("Error al finalizar la facturación");
     }
@@ -147,10 +168,10 @@ const FacturacionDetalle: React.FC = () => {
     try {
       // Crear subobjeto de facturacion si no existe
       const facturacion = pedido.facturacion || {
-        usuario: admin?.usuario || '',
+        usuario: admin?.usuario || "",
         fechainicio_facturacion: new Date().toISOString(),
         fechafin_facturacion: null,
-        estado_facturacion: 'en_proceso',
+        estado_facturacion: "en_proceso",
       };
       // Actualizar el pedido con el subestado de facturación
       await actualizarEstadoFacturacion(pedido._id, facturacion);
@@ -184,9 +205,15 @@ const FacturacionDetalle: React.FC = () => {
 
   // Estadísticas y productos
   // productos ya está declarado arriba
-  const montoTotal = productos.reduce((acc: number, p: ProductoArmado) => acc + ((p.cantidad_pedida || 0) * (p.precio_unitario || 0)), 0);
+  const montoTotal = productos.reduce(
+    (acc: number, p: ProductoArmado) =>
+      acc + (p.cantidad_pedida || 0) * (p.precio_unitario || 0),
+    0
+  );
   const usuarioFacturo = "-";
-  const fechaInicio = pedido.fecha_creacion ? new Date(pedido.fecha_creacion).toLocaleString() : "-";
+  const fechaInicio = pedido.fecha_creacion
+    ? new Date(pedido.fecha_creacion).toLocaleString()
+    : "-";
 
   return (
     <div className="container mx-auto p-1.5 max-h-screen">
@@ -194,21 +221,41 @@ const FacturacionDetalle: React.FC = () => {
         <CardHeader className="p-1">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-sm">Facturación de Pedido #{pedido._id.slice(-6)}</CardTitle>
-              <CardDescription className="text-sm">Cliente: {pedido.cliente}</CardDescription>
-              <CardDescription className="text-sm">RIF: {pedido.rif}</CardDescription>
+              <CardTitle className="text-sm">
+                Facturación de Pedido #{pedido._id.slice(-6)}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                Cliente: {pedido.cliente}
+              </CardDescription>
+              <CardDescription className="text-sm">
+                RIF: {pedido.rif}
+              </CardDescription>
             </div>
-            <Badge variant={pedido.estado === ESTADOS_PEDIDO.FACTURANDO ? 'default' : 'secondary'}>
+            <Badge
+              variant={
+                pedido.estado === ESTADOS_PEDIDO.FACTURANDO
+                  ? "default"
+                  : "secondary"
+              }
+            >
               {pedido.estado.toUpperCase()}
             </Badge>
           </div>
-          <div ref={detalleRef} id="facturacion-info" className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-2 p-2 border rounded-lg">
+          <div
+            ref={detalleRef}
+            id="facturacion-info"
+            className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-2 p-2 border rounded-lg"
+          >
             <div>
-              <p className="text-sm font-medium text-gray-500">Usuario Facturación</p>
+              <p className="text-sm font-medium text-gray-500">
+                Usuario Facturación
+              </p>
               <p className="text-sm font-semibold">{usuarioFacturo}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Inicio Facturación</p>
+              <p className="text-sm font-medium text-gray-500">
+                Inicio Facturación
+              </p>
               <p className="text-sm font-semibold">{fechaInicio}</p>
             </div>
             <div>
@@ -217,12 +264,22 @@ const FacturacionDetalle: React.FC = () => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500">Estado</p>
-              <p className={`text-sm font-semibold ${pedido.estado === ESTADOS_PEDIDO.FACTURANDO ? 'text-blue-600' : 'text-gray-600'}`}>{pedido.estado.replace('_', ' ')}</p>
+              <p
+                className={`text-sm font-semibold ${
+                  pedido.estado === ESTADOS_PEDIDO.FACTURANDO
+                    ? "text-blue-600"
+                    : "text-gray-600"
+                }`}
+              >
+                {pedido.estado.replace("_", " ")}
+              </p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <h3 className="text-lg text-center font-bold mb-2 text-gray-800">Productos de la Facturación</h3>
+          <h3 className="text-lg text-center font-bold mb-2 text-gray-800">
+            Productos de la Facturación
+          </h3>
           <div className="mt-1 flex-1 max-h-[60vh] overflow-y-auto">
             {(() => {
               // Separar productos con cantidad_encontrada === 0
@@ -232,93 +289,176 @@ const FacturacionDetalle: React.FC = () => {
               const productosSinCantidad = productos.filter(
                 (p) => (p.cantidad_encontrada ?? 0) === 0
               );
-              const productosOrdenados = [...productosConCantidad, ...productosSinCantidad];
+              const productosOrdenados = [
+                ...productosConCantidad,
+                ...productosSinCantidad,
+              ];
               const divisionIndex = productosConCantidad.length;
               return (
                 <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
-                  {productosOrdenados.map((producto: ProductoArmado, idx: number) => {
-                    const codigo = String(producto.codigo ?? idx);
-                    // Insertar línea divisoria antes del primer producto con cantidad_encontrada === 0
-                    const showDivider = divisionIndex > 0 && idx === divisionIndex;
-                    return (
-                      <React.Fragment key={codigo}>
-                        {showDivider && (
-                          <div className="w-full border-t-2 border-red-500 my-2" aria-label="Separador productos sin encontrar" />
-                        )}
-                        <div
-                          className="flex flex-col md:flex-col bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh] md:mb-8 mb-4"
-                        >
-                          {/* Índice arriba */}
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-black font-bold text-base">{idx + 1}</span>
-                          </div>
-                          <div className="flex flex-col md:flex-row w-full gap-4">
-                            {/* Columna izquierda: descripción y demás */}
-                            <div className="flex-1">
-                              <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
-                                {producto.descripcion}
-                                {producto.nacional && (
-                                  <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">Nacional</span>
-                                )}
-                              </div>
-                              <div className="flex flex-wrap gap-2 mb-1 text-sm">
-                                <span className="text-gray-700">Subtotal: <span className="font-semibold">$ {(producto.subtotal ?? (producto.cantidad_pedida * (producto.precio_unitario || 0))).toFixed(2)}</span></span>
-                              </div>
-                              <div className="flex flex-wrap gap-4 mb-1 text-xs">
-                                <span className="text-gray-500">Descuento1: <span className="font-bold text-blue-700">{producto.descuento1 ?? 0}%</span></span>
-                                <span className="text-gray-500">Descuento2: <span className="font-bold text-blue-700">{producto.descuento2 ?? 0}%</span></span>
-                                <span className="text-gray-500">Descuento3: <span className="font-bold text-blue-700">{producto.descuento3 ?? 0}%</span></span>
-                                <span className="text-gray-500">Descuento4: <span className="font-bold text-blue-700">{producto.descuento4 ?? 0}%</span></span>
-                              </div>
-                              <div className="flex flex-wrap gap-4 mb-1 text-xs">
-                                <span className="text-gray-700">Cantidad pedida: <span className="font-bold">{producto.cantidad_pedida}</span></span>
-                                <span className="text-gray-700">Existencia real: <span className="font-bold text-purple-700">{producto.existencia ?? '-'}</span></span>
-                              </div>
+                  {productosOrdenados.map(
+                    (producto: ProductoArmado, idx: number) => {
+                      const codigo = String(producto.codigo ?? idx);
+                      // Insertar línea divisoria antes del primer producto con cantidad_encontrada === 0
+                      const showDivider =
+                        divisionIndex > 0 && idx === divisionIndex;
+                      return (
+                        <React.Fragment key={codigo}>
+                          {showDivider && (
+                            <div
+                              className="w-full border-t-2 border-red-500 my-2"
+                              aria-label="Separador productos sin encontrar"
+                            />
+                          )}
+                          <div className="flex flex-col md:flex-col bg-gray-50 rounded-lg p-2 border border-gray-100 shadow-sm max-h-[20vh] md:mb-8 mb-4">
+                            {/* Índice arriba */}
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-black font-bold text-base">
+                                {idx + 1}
+                              </span>
                             </div>
-                            {/* Columna derecha: información seleccionada */}
-                            <div className="flex flex-col items-start justify-center min-w-[140px] md:min-w-[180px] md:pl-4 border-l border-gray-200">
-                              <span
-                                ref={el => { codigoRefs.current[idx] = el ?? null; }}
-                                tabIndex={-1}
-                                className={`font-mono tracking-widest text-xs text-gray-500 mb-2 cursor-pointer ${codigoIndex === idx ? 'bg-blue-100 ring-2 ring-blue-400' : ''}`}
-                                onClick={() => {
-                                  setCodigoIndex(idx);
-                                  setTimeout(() => {
-                                    const ref = codigoRefs.current[idx];
-                                    if (ref) {
-                                      const range = document.createRange();
-                                      range.selectNodeContents(ref);
-                                      const sel = window.getSelection();
-                                      if (sel) {
-                                        sel.removeAllRanges();
-                                        sel.addRange(range);
+                            <div className="flex flex-col md:flex-row w-full gap-4">
+                              {/* Columna izquierda: descripción y demás */}
+                              <div className="flex-1">
+                                <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
+                                  {producto.descripcion}
+                                  <div>
+                                    nacional
+                                    {producto.nacional && (
+                                      <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">
+                                        Nacional
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex flex-wrap gap-2 mb-1 text-sm">
+                                  <span className="text-gray-700">
+                                    Subtotal:{" "}
+                                    <span className="font-semibold">
+                                      ${" "}
+                                      {(
+                                        producto.subtotal ??
+                                        producto.cantidad_pedida *
+                                          (producto.precio_unitario || 0)
+                                      ).toFixed(2)}
+                                    </span>
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-4 mb-1 text-xs">
+                                  <span className="text-gray-500">
+                                    Descuento1:{" "}
+                                    <span className="font-bold text-blue-700">
+                                      {producto.descuento1 ?? 0}%
+                                    </span>
+                                  </span>
+                                  <span className="text-gray-500">
+                                    Descuento2:{" "}
+                                    <span className="font-bold text-blue-700">
+                                      {producto.descuento2 ?? 0}%
+                                    </span>
+                                  </span>
+                                  <span className="text-gray-500">
+                                    Descuento3:{" "}
+                                    <span className="font-bold text-blue-700">
+                                      {producto.descuento3 ?? 0}%
+                                    </span>
+                                  </span>
+                                  <span className="text-gray-500">
+                                    Descuento4:{" "}
+                                    <span className="font-bold text-blue-700">
+                                      {producto.descuento4 ?? 0}%
+                                    </span>
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-4 mb-1 text-xs">
+                                  <span className="text-gray-700">
+                                    Cantidad pedida:{" "}
+                                    <span className="font-bold">
+                                      {producto.cantidad_pedida}
+                                    </span>
+                                  </span>
+                                  <span className="text-gray-700">
+                                    Existencia real:{" "}
+                                    <span className="font-bold text-purple-700">
+                                      {producto.existencia ?? "-"}
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                              {/* Columna derecha: información seleccionada */}
+                              <div className="flex flex-col items-start justify-center min-w-[140px] md:min-w-[180px] md:pl-4 border-l border-gray-200">
+                                <span
+                                  ref={(el) => {
+                                    codigoRefs.current[idx] = el ?? null;
+                                  }}
+                                  tabIndex={-1}
+                                  className={`font-mono tracking-widest text-xs text-gray-500 mb-2 cursor-pointer ${
+                                    codigoIndex === idx
+                                      ? "bg-blue-100 ring-2 ring-blue-400"
+                                      : ""
+                                  }`}
+                                  onClick={() => {
+                                    setCodigoIndex(idx);
+                                    setTimeout(() => {
+                                      const ref = codigoRefs.current[idx];
+                                      if (ref) {
+                                        const range = document.createRange();
+                                        range.selectNodeContents(ref);
+                                        const sel = window.getSelection();
+                                        if (sel) {
+                                          sel.removeAllRanges();
+                                          sel.addRange(range);
+                                        }
+                                        ref.scrollIntoView({
+                                          behavior: "smooth",
+                                          block: "center",
+                                        });
                                       }
-                                      ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    }
-                                  }, 50);
-                                }}
-                              >{producto.codigo ?? '—'}</span>
-                              <span className="text-gray-700 mb-1">Cantidad encontrada: <span className="font-bold text-green-700">{producto.cantidad_encontrada ?? 0}</span></span>
-                              {/* Precio con descuentos 1 y 2 aplicados */}
-                              {(() => {
-                                const base = producto.precio ?? producto.precio_unitario ?? 0;
-                                const d1 = producto.descuento1 ?? 0;
-                                const d2 = producto.descuento2 ?? 0;
-                                const precioD1 = base * (1 - d1 / 100);
-                                const precioFinal = precioD1 * (1 - d2 / 100);
-                                return (
-                                  <>
-                                    <span className="text-gray-700">Precio original: <span className="font-semibold text-gray-600">$ {base.toFixed(2)}</span></span>
-                                    <span className="text-gray-700">Precio c/desc. <span className="font-semibold text-green-600">$ {precioFinal.toFixed(2)}</span></span>
-                                  </>
-                                );
-                              })()}
+                                    }, 50);
+                                  }}
+                                >
+                                  {producto.codigo ?? "—"}
+                                </span>
+                                <span className="text-gray-700 mb-1">
+                                  Cantidad encontrada:{" "}
+                                  <span className="font-bold text-green-700">
+                                    {producto.cantidad_encontrada ?? 0}
+                                  </span>
+                                </span>
+                                {/* Precio con descuentos 1 y 2 aplicados */}
+                                {(() => {
+                                  const base =
+                                    producto.precio ??
+                                    producto.precio_unitario ??
+                                    0;
+                                  const d1 = producto.descuento1 ?? 0;
+                                  const d2 = producto.descuento2 ?? 0;
+                                  const precioD1 = base * (1 - d1 / 100);
+                                  const precioFinal = precioD1 * (1 - d2 / 100);
+                                  return (
+                                    <>
+                                      <span className="text-gray-700">
+                                        Precio original:{" "}
+                                        <span className="font-semibold text-gray-600">
+                                          $ {base.toFixed(2)}
+                                        </span>
+                                      </span>
+                                      <span className="text-gray-700">
+                                        Precio c/desc.{" "}
+                                        <span className="font-semibold text-green-600">
+                                          $ {precioFinal.toFixed(2)}
+                                        </span>
+                                      </span>
+                                    </>
+                                  );
+                                })()}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </React.Fragment>
-                    );
-                  })}
+                        </React.Fragment>
+                      );
+                    }
+                  )}
                 </div>
               );
             })()}
@@ -328,17 +468,31 @@ const FacturacionDetalle: React.FC = () => {
               Total: $ {montoTotal.toFixed(2)}
             </div>
             <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-              <Button variant="outline" onClick={() => navigate(-1)} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={() => navigate(-1)}
+                disabled={loading}
+              >
                 <AiOutlineArrowLeft className="mr-2 h-4 w-4" /> Volver
               </Button>
               {pedido.estado === ESTADOS_PEDIDO.PARA_FACTURAR && (
-                <Button onClick={handleIniciarFacturacion} disabled={loading} className="bg-blue-600 text-white">
-                  <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar Facturación
+                <Button
+                  onClick={handleIniciarFacturacion}
+                  disabled={loading}
+                  className="bg-blue-600 text-white"
+                >
+                  <AiOutlinePlayCircle className="mr-2 h-4 w-4" /> Iniciar
+                  Facturación
                 </Button>
               )}
               {pedido.estado === ESTADOS_PEDIDO.FACTURANDO && (
-                <Button onClick={handleFinalizar} disabled={loading} className="bg-blue-600 text-white">
-                  <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar Facturación
+                <Button
+                  onClick={handleFinalizar}
+                  disabled={loading}
+                  className="bg-blue-600 text-white"
+                >
+                  <AiOutlineSend className="mr-2 h-4 w-4" /> Finalizar
+                  Facturación
                 </Button>
               )}
             </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { ChipFiltroNacional } from "./FiltroItemNacional";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePedido, ESTADOS_PEDIDO } from "../hooks/usePedido";
 import {
@@ -44,6 +45,14 @@ const PickingDetalle: React.FC = () => {
   } = usePedido();
 
   const [cantidadesInput, setCantidadesInput] = useState<CantidadesInput>({});
+  const [filtroNacional, setFiltroNacional] = useState<"todos" | "nacional" | "no_nacional">("todos");
+  // Filtrar productos según filtro nacional
+  const productosFiltrados = pedido?.productos?.filter((p) => {
+    if (filtroNacional === "todos") return true;
+    if (filtroNacional === "nacional") return p.nacional === "SI";
+    if (filtroNacional === "no_nacional") return p.nacional !== "SI";
+    return true;
+  }) || [];
   const [elapsed, setElapsed] = useState<string>("—");
 
   // refs para inputs de cantidad
@@ -442,11 +451,11 @@ const PickingDetalle: React.FC = () => {
                 }))}
               onEncontrado={handleEncontrarPorCodigo}
             />
-            <h3 className="text-md text-center font-semibold mb-2">
-              Productos del Picking
-            </h3>
+            <div className="flex justify-end mb-2">
+              <ChipFiltroNacional onChange={setFiltroNacional} initialFiltro="todos" />
+            </div>
             <div className="space-y-2 max-h-[60vh] overflow-y-auto scrollbar-thin">
-              {pedido.productos.map((prod, idx) => {
+              {productosFiltrados.map((prod, idx) => {
                 const codigo = String(prod.codigo);
                 return (
                   <div className="flex flex-row pb-3" key={codigo}>

@@ -20,6 +20,12 @@ export interface ProductoArmado {
   laboratorio?: string;
   fv?: string;
   existencia?: number | string;
+  // Iconos y propiedades adicionales
+  frio?: boolean;
+  advertencia?: boolean;
+  limpieza?: boolean;
+  calendario?: boolean;
+  lotes?: any[]; // Puedes definir un tipo específico para lotes si lo tienes
 }
 
 export interface PickingInfo {
@@ -55,12 +61,15 @@ export interface FacturacionInfo {
 export type EstadoPedido =
   | 'nuevo'
   | 'picking'
+  | 'checkpicking'
   | 'packing'
   | 'enviado'
   | 'entregado'
   | 'cancelado'
   | 'para_facturar'
+  | 'pendiente'
   | 'facturando';
+  
 
 export interface PedidoArmado {
   _id: string;

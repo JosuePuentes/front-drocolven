@@ -8,6 +8,7 @@ import {
 export const ESTADOS_PEDIDO = {
   NUEVO: "nuevo",
   PICKING: "picking",
+  CHECKPICKING: "checkpicking",
   PACKING: "packing",
   ENVIADO: "enviado",
   ENTREGADO: "entregado",
@@ -143,7 +144,7 @@ export const usePedido = () => {
     const productos = productosActualizados || pedido.productos;
     const datos: PedidoArmado = {
       ...pedido,
-      estado: ESTADOS_PEDIDO.PACKING,
+      estado: ESTADOS_PEDIDO.CHECKPICKING,
       productos,
       picking: {
         ...pedido.picking,

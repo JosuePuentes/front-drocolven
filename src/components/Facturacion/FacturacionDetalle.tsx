@@ -17,7 +17,11 @@ import {
   AiOutlineArrowLeft,
   AiOutlineSend,
   AiOutlinePlayCircle,
+  AiOutlineWarning,
+  AiOutlineCalendar,
 } from "react-icons/ai";
+import { MdAcUnit } from "react-icons/md";
+import { FaLeaf } from "react-icons/fa";
 import { animate } from "animejs";
 import { ProductoArmado } from "../Pedidos/pedidotypes";
 import { useAdminAuth } from "@/context/AuthAdminContext";
@@ -333,6 +337,18 @@ const FacturacionDetalle: React.FC = () => {
                               <div className="flex-1">
                                 <div className="font-semibold text-black text-xl md:text-lg mb-1 flex items-center gap-2">
                                   {producto.descripcion}
+                                  {producto.frio && (
+                                    <MdAcUnit className="w-5 h-5 text-blue-600" title="Frío" />
+                                  )}
+                                  {producto.advertencia && (
+                                    <AiOutlineWarning className="w-5 h-5 text-purple-600" title="Advertencia" />
+                                  )}
+                                  {producto.limpieza && (
+                                    <FaLeaf className="w-5 h-5 text-amber-700" title="Limpieza" />
+                                  )}
+                                  {producto.calendario && (
+                                    <AiOutlineCalendar className="w-5 h-5 text-green-600" title="Calendario" />
+                                  )}
                                   <div>
                                     {producto.nacional == "SI" ? (
                                       <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">

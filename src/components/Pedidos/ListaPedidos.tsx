@@ -9,6 +9,8 @@ const ESTADOS = [
   { id: 'packing', label: 'Packing' },
   { id: 'enviado', label: 'Enviado' },
   { id: 'entregado', label: 'Entregado' },
+  { id: 'para_facturar', label: 'Por facturar' },
+  { id: 'facturando', label: 'Facturando' },
   { id: 'cancelado', label: 'Cancelado' },
 ];
 

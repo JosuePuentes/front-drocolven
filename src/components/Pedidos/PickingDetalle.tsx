@@ -330,20 +330,7 @@ const PickingDetalle: React.FC = () => {
     }
   };
 
-  // const handleCancelarPicking = async () => {
-  //     if (!pedido) return;
-  //     setLoading(true);
-  //     try {
-  //         await cancelarProceso(pedido._id, ESTADOS_PEDIDO.PICKING);
-  //         toast.success("Picking cancelado. Pedido devuelto a 'nuevo'.");
-  //         navigate("/admin/pickingpedidos");
-  //     } catch (error: any) {
-  //         toast.error(`Error al cancelar: ${error.message}`);
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  // };
-
+  
   // función para enfocar input de cantidad por código
   const handleEncontrarPorCodigo = (codigo: string) => {
     const ref = cantidadRefs.current[codigo];

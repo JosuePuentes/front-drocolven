@@ -147,6 +147,22 @@ const AdminPage: React.FC = () => {
             logo={<BookA size={48} />}
           />
         </HasModule>
+        <HasModule module="pendientes">
+          <CardModule
+            bottomText="Pedidos Pendientes"
+            description="Visualiza y gestiona los pedidos con estado pendiente."
+            onClick={() => navigate("pendientespedidos")}
+            logo={<BookA size={48} />}
+          />
+        </HasModule>
+        <HasModule module="checkpicking">
+          <CardModule
+            bottomText="Verificación de Picking"
+            description="Gestiona y verifica los pedidos en proceso de picking."
+            onClick={() => navigate("checkpickingpedidos")}
+            logo={<BookA size={48} />}
+          />
+        </HasModule>
 
       </div>
     </div>

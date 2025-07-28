@@ -17,7 +17,11 @@ import {
   AiOutlinePlayCircle,
   AiOutlineSend,
   AiOutlineBarcode,
+  AiOutlineWarning,
+  AiOutlineCalendar,
 } from "react-icons/ai";
+import { MdAcUnit } from "react-icons/md";
+import { FaLeaf } from "react-icons/fa";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/context/AuthAdminContext";
 import { toZonedTime } from "date-fns-tz";
@@ -343,8 +347,20 @@ const PackingDetalle: React.FC = () => {
                                   {codigo ?? "—"}
                                 </span>
                               </div>
-                              <div className="font-semibold text-black text-xl md:text-lg mt-1">
+                              <div className="font-semibold text-black text-xl md:text-lg mt-1 flex items-center gap-2">
                                 {producto.descripcion}
+                                {producto.frio && (
+                                  <MdAcUnit className="w-5 h-5 text-blue-600" title="Frío" />
+                                )}
+                                {producto.advertencia && (
+                                  <AiOutlineWarning className="w-5 h-5 text-purple-600" title="Advertencia" />
+                                )}
+                                {producto.limpieza && (
+                                  <FaLeaf className="w-5 h-5 text-amber-700" title="Limpieza" />
+                                )}
+                                {producto.calendario && (
+                                  <AiOutlineCalendar className="w-5 h-5 text-green-600" title="Calendario" />
+                                )}
                               </div>
                               <span className="font-semibold text-green-600 text-lg mt-1">
                                 ${" "}

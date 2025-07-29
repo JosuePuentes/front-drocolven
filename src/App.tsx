@@ -101,7 +101,7 @@ function App() {
           <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
           <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="admin-pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
           <Route path="pickingpedidos" element={<AdminProtectedRoute moduleRequired="picking"><PickingPedidos /></AdminProtectedRoute>} />
-          <Route path="checkpickingpedidos" element={<AdminProtectedRoute moduleRequired="packing"><CheckPicking /></AdminProtectedRoute>} />
+          <Route path="checkpickingpedidos" element={<AdminProtectedRoute moduleRequired="checkpicking"><CheckPicking /></AdminProtectedRoute>} />
           <Route path="pendientespedidos" element={<AdminProtectedRoute moduleRequired="pendientes"><PeditentesPage /></AdminProtectedRoute>} />
           <Route path="packingpedidos" element={<AdminProtectedRoute moduleRequired="packing"><PackingPedidos /></AdminProtectedRoute>} />
           <Route path="pedido/:id" element={<AdminProtectedRoute moduleRequired="picking"><PickingDetalle /></AdminProtectedRoute>} />

@@ -349,6 +349,12 @@ const FacturacionDetalle: React.FC = () => {
                                   {producto.calendario && (
                                     <AiOutlineCalendar className="w-5 h-5 text-green-600" title="Calendario" />
                                   )}
+                                  {producto.lotes && producto.lotes.length > 0 && (
+                                    <span className="bg-yellow-100 text-yellow-800 rounded-full px-2 py-0.5 text-xs font-semibold">
+                                      {producto.lotes.map((l) => l.lote).join(", ")}{" - "}
+                                      {producto.lotes.map((l) => l.fecha_vencimiento).join(", ")}
+                                    </span>
+                                  )}
                                   <div>
                                     {producto.nacional == "SI" ? (
                                       <span className="bg-green-100 text-green-800 rounded-full px-2 py-0.5 text-xs font-semibold ml-2">

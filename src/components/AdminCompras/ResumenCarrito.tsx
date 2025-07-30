@@ -3,6 +3,7 @@ import { AiOutlineDelete, AiOutlineCloseCircle } from "react-icons/ai";
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { animate } from "animejs"; // Asegúrate de que 'animejs' esté instalado
 import { CarritoProducto, Cliente } from './types/types';
+import { useNavigate } from "react-router-dom";
 
 interface ResumenCarritoProps {
     carrito: CarritoProducto[];
@@ -20,6 +21,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
     titulo = "RESUMEN DEL PEDIDO",
     onTotalizar,
 }) => {
+    const navigate = useNavigate();
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
     const [ordersModalOpen, setOrdersModalOpen] = useState(false);
     const [observacion, setObservacion] = useState("");
@@ -175,7 +177,12 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 alert("¡Pedido registrado exitosamente!");
                 setConfirmModalVisible(false);
                 setObservacion("");
-                if (onTotalizar) onTotalizar();
+                // Limpiar carrito en localStorage
+                localStorage.removeItem("carrito");
+                if (onTotalizar) {
+                    onTotalizar(); // Limpia el carrito usando la función del padre
+                }
+                navigate("/admin"); // Redirige a /admin
             } else {
                 const errorData = await response.json();
                 alert(`Error al registrar el pedido: ${errorData.message || response.statusText}`);

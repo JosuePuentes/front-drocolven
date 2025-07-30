@@ -56,6 +56,13 @@ const AdminProductoItem = ({
           <p className="text-sm text-gray-500">
             Precio base: ${producto.precio.toFixed(2)}
           </p>
+          <div className="flex items-center gap-1 bg-green-50 rounded-full px-3 py-1">
+            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-green-700 font-semibold text-sm">Existencia:</span>
+            <span className="text-green-700 font-bold text-base ml-1">{producto.existencia ?? 0}</span>
+          </div>
           <p className="text-sm rounded-full bg-blue-200 px-2 py-1 font-medium text-gray-800">
             DL: {producto.descuento1.toFixed(2)}%
           </p>

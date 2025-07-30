@@ -137,6 +137,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                 subtotal: parseFloat((prod.precio * prod.cantidad_pedida).toFixed(4)),
                 cantidad_pedida: prod.cantidad_pedida,
                 cantidad_encontrada: prod.cantidad_encontrada,
+               existencia: prod.existencia,
                 laboratorio: prod.laboratorio ?? null,
                 fv: prod.fv ?? null,
                 nacional: prod.nacional ?? null,
@@ -147,6 +148,23 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
         console.log("Resumen a enviar:", JSON.stringify(resumen, null, 2));
 
         try {
+
+            // Registrar movimiento en Kardex y restar cantidades por cada producto
+            for (const prod of carrito) {
+                await fetch(`${import.meta.env.VITE_API_URL}/transaccion/descargar`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        producto_codigo: prod.codigo,
+                        cantidad: prod.cantidad_pedida,
+                        usuario: cliente?.encargado || "admin",
+                        tipo_movimiento: "pedido",
+                        observaciones: observacion,
+                        documento_origen: resumen // puedes enviar el resumen del pedido como referencia
+                    })
+                });
+            }
+
             const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

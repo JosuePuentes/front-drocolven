@@ -444,6 +444,7 @@ const PickingDetalle: React.FC = () => {
             <div className="space-y-2 max-h-[60vh] overflow-y-auto scrollbar-thin">
               {productosFiltrados.map((prod, idx) => {
                 const codigo = String(prod.codigo);
+                {console.log(prod);}
                 return (
                   <div className="flex flex-row pb-3" key={codigo}>
                     <div
@@ -464,10 +465,19 @@ const PickingDetalle: React.FC = () => {
                           <div className="font-semibold text-gray-900 text-xl md:text-lg">
                             {prod.descripcion}
                           </div>
-
-                          <div className="flex justify-between">
+                          <div className="flex flex-col md:flex-row justify-between items-center w-full mt-2 gap-2">
+                            <div className="flex flex-col items-start">
+                              <span className="text-xs text-gray-500">Existencia</span>
+                              <span className="flex items-center gap-1 bg-green-50 rounded-full px-2 py-0.5 text-green-700 font-bold text-base">
+                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12l2 2 4-4" />
+                                </svg>
+                                {prod.existencia ?? prod.cantidad_encontrada ?? 0}
+                              </span>
+                            </div>
                             <div className={`text-2xl max-w-fit mt-2`}>
-                              PEDIDO:{" "}
+                              PEDIDO: {" "}
                               <span
                                 className={`font-medium rounded-full px-1.5 w-fit
                                   ${

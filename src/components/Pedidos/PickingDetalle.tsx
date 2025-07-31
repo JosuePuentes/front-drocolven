@@ -43,6 +43,8 @@ const PickingDetalle: React.FC = () => {
     guardarPicking,
     finalizarPicking,
   } = usePedido();
+  // Importar el hook de transacciones
+  const { registrarDescargoCarrito } = require('../hooks/useTransaccion').useTransaccion();
 
   const [cantidadesInput, setCantidadesInput] = useState<CantidadesInput>({});
   const [filtroNacional, setFiltroNacional] = useState<"todos" | "nacional" | "no_nacional">("todos");
@@ -271,6 +273,12 @@ const PickingDetalle: React.FC = () => {
 
     setLoading(true);
     try {
+      // Ejecutar la transacción para restar cantidades (descargo) usando la cantidad encontrada
+      const productosDescargo = productosActualizados.map(prod => ({
+        ...prod,
+        cantidad_pedida: prod.cantidad_encontrada ?? 0 // Usar cantidad encontrada para el descargo
+      }));
+      await registrarDescargoCarrito(productosDescargo, pedido.cliente, '', pedido);
       await finalizarPicking(pedido._id, productosActualizados);
       toast.success("Picking finalizado. Listo para empacar.");
       navigate("/admin");

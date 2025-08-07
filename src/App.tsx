@@ -111,7 +111,7 @@ function App() {
           <Route path="enviado/:id" element={<AdminProtectedRoute moduleRequired="envios"><EnviadoDetalle /></AdminProtectedRoute>} />
           <Route path="facturacionpedidos" element={<AdminProtectedRoute moduleRequired="facturacion"><FacturacionPedidos /></AdminProtectedRoute>} />
           <Route path="facturacion/:id" element={<AdminProtectedRoute moduleRequired="facturacion"><FacturacionDetalle /></AdminProtectedRoute>} />
-          <Route path="vistapedidos" element={<AdminProtectedRoute moduleRequired="pedidos"><VistaPedidos /></AdminProtectedRoute>} />
+          <Route path="vistapedidos" element={<AdminProtectedRoute moduleRequired="vistapedidos"><VistaPedidos /></AdminProtectedRoute>} />
           <Route path="unauthorized" element={<AdminProtectedRoute moduleRequired=""><div>no estas autorizado para realizar esta operacion</div></AdminProtectedRoute>} />
         </Route>
 

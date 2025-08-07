@@ -1,4 +1,4 @@
-import { BookA, SquareChartGantt, User, LayoutDashboard, PackageCheck } from "lucide-react";
+import { BookA, SquareChartGantt, User, LayoutDashboard, PackageCheck, BookCheck, BookDashed, BookHeart, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import HasModule from "../../components/auth/HasModule";
@@ -73,6 +73,7 @@ const AdminPage: React.FC = () => {
           />
         </HasModule>
 
+
         <HasModule module="pedidos">
           <CardModule
             bottomText="Resumen de Pedidos"
@@ -81,7 +82,14 @@ const AdminPage: React.FC = () => {
             logo={<BookA size={48} />}
           />
         </HasModule>
-
+        <HasModule module="vistapedidos">
+          <CardModule
+            bottomText="Ver de Pedidos"
+            description="Visualiza y gestiona todos los pedidos."
+            onClick={() => navigate("vistapedidos")}
+            logo={<BookOpen size={48} />}
+          />
+        </HasModule>
         <HasModule module="usuarios">
           <CardModule
             bottomText="Administración de Usuarios"

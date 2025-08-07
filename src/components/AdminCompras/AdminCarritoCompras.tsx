@@ -30,7 +30,7 @@ export const AdminCarritoCompras = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const productosFiltrados = filtrarPorMultiplesPalabrasAND(productos, busqueda, ["descripcion"]);
+  const productosFiltrados = filtrarPorMultiplesPalabrasAND(productos, busqueda, ["descripcion", "codigo"]);
 
   return (
     <div className="max-w-[100vw] min-h-screen flex flex-col gap-8 px-2 md:px-0 items-center justify-center max-h-screen overflow-hidden">

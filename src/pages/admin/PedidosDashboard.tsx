@@ -24,6 +24,7 @@ const PedidosDashboard: React.FC = () => {
   const pedidosFiltrados = pedidos.filter(
     (pedido) =>
       pedido.estado === ESTADOS_PEDIDO.PICKING ||
+      pedido.estado === ESTADOS_PEDIDO.CHECKPICKING ||
       pedido.estado === ESTADOS_PEDIDO.PACKING ||
       pedido.estado === ESTADOS_PEDIDO.ENVIADO ||
       pedido.estado === ESTADOS_PEDIDO.NUEVO ||
@@ -34,6 +35,9 @@ const PedidosDashboard: React.FC = () => {
   // Separar pedidos por estado
   const pedidosPicking = pedidosFiltrados.filter(
     (p) => p.estado === ESTADOS_PEDIDO.PICKING
+  );
+  const pedidosCheckPicking = pedidosFiltrados.filter(
+    (p) => p.estado === ESTADOS_PEDIDO.CHECKPICKING
   );
   const pedidosPacking = pedidosFiltrados.filter(
     (p) => p.estado === ESTADOS_PEDIDO.PACKING
@@ -89,6 +93,26 @@ const PedidosDashboard: React.FC = () => {
                 </li>
               )}
               {pedidosPicking.map((pedido) => (
+                <li key={pedido._id} className="px-4 py-2">
+                  <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        {/* Lista de check picking */}
+        <div>
+          <h2 className="text-lg font-semibold text-blue-700 mb-3 pl-1">
+            En Check Picking
+          </h2>
+          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <ul className="divide-y divide-gray-100">
+              {pedidosCheckPicking.length === 0 && !loading && (
+                <li className="text-center text-muted-foreground py-8 w-full">
+                  No hay pedidos en check picking.
+                </li>
+              )}
+              {pedidosCheckPicking.map((pedido) => (
                 <li key={pedido._id} className="px-4 py-2">
                   <PedidoMiniCard pedido={pedido} onClick={() => {}} size="lg" />
                 </li>

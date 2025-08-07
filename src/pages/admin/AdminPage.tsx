@@ -1,4 +1,4 @@
-import { BookA, SquareChartGantt, User, LayoutDashboard, PackageCheck, BookCheck, BookDashed, BookHeart, BookOpen } from "lucide-react";
+import { BookA, SquareChartGantt, User, LayoutDashboard, PackageCheck,BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import HasModule from "../../components/auth/HasModule";

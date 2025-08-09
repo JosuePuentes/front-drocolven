@@ -9,7 +9,7 @@ const PackingPedidos: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    obtenerPedidos();
+    obtenerPedidos(["packing"]); // Cargar pedidos en estado 'packing'
   }, []);
 
   // Filtrar solo pedidos en estado 'packing'

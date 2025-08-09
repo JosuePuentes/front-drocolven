@@ -15,7 +15,7 @@ const PickingPedidos: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    obtenerPedidos();
+    obtenerPedidos(["nuevo","picking"]); // Cargar pedidos en estado NUEVO y PICKING
   }, []);
 
   const handleSeleccionarPedido = (pedidoId: string) => {

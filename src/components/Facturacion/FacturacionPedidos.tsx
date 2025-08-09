@@ -7,13 +7,13 @@ import { Loader2, SearchX } from "lucide-react";
 const FacturacionPedidos: React.FC = () => {
   const {
     pedidos,
-    obtenerPedidosParaFacturar,
+    obtenerPedidos,
     loading
   } = usePedido();
   const navigate = useNavigate();
 
   useEffect(() => {
-    obtenerPedidosParaFacturar();
+    obtenerPedidos(["para_facturar", "facturando"]);
   }, []);
 
   const handleSeleccionarPedido = (pedidoId: string) => {

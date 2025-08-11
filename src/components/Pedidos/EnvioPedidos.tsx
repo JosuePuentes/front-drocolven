@@ -9,7 +9,7 @@ const EnviadosPedidos: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    obtenerPedidos();
+    obtenerPedidos(["enviado"]);
   }, []);
 
   // Filtrar solo pedidos en estado 'enviado'

@@ -35,6 +35,8 @@ import FacturacionDetalle from "./components/Facturacion/FacturacionDetalle";
 import CheckPicking from "./components/Pedidos/checkpicking/CheckPicking";
 import PeditentesPage from "./components/Pedidos/checkpicking/PeditentesPage";
 import VistaPedidos from "./components/Pedidos/VistaPedidos";
+import ModificarInventario from "./pages/inventario/ModificarInventario";
+import ProcesarExcelExistencia from "./pages/inventario/ajusteInv/ProcesarExcelExistencia";
 
 function App() {
   useEffect(() => {
@@ -97,6 +99,8 @@ function App() {
           <Route path="usuarios/crearcliente" element={<AdminProtectedRoute moduleRequired="usuarios"><CreateClient /></AdminProtectedRoute>} />
           <Route path="inventario/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><UploadInventory /></AdminProtectedRoute>} />
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
+          <Route path="inventario/maestro" element={<AdminProtectedRoute moduleRequired="inventario"><ModificarInventario /></AdminProtectedRoute>} />
+          <Route path="inventario/maestro/procesarexistencia" element={<AdminProtectedRoute moduleRequired="inventario"><ProcesarExcelExistencia /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="crear-pedido" element={<AdminProtectedRoute moduleRequired="pedidos"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedidos"><PedidosDashboard /></AdminProtectedRoute>} />

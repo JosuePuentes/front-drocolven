@@ -3,14 +3,31 @@ import { usePedido, ESTADOS_PEDIDO } from '../../components/hooks/usePedido';
 import PedidoMiniCard from '../../components/Pedidos/PedidoMiniCard';
 import PedidoNuevoCard from '../../components/Pedidos/PedidoNuevoCard';
 
+
+// Helpers para rango de fechas +/- 15 días
+function formatDate(date: Date) {
+  return date.toISOString().split('T')[0];
+}
+const today = new Date();
+const dateBefore = new Date(today);
+dateBefore.setDate(today.getDate() - 15);
+const dateAfter = new Date(today);
+dateAfter.setDate(today.getDate() + 15);
+
+const [fechaDesde, fechaHasta] = [formatDate(dateBefore), formatDate(dateAfter)];
+
 const PedidosDashboard: React.FC = () => {
-  const { pedidos, fetchPedidos, loading } = usePedido();
+  const { pedidos, obtenerPedidos, loading } = usePedido();
 
   useEffect(() => {
-    fetchPedidos();
+    obtenerPedidos([
+      "picking","checkpicking","packing","enviado","nuevo","facturando","para_facturar"
+    ], fechaDesde, fechaHasta);
     const interval = setInterval(() => {
-      fetchPedidos();
-    }, 20000); // Actualiza cada 20 segundos (20,000 ms)
+      obtenerPedidos([
+        "picking","checkpicking","packing","enviado","nuevo","facturando","para_facturar"
+      ], fechaDesde, fechaHasta);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
 

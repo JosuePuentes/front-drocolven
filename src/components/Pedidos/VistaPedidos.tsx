@@ -18,29 +18,47 @@ const ESTADOS = [
   { id: 'cancelado', label: 'Cancelado' },
 ];
 
+
+// Helpers para semana actual
+function getMonday(d = new Date()) {
+  d = new Date(d);
+  const day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+function formatDate(date: Date) {
+  return date.toISOString().split('T')[0];
+}
+
 export default function VistaPedidos() {
   const { pedidos, obtenerPedidos } = usePedido();
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(ESTADOS[0].id);
   const [search, setSearch] = useState("");
-  const [fechaDesde, setFechaDesde] = useState("");
-  const [fechaHasta, setFechaHasta] = useState("");
+  // Semana actual por defecto
+  const hoy = new Date();
+  const lunes = getMonday(hoy);
+  const domingo = new Date(lunes);
+  domingo.setDate(lunes.getDate() + 6);
+  const [fechaDesde, setFechaDesde] = useState(formatDate(lunes));
+  const [fechaHasta, setFechaHasta] = useState(formatDate(domingo));
   const listaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    obtenerPedidos();
-  }, []);
 
+  // Ya no filtramos por fecha en frontend, solo por búsqueda y estado
   const pedidosFiltrados = useMemo(() =>
     pedidos.filter(p => {
       const matchEstado = p.estado === estadoSeleccionado;
       const matchSearch = p.cliente.toLowerCase().includes(search.toLowerCase());
-      const fechaISO = new Date(p.fecha_creacion ?? 0).toISOString().split('T')[0];
-      const matchDesde = fechaDesde ? fechaISO >= fechaDesde : true;
-      const matchHasta = fechaHasta ? fechaISO <= fechaHasta : true;
-      return matchEstado && matchSearch && matchDesde && matchHasta;
+      return matchEstado && matchSearch;
     }),
-    [pedidos, estadoSeleccionado, search, fechaDesde, fechaHasta]
+    [pedidos, estadoSeleccionado, search]
   );
+
+
+  // Consultar pedidos al montar y cuando cambian los filtros principales
+  useEffect(() => {
+    obtenerPedidos([estadoSeleccionado], fechaDesde, fechaHasta);
+    // eslint-disable-next-line
+  }, [estadoSeleccionado, fechaDesde, fechaHasta]);
 
   useEffect(() => {
     if (listaRef.current) {
@@ -97,7 +115,7 @@ export default function VistaPedidos() {
             className="input"
           />
           <button
-            onClick={() => obtenerPedidos()}
+            onClick={() => obtenerPedidos([estadoSeleccionado], fechaDesde, fechaHasta)}
             className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 p-2 rounded-md"
             title="Refrescar"
           >

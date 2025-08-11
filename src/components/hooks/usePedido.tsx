@@ -39,38 +39,52 @@ export const usePedido = () => {
 
 
   // Función para obtener pedidos desde el backend
-const obtenerPedidos = async (estados: string[] | null = null) => {
-  setLoading(true);
+  const obtenerPedidos = async (
+    estados: string[] | null = null,
+    fecha_desde?: string,
+    fecha_hasta?: string
+  ) => {
+    setLoading(true);
 
-  // 1. Construir la URL base
-  const url = new URL(`${import.meta.env.VITE_API_URL}/obtener_pedidos/`);
+    // 1. Construir la URL base
+    const url = new URL(`${import.meta.env.VITE_API_URL}/obtener_pedidos/`);
 
-  // 2. Si se proporciona una lista de estados, añadir cada uno como un parámetro
-  if (estados && estados.length > 0) {
-    estados.forEach(estado => {
-      // La clave 'estados' debe coincidir con el parámetro en tu endpoint de FastAPI
-      url.searchParams.append('estados', estado);
-    });
-  }
-
-  try {
-    // 3. Usar la URL final en la petición fetch
-    const response = await fetch(url.toString());
-    
-    if (!response.ok) {
-      throw new Error("Error al obtener pedidos");
+    // 2. Si se proporciona una lista de estados, añadir cada uno como un parámetro
+    if (estados && estados.length > 0) {
+      estados.forEach(estado => {
+        url.searchParams.append('estados', estado);
+      });
     }
-    
-    const data: PedidoArmado[] = await response.json();
-    console.log(`Pedidos obtenidos (Filtros: ${estados ? estados.join(', ') : 'ninguno'}):`, data);
-    setPedidos(data);
 
-  } catch (error) {
-    console.error("Error al obtener pedidos:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    // 3. Añadir fechas si se proporcionan
+    if (fecha_desde) {
+      url.searchParams.append('fecha_desde', fecha_desde);
+    }
+    if (fecha_hasta) {
+      url.searchParams.append('fecha_hasta', fecha_hasta);
+    }
+
+    try {
+      // 4. Usar la URL final en la petición fetch
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        throw new Error("Error al obtener pedidos");
+      }
+
+      const data: PedidoArmado[] = await response.json();
+      console.log(
+        `Pedidos obtenidos (Filtros: ${estados ? estados.join(', ') : 'ninguno'}, Fecha desde: ${fecha_desde || 'ninguna'}, Fecha hasta: ${fecha_hasta || 'ninguna'}):`,
+        data
+      );
+      setPedidos(data);
+
+    } catch (error) {
+      console.error("Error al obtener pedidos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const actualizarPedido = async (pedidoId: string, datos: Partial<PedidoArmado>) => {
     setLoading(true);

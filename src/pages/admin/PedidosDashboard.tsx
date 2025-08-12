@@ -27,7 +27,7 @@ const PedidosDashboard: React.FC = () => {
       obtenerPedidos([
         "picking","checkpicking","packing","enviado","nuevo","facturando","para_facturar"
       ], fechaDesde, fechaHasta);
-    }, 20000);
+    }, 300000);
     return () => clearInterval(interval);
   }, []);
 

@@ -37,6 +37,10 @@ import PeditentesPage from "./components/Pedidos/checkpicking/PeditentesPage";
 import VistaPedidos from "./components/Pedidos/VistaPedidos";
 import ModificarInventario from "./pages/inventario/ModificarInventario";
 import ProcesarExcelExistencia from "./pages/inventario/ajusteInv/ProcesarExcelExistencia";
+import ConvenioUploader from "./pages/inventario/convenios/ConveniosUploader";
+import EdicionClientePage from "./components/usuarios/edicionCliente/EdicionClientePage";
+import EdicionCliente from "./components/usuarios/edicionCliente/EdicionCliente";
+import VistaCliente from "./components/usuarios/edicionCliente/VistaCliente";
 
 function App() {
   useEffect(() => {
@@ -101,6 +105,7 @@ function App() {
           <Route path="inventario/ver" element={<AdminProtectedRoute moduleRequired="inventario"><InventoryList /></AdminProtectedRoute>} />
           <Route path="inventario/maestro" element={<AdminProtectedRoute moduleRequired="inventario"><ModificarInventario /></AdminProtectedRoute>} />
           <Route path="inventario/maestro/procesarexistencia" element={<AdminProtectedRoute moduleRequired="inventario"><ProcesarExcelExistencia /></AdminProtectedRoute>} />
+          <Route path="inventario/convenios/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><ConvenioUploader /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="crear-pedido" element={<AdminProtectedRoute moduleRequired="pedidos"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
@@ -116,6 +121,9 @@ function App() {
           <Route path="facturacionpedidos" element={<AdminProtectedRoute moduleRequired="facturacion"><FacturacionPedidos /></AdminProtectedRoute>} />
           <Route path="facturacion/:id" element={<AdminProtectedRoute moduleRequired="facturacion"><FacturacionDetalle /></AdminProtectedRoute>} />
           <Route path="vistapedidos" element={<AdminProtectedRoute moduleRequired="vistapedidos"><VistaPedidos /></AdminProtectedRoute>} />
+          <Route path="clientes/edicion" element={<AdminProtectedRoute moduleRequired="clientes"><EdicionClientePage /></AdminProtectedRoute>} />
+          <Route path="clientes/:rif" element={<AdminProtectedRoute moduleRequired="clientes"><VistaCliente /></AdminProtectedRoute>} />
+          <Route path="clientes/:rif/editar" element={<AdminProtectedRoute moduleRequired="clientes"><EdicionCliente /></AdminProtectedRoute>} />
           <Route path="unauthorized" element={<AdminProtectedRoute moduleRequired=""><div>no estas autorizado para realizar esta operacion</div></AdminProtectedRoute>} />
         </Route>
 

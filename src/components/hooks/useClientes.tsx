@@ -15,6 +15,7 @@ export interface ClienteDetalle extends ClienteResumen {
   descuento1: number;
   descuento2: number;
   descuento3: number;
+  preciosmp: boolean;
 }
 
 export const useClientes = () => {
@@ -81,6 +82,7 @@ export const useClientes = () => {
         descuento1: Number(data.descuento1?.$numberDouble ?? data.descuento1) || 0,
         descuento2: Number(data.descuento2?.$numberDouble ?? data.descuento2) || 0,
         descuento3: Number(data.descuento3?.$numberDouble ?? data.descuento3) || 0,
+        preciosmp: data.preciosmp || false,
       };
       setClienteSeleccionado(detalle);
     } catch (err) {

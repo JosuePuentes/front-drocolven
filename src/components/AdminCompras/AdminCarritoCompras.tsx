@@ -12,7 +12,7 @@ import { AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 export const AdminCarritoCompras = () => {
   const { clientes, clienteSeleccionado, seleccionarCliente } = useClientes();
   const { carrito, agregarProducto, eliminarProducto, limpiarCarrito } = useCarrito();
-  const { productos } = useProductos();
+  const { productos } = useProductos(clienteSeleccionado?.preciosmp);
   const [busqueda, setBusqueda] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
   const inputBusquedaRef = useRef<HTMLInputElement>(null);

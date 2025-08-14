@@ -16,6 +16,7 @@ interface Cliente {
   descuento1?: number;
   descuento2?: number;
   descuento3?: number;
+  preciosmp?: boolean;
   // Agrega aquí cualquier otra propiedad del cliente que uses
 }
 

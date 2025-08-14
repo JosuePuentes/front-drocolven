@@ -122,7 +122,7 @@ export const CarritoComprasCliente = () => {
 
     // Memoiza los productos filtrados para evitar recálculos innecesarios
     const productosFiltrados = useMemo(
-        () => filtrarPorMultiplesPalabrasAND(productos, busqueda, ["descripcion", "id"]),
+        () => filtrarPorMultiplesPalabrasAND(productos, busqueda, ["descripcion", "codigo"]),
         [productos, busqueda]
     );
 
@@ -130,7 +130,7 @@ export const CarritoComprasCliente = () => {
     const handleSeleccionarOrdenGuardada = (productosOrden: any[]) => {
         limpiarCarrito();
         productosOrden.forEach((prodGuardado) => {
-            const prodCatalogo = productos.find((p) => p.id === prodGuardado.id);
+            const prodCatalogo = productos.find((p) => p.codigo === prodGuardado.codigo);
             const productoCompleto = prodCatalogo ? { ...prodCatalogo, ...prodGuardado } : prodGuardado;
             agregarProducto(productoCompleto);
         });
@@ -197,7 +197,7 @@ export const CarritoComprasCliente = () => {
                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6 max-h-[calc(100vh-280px)] md:max-h-[calc(100vh-200px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
                         {productosFiltrados.map((producto) => (
                             <ProductoItem
-                                key={producto.id}
+                                key={producto.codigo}
                                 producto={producto}
                                 onAgregar={(prod, cantidad) => {
                                     agregarProducto({
@@ -270,7 +270,7 @@ export const CarritoComprasCliente = () => {
                             {modalAbierto && (
                                 <ResumenCarrito
                                     carrito={carrito.map(prod => ({
-                                        codigo: prod.id,
+                                        codigo: prod.codigo,
                                         descripcion: prod.descripcion,
                                         precio: prod.precio,
                                         precio_n: prod.precio_n,

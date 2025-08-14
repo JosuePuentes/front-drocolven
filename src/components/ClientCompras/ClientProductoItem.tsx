@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai"; // Icono para el botón de info
 
 interface Producto {
-    id: string;
+    codigo: string;
     descripcion: string;
     precio: number;
     precio_n?: number;

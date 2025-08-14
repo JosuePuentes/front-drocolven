@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 export interface Producto {
-  id: string;
+  codigo: string;
   descripcion: string;
   precio: number;
   precio_n?: number; // precio_n es opcional y puede ser null
@@ -36,11 +36,11 @@ export function useCarrito() {
       : 1;
 
     setCarrito((prev) => {
-      const existe = prev.find((p) => p.id === producto.id);
+      const existe = prev.find((p) => p.codigo === producto.codigo);
 
       if (existe) {
         return prev.map((p) =>
-          p.id === producto.id
+          p.codigo === producto.codigo
             ? { ...p, cantidad_pedida: p.cantidad_pedida + cantidad }
             : p
         );
@@ -52,16 +52,16 @@ export function useCarrito() {
 
 
 
-  const quitarProducto = (id: string) => {
+  const quitarProducto = (codigo: string) => {
     setCarrito((prev) =>
       prev
-        .map((p) => (p.id === id ? { ...p, cantidad_pedida: p.cantidad_pedida - 1 } : p))
+        .map((p) => (p.codigo === codigo ? { ...p, cantidad_pedida: p.cantidad_pedida - 1 } : p))
         .filter((p) => p.cantidad_pedida > 0)
     );
   };
 
-  const eliminarProducto = (id: string) => {
-    setCarrito((prev) => prev.filter((p) => p.id !== id));
+  const eliminarProducto = (codigo: string) => {
+    setCarrito((prev) => prev.filter((p) => p.codigo !== codigo));
   };
 
   const limpiarCarrito = () => {

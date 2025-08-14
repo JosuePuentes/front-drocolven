@@ -7,7 +7,7 @@ interface OrdenGuardada {
   fecha: string;
   cliente: string;
   productos: Array<{
-    id: string;
+    codigo: string;
     descripcion: string;
     cantidad_pedida: number;
     precio_n: number;
@@ -53,7 +53,7 @@ export const OrdenesGuardadas: React.FC<OrdenesGuardadasProps> = ({ onSelectOrde
             </div>
             <ul className="divide-y divide-gray-100 mb-4">
               {orden.productos.map((prod) => (
-                <li key={prod.id} className="py-2 flex flex-col sm:flex-row justify-between text-sm gap-1 sm:gap-0">
+                <li key={prod.codigo} className="py-2 flex flex-col sm:flex-row justify-between text-sm gap-1 sm:gap-0">
                   <div className="flex flex-col">
                     <span className="font-semibold text-gray-800 text-base sm:text-lg leading-tight">
                       {prod.descripcion}

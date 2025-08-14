@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // La interfaz no necesita cambios
 export interface Producto {
-  id: string;
+  codigo: string;
   descripcion: string;
   precio: number;
   precio_n?: number;
@@ -73,7 +73,7 @@ export const useProductos = (preciosmp: boolean = false) => {
             const precioEspecial = preciosConvenio ? preciosConvenio[codigoProducto] : undefined;
 
             return {
-              id: codigoProducto,
+              codigo: codigoProducto,
               descripcion: item.descripcion.trim(),
               precio: parseFloat(precioEspecial !== undefined ? String(precioEspecial) : item.precio) || 0,
               cantidad_pedida: Number(item.cantidad) || 0,

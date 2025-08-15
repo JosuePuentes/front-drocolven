@@ -69,7 +69,7 @@ const EdicionCliente: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8000/clientes/${rif}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/clientes/${rif}`);
         if (!response.ok) {
           throw new Error(`Error ${response.status}: No se pudo encontrar el cliente.`);
         }
@@ -127,7 +127,7 @@ const EdicionCliente: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/clientes/${rif}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/clientes/${rif}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload), // Enviamos el payload sin la contraseña si está vacía

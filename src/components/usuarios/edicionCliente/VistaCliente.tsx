@@ -35,7 +35,7 @@ const VistaCliente: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8000/clientes/${rif}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/clientes/${rif}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.detail || `Error: No se pudo encontrar el cliente.`);

@@ -29,7 +29,7 @@ const ListaClientes: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:8000/clientes/all');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/clientes/all`);
         if (!response.ok) {
           throw new Error('No se pudo obtener la lista de clientes.');
         }

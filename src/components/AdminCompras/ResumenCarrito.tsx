@@ -121,7 +121,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
     }
     let usuario;
     try {
-      const usuarioStr = localStorage.getItem("usuario");
+      const usuarioStr = localStorage.getItem("admin_data");
       if (!usuarioStr)
         throw new Error("No se encontró información del usuario.");
       usuario = JSON.parse(usuarioStr);
@@ -185,7 +185,7 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
       // --- PASO 2: Construir y enviar la transacción usando el hook ---
       const transaccionPayload: TransaccionPayload = {
         tipo_movimiento: "pedido",
-        usuario: usuario.login || "usuario_desconocido", // ¡Confirma esta propiedad!
+        usuario: usuario.usuario || "usuario_desconocido", // ¡Confirma esta propiedad!
         observaciones: `Descargo por pedido N° ${pedidoCreado.pedido_id}. ${observacion}`,
         documento_origen: pedidoCreado.pedido_id.toString(),
         productos: carrito.map((p) => ({

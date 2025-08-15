@@ -125,10 +125,6 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
       if (!usuarioStr)
         throw new Error("No se encontró información del usuario.");
       usuario = JSON.parse(usuarioStr);
-      if (cliente && usuario?.rif && usuario.rif !== cliente.rif) {
-        alert("El cliente logueado no coincide con el cliente del pedido.");
-        return;
-      }
     } catch (e) {
       alert("Error al validar el cliente logueado.");
       return;

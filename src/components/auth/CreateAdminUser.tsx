@@ -13,6 +13,7 @@ const CreateAdminUser = () => {
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [identificador, setIdentificador] = useState('');
 
+  
   useEffect(() => {
     const fetchModulos = async () => {
       try {

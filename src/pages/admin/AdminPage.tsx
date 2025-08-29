@@ -129,7 +129,7 @@ const AdminPage: React.FC = () => {
           />
         </HasModule>
 
-        <HasModule module="pedidos">
+        <HasModule module="info-pedido">
           <CardModule
             bottomText="Dashboard de Pedidos"
             description="Visualiza todos los pedidos, tiempos y estado actual."

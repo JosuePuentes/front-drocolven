@@ -108,7 +108,7 @@ function App() {
           <Route path="inventario/convenios/cargar" element={<AdminProtectedRoute moduleRequired="inventario"><ConvenioUploader /></AdminProtectedRoute>} />
           <Route path="comprar" element={<AdminProtectedRoute moduleRequired="compras"><AdminCarritoCompras /></AdminProtectedRoute>} />
           <Route path="crear-pedido" element={<AdminProtectedRoute moduleRequired="pedidos"><AdminCarritoCompras /></AdminProtectedRoute>} />
-          <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedidos"><PedidosDashboard /></AdminProtectedRoute>} />
+          <Route path="pedidos-dashboard" element={<AdminProtectedRoute moduleRequired="info-pedido"><PedidosDashboard /></AdminProtectedRoute>} />
           <Route path="pedidos" element={<AdminProtectedRoute moduleRequired="admin-pedidos"><MonitorPedidos /></AdminProtectedRoute>} />
           <Route path="pickingpedidos" element={<AdminProtectedRoute moduleRequired="picking"><PickingPedidos /></AdminProtectedRoute>} />
           <Route path="checkpickingpedidos" element={<AdminProtectedRoute moduleRequired="checkpicking"><CheckPicking /></AdminProtectedRoute>} />

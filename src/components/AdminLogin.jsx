@@ -25,16 +25,38 @@ function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
-    // Simular autenticación
-    setTimeout(() => {
-      setIsLoading(false)
-      // Redirigir al dashboard
-      window.location.href = '/admin'
-    }, 2000)
-  }
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Construye la URL completa usando la variable de entorno
+      const backendUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${backendUrl}/auth/adminlogin`, { // Asumiendo que tu endpoint de login es /auth/adminlogin
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Aquí puedes guardar el token de autenticación si tu backend lo devuelve
+        // Por ejemplo: localStorage.setItem('token', data.token);
+        console.log('Login exitoso:', data);
+        window.location.href = '/admin'; // Redirigir al dashboard
+      } else {
+        const errorData = await response.json();
+        console.error('Error en el login:', errorData.message || 'Credenciales inválidas');
+        alert(errorData.message || 'Credenciales inválidas'); // Mostrar un mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error('Error de red o del servidor:', error);
+      alert('Error de conexión. Inténtalo de nuevo más tarde.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     setFormData({

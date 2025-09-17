@@ -19,7 +19,7 @@ import logoSolo from '../assets/LOGOSolo.png'
 function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    username: '',
+    usuario: '',
     password: ''
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -121,10 +121,10 @@ function AdminLogin() {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
                 <Input
                   id="username"
-                  name="username"
+                  name="usuario"
                   type="text"
                   placeholder="Ingrese su usuario"
-                  value={formData.username}
+                  value={formData.usuario}
                   onChange={handleInputChange}
                   className="pl-10 bg-white/10 border-white/20 text-gray-900 placeholder:text-white/60 focus:border-accent futuristic-border"
                   required

@@ -31,7 +31,7 @@ function AdminLogin() {
     try {
       // Construye la URL completa usando la variable de entorno
       const backendUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${backendUrl}/auth/adminlogin`, { // Asumiendo que tu endpoint de login es /auth/adminlogin
+      const response = await fetch(`${backendUrl}/login/admin`, { // Ahora el endpoint es /login/admin
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

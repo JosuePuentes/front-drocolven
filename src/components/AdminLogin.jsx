@@ -126,7 +126,7 @@ function AdminLogin() {
                   placeholder="Ingrese su usuario"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-accent futuristic-border"
+                  className="pl-10 bg-white/10 border-white/20 text-gray-900 placeholder:text-white/60 focus:border-accent futuristic-border"
                   required
                 />
               </div>
@@ -143,7 +143,7 @@ function AdminLogin() {
                   placeholder="Ingrese su contraseña"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-accent futuristic-border"
+                  className="pl-10 pr-10 bg-white/10 border-white/20 text-gray-900 placeholder:text-white/60 focus:border-accent futuristic-border"
                   required
                 />
                 <button

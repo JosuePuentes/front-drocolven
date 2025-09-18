@@ -3,7 +3,6 @@
     {
       "source": "/api/:path*",
       "destination": "https://drocolven-backend-2019.onrender.com/:path*"
-    },
-    { "source": "/(.*)", "destination": "/index.html" }
+    }
   ]
 }

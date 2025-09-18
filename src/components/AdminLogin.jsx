@@ -29,8 +29,12 @@ function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/login/admin/`, {
-        method: 'GET',
+      const response = await fetch(`/api/login/admin/`, { // Ahora el endpoint es /login/admin
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {

@@ -50,6 +50,7 @@ function AdminLogin() {
       }
     } catch (error) {
       console.error('Error de red o del servidor:', error);
+      console.log('Full error object:', error);
       alert('Error de conexión. Inténtalo de nuevo más tarde.');
     } finally {
       setIsLoading(false);

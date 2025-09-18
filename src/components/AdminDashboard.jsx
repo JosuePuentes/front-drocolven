@@ -387,6 +387,67 @@ function AdminDashboard() {
             </Card>
           )}
 
+          {/* Pedidos Pendientes de Activación */}
+          {activeSection === 'pending-orders' && (
+            <Card className="glass-effect border-0">
+              <CardHeader>
+                <CardTitle>Pedidos Pendientes de Activación</CardTitle>
+                <CardDescription>Pedidos en estado de administración listos para ser activados.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingPendingOrders ? (
+                  <p>Cargando pedidos pendientes...</p>
+                ) : errorPendingOrders ? (
+                  <p className="text-red-500">Error: {errorPendingOrders}</p>
+                ) : pendingOrders.length === 0 ? (
+                  <p>No hay pedidos pendientes de activación.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingOrders.map((order) => (
+                      <div key={order.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div className="flex-1">
+                          <p className="font-medium">Pedido ID: {order.id}</p>
+                          <p className="text-sm text-muted-foreground">Cliente: {order.customer_name || 'N/A'}</p>
+                          <p className="text-sm text-muted-foreground">Monto: ${order.total_amount || 'N/A'}</p>
+                        </div>
+                        <Button
+                          onClick={() => handleActivateOrder(order.id)}
+                          className="bg-green-500 hover:bg-green-600 text-white"
+                        >
+                          Activar Pedido
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Administración de Pedidos Card for Dashboard View */}
+          {activeSection === 'dashboard' && (
+            <Card className="glass-effect border-0">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center">
+                      <ShoppingCart className="mr-2 h-5 w-5 text-blue-500" />
+                      Administración de Pedidos
+                    </CardTitle>
+                    <CardDescription>Gestiona los pedidos pendientes de activación.</CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setActiveSection('pending-orders')}>
+                    <Eye className="mr-2 h-4 w-4" />
+                    Ver Pedidos
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Accede a la lista de pedidos en estado de administración para activarlos y prepararlos para picking.</p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Quick Actions */}
           <Card className="glass-effect border-0">
             <CardHeader>

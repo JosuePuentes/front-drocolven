@@ -24,7 +24,8 @@ import {
   Upload,
   Activity,
   DollarSign,
-  AlertTriangle
+  AlertTriangle,
+  Hourglass
 } from 'lucide-react'
 import logoSolo from '../assets/LOGOSolo.png'
 
@@ -80,8 +81,71 @@ function AdminDashboard() {
     { name: "Loratadina 10mg", stock: 3, minStock: 15 },
   ]
 
+  const [pendingOrders, setPendingOrders] = useState([])
+  const [loadingPendingOrders, setLoadingPendingOrders] = useState(true)
+  const [errorPendingOrders, setErrorPendingOrders] = useState(null)
+
+  const fetchPendingOrders = async () => {
+    setLoadingPendingOrders(true)
+    setErrorPendingOrders(null)
+    try {
+      const token = localStorage.getItem('authToken') // Assuming token is stored in localStorage
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/pedidos/pendientes_activacion/`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error('No tienes permiso para ver pedidos pendientes de activación.')
+        }
+        throw new Error(`Error al cargar pedidos pendientes: ${response.statusText}`)
+      }
+      const data = await response.json()
+      setPendingOrders(data)
+    } catch (error) {
+      console.error("Error fetching pending orders:", error)
+      setErrorPendingOrders(error.message)
+    } finally {
+      setLoadingPendingOrders(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchPendingOrders()
+  }, [])
+
+  const handleActivateOrder = async (orderId) => {
+    try {
+      const token = localStorage.getItem('authToken')
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/pedidos/activar/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error('No tienes permiso para activar pedidos.')
+        }
+        throw new Error(`Error al activar el pedido: ${response.statusText}`)
+      }
+
+      // If activation is successful, refetch pending orders to update the list
+      fetchPendingOrders()
+      alert(`Pedido ${orderId} activado exitosamente.`)
+    } catch (error) {
+      console.error("Error activating order:", error)
+      alert(`Error al activar el pedido: ${error.message}`)
+    }
+  }
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'pending-orders', label: 'Pedidos Pendientes', icon: Hourglass },
     { id: 'orders', label: 'Pedidos', icon: ShoppingCart },
     { id: 'products', label: 'Productos', icon: Package },
     { id: 'customers', label: 'Clientes', icon: Users },
@@ -285,6 +349,43 @@ function AdminDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Pedidos Pendientes de Activación */}
+          {activeSection === 'pending-orders' && (
+            <Card className="glass-effect border-0">
+              <CardHeader>
+                <CardTitle>Pedidos Pendientes de Activación</CardTitle>
+                <CardDescription>Pedidos en estado de administración listos para ser activados.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingPendingOrders ? (
+                  <p>Cargando pedidos pendientes...</p>
+                ) : errorPendingOrders ? (
+                  <p className="text-red-500">Error: {errorPendingOrders}</p>
+                ) : pendingOrders.length === 0 ? (
+                  <p>No hay pedidos pendientes de activación.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingOrders.map((order) => (
+                      <div key={order.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div className="flex-1">
+                          <p className="font-medium">Pedido ID: {order.id}</p>
+                          <p className="text-sm text-muted-foreground">Cliente: {order.customer_name || 'N/A'}</p>
+                          <p className="text-sm text-muted-foreground">Monto: ${order.total_amount || 'N/A'}</p>
+                        </div>
+                        <Button
+                          onClick={() => handleActivateOrder(order.id)}
+                          className="bg-green-500 hover:bg-green-600 text-white"
+                        >
+                          Activar Pedido
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Quick Actions */}
           <Card className="glass-effect border-0">

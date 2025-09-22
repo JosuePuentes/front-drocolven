@@ -3,6 +3,8 @@ import { AiOutlineDelete, AiOutlineCloseCircle } from "react-icons/ai";
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { animate } from "animejs"; // Asegúrate de que 'animejs' esté instalado
 import { CarritoProducto, Cliente } from './types/types';
+import { useReactToPrint } from 'react-to-print'; // Importar useReactToPrint
+import PreliminarPedidoPDF from './pdf/PreliminarPedidoPDF'; // Importar el componente PDF
 
 interface ResumenCarritoProps {
     carrito: CarritoProducto[];
@@ -26,6 +28,13 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
 
     const confirmModalRef = useRef<HTMLDivElement>(null);
     const confirmOverlayRef = useRef<HTMLDivElement>(null);
+    const pdfRef = useRef<HTMLDivElement>(null); // Ref para el componente PDF
+
+    const handlePrint = useReactToPrint({
+        content: () => pdfRef.current,
+        documentTitle: `Pedido_Preliminar_${cliente?.encargado || 'Sin_Cliente'}_${new Date().toLocaleDateString().replace(/\//g, '-')}`,
+        pageStyle: `@page { size: A4; margin: 10mm; }`,
+    });
 
     // Animación de aparición/desaparición del modal de CONFIRMACIÓN (Totalizar Pedido)
     useEffect(() => {
@@ -331,7 +340,27 @@ export const ResumenCarrito: React.FC<ResumenCarritoProps> = ({
                   >
                     Ver Órdenes Guardadas
                   </button>
+                  <button
+                    className="bg-purple-600 text-white text-sm px-3 py-1.5 rounded-lg shadow-sm hover:bg-purple-700 transition-colors"
+                    onClick={handlePrint}
+                  >
+                    Exportar PDF
+                  </button>
                 </div>
+            </div>
+
+            {/* Componente oculto para la generación de PDF */}
+            <div className="hidden">
+                <PreliminarPedidoPDF
+                    ref={pdfRef}
+                    cartItems={carrito.map(item => ({
+                        id: item.codigo,
+                        nombre: item.descripcion,
+                        cantidad: item.cantidad_pedida,
+                        precioUnitario: item.precio_n ?? item.precio,
+                    }))}
+                    total={total}
+                />
             </div>
 
             {/* Modal de Confirmación para Totalizar Pedido */}

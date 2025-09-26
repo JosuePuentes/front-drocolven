@@ -22,8 +22,6 @@ import {
 import logoSolo from './assets/LOGOSolo.png'
 import AdminLogin from './components/AdminLogin.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
-import ParticleField from './components/ParticleField.jsx'
-import HolographicIcon from './components/HolographicIcon.jsx'
 import './App.css'
 
 function HomePage() {
@@ -129,9 +127,7 @@ function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden neural-network">
-        <ParticleField density={15} />
-        <div className="absolute inset-0 medical-grid opacity-20"></div>
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">

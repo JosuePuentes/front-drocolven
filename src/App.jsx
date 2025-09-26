@@ -136,9 +136,9 @@ function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <span className="drocolven-badge">
+                <div className="drocolven-badge">
                   Droguería Digital Avanzada
-                </span>
+                </div>
                 <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                   Bienvenido a{' '}
                   <span className="drocolven-gradient-text">Drocolven</span>
@@ -250,16 +250,16 @@ function HomePage() {
                         <Pill size={64} className="text-green-600" />
                       </div>
                     </div>
-                    <span className="drocolven-badge absolute top-2 right-2 bg-red-500 text-white">
+                    <div className="drocolven-badge absolute top-2 right-2 bg-red-500 text-white">
                       -{product.discount}
-                    </span>
+                    </div>
                   </div>
                 </div>
                 <div className="p-4">
                   <div className="space-y-2">
-                    <span className="drocolven-badge-outline text-xs">
+                    <div className="drocolven-badge-outline text-xs">
                       {product.category}
-                    </span>
+                    </div>
                     <h3 className="text-lg font-semibold drocolven-gradient-text">{product.name}</h3>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold text-green-600">{product.price}</span>

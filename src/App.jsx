@@ -95,7 +95,7 @@ function HomePage() {
 
             {/* Actions */}
             <div className="flex items-center space-x-4">
-              <button className="drocolven-btn-secondary hidden sm:flex">
+              <button className="drocolven-btn-secondary hidden sm:inline-flex">
                 Iniciar Sesión
               </button>
               <button className="drocolven-btn" onClick={() => window.location.href = '/adminlogin'}>

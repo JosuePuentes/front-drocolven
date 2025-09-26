@@ -22,6 +22,8 @@ import {
 import logoSolo from './assets/LOGOSolo.png'
 import AdminLogin from './components/AdminLogin.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
+import ParticleField from './components/ParticleField.jsx'
+import HolographicIcon from './components/HolographicIcon.jsx'
 import './App.css'
 
 function HomePage() {
@@ -95,17 +97,17 @@ function HomePage() {
 
             {/* Actions */}
             <div className="flex items-center space-x-4">
-              <button className="drocolven-btn-secondary hidden sm:inline-flex">
+              <Button variant="outline" size="sm" className="drocolven-btn-secondary">
                 Iniciar Sesión
-              </button>
-              <button className="drocolven-btn" onClick={() => window.location.href = '/adminlogin'}>
+              </Button>
+              <Button size="sm" className="drocolven-btn" onClick={() => window.location.href = '/adminlogin'}>
                 Panel Admin
-              </button>
+              </Button>
               
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 drocolven-icon"
+                className="md:hidden p-2"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -127,14 +129,16 @@ function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden neural-network">
+        <ParticleField density={15} />
+        <div className="absolute inset-0 medical-grid opacity-20"></div>
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <div className="drocolven-badge">
+                <Badge className="drocolven-badge">
                   Droguería Digital Avanzada
-                </div>
+                </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                   Bienvenido a{' '}
                   <span className="drocolven-gradient-text">Drocolven</span>
@@ -145,34 +149,28 @@ function HomePage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="drocolven-btn flex items-center justify-center">
+                <Button size="lg" className="drocolven-btn">
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   Explorar Catálogo
-                </button>
-                <button className="drocolven-btn-secondary flex items-center justify-center">
+                </Button>
+                <Button variant="outline" size="lg" className="drocolven-btn-secondary">
                   <Heart className="mr-2 h-5 w-5" />
                   Conocer Más
-                </button>
+                </Button>
               </div>
 
               {/* Features */}
               <div className="grid grid-cols-3 gap-4 pt-8">
                 <div className="text-center">
-                  <div className="drocolven-icon mx-auto mb-2">
-                    <Shield size={48} className="text-green-600" />
-                  </div>
+                  <HolographicIcon icon={Shield} size={48} className="mx-auto mb-2" />
                   <p className="text-sm font-medium">Calidad Garantizada</p>
                 </div>
                 <div className="text-center">
-                  <div className="drocolven-icon mx-auto mb-2">
-                    <Truck size={48} className="text-blue-600" />
-                  </div>
+                  <HolographicIcon icon={Truck} size={48} color="text-secondary" className="mx-auto mb-2" />
                   <p className="text-sm font-medium">Envío Rápido</p>
                 </div>
                 <div className="text-center">
-                  <div className="drocolven-icon mx-auto mb-2">
-                    <Clock size={48} className="text-green-600" />
-                  </div>
+                  <HolographicIcon icon={Clock} size={48} color="text-accent" className="mx-auto mb-2" />
                   <p className="text-sm font-medium">24/7 Disponible</p>
                 </div>
               </div>
@@ -183,20 +181,12 @@ function HomePage() {
               <div className="drocolven-card rounded-3xl p-8 drocolven-bounce">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-4">
-                    <div className="drocolven-icon">
-                      <Pill size={64} className="text-green-600" />
-                    </div>
-                    <div className="drocolven-icon">
-                      <Stethoscope size={64} className="text-blue-600" />
-                    </div>
+                    <HolographicIcon icon={Pill} size={64} />
+                    <HolographicIcon icon={Stethoscope} size={64} color="text-secondary" />
                   </div>
                   <div className="space-y-4">
-                    <div className="drocolven-icon">
-                      <Activity size={64} className="text-green-600" />
-                    </div>
-                    <div className="drocolven-icon">
-                      <Plus size={64} className="text-blue-600" />
-                    </div>
+                    <HolographicIcon icon={Activity} size={64} color="text-accent" />
+                    <HolographicIcon icon={Plus} size={64} />
                   </div>
                 </div>
               </div>
@@ -213,14 +203,14 @@ function HomePage() {
             <div className="flex gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <input 
+                <Input 
                   placeholder="Buscar medicamentos, vitaminas, productos..." 
-                  className="drocolven-input pl-10 h-12 w-full"
+                  className="drocolven-input pl-10 h-12"
                 />
               </div>
-              <button className="drocolven-btn px-8 h-12">
+              <Button size="lg" className="drocolven-btn">
                 Buscar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -238,25 +228,23 @@ function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="drocolven-card border-0 overflow-hidden">
-                <div className="p-0">
+              <Card key={product.id} className="drocolven-card border-0 overflow-hidden">
+                <CardHeader className="p-0">
                   <div className="relative drocolven-loading">
                     <div className="w-full h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center">
-                      <div className="drocolven-icon">
-                        <Pill size={64} className="text-green-600" />
-                      </div>
+                      <HolographicIcon icon={Pill} size={64} animate={false} />
                     </div>
-                    <div className="drocolven-badge absolute top-2 right-2 bg-red-500 text-white">
+                    <Badge className="absolute top-2 right-2 drocolven-badge bg-red-500 text-white">
                       -{product.discount}
-                    </div>
+                    </Badge>
                   </div>
-                </div>
-                <div className="p-4">
+                </CardHeader>
+                <CardContent className="p-4">
                   <div className="space-y-2">
-                    <div className="drocolven-badge-outline text-xs">
+                    <Badge variant="outline" className="text-xs drocolven-badge-outline">
                       {product.category}
-                    </div>
-                    <h3 className="text-lg font-semibold drocolven-gradient-text">{product.name}</h3>
+                    </Badge>
+                    <CardTitle className="text-lg drocolven-gradient-text">{product.name}</CardTitle>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold text-green-600">{product.price}</span>
                       <span className="text-sm text-muted-foreground line-through">
@@ -270,19 +258,20 @@ function HomePage() {
                       <span className="text-sm text-muted-foreground ml-1">(4.8)</span>
                     </div>
                   </div>
-                  <button className="drocolven-btn w-full mt-4 flex items-center justify-center">
+                  <Button className="w-full mt-4 drocolven-btn">
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Ver Oferta
-                  </button>
-                </div>
-              </div>
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
       {/* Daily Verse Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-50 to-blue-50 relative">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-50 to-blue-50 relative neural-network">
+        <ParticleField density={8} />
         <div className="max-w-4xl mx-auto text-center">
           <div className="drocolven-card rounded-2xl p-8 drocolven-shadow-soft">
             <h3 className="text-xl font-semibold mb-4 drocolven-gradient-text">Versículo del Día</h3>
@@ -314,42 +303,30 @@ function HomePage() {
             <div>
               <h4 className="font-semibold mb-4">Productos</h4>
               <ul className="space-y-2 text-sm opacity-80">
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Medicamentos</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Vitaminas</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Cuidado Personal</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Primeros Auxilios</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Medicamentos</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Vitaminas</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Cuidado Personal</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Primeros Auxilios</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Servicios</h4>
               <ul className="space-y-2 text-sm opacity-80">
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Consulta Farmacéutica</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Entrega a Domicilio</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Programa de Fidelidad</a></li>
-                <li><a href="#" className="hover:opacity-100 transition-opacity drocolven-nav-link">Atención 24/7</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Consulta Farmacéutica</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Entrega a Domicilio</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Programa de Fidelidad</a></li>
+                <li><a href="#" className="hover:opacity-100 transition-opacity">Atención 24/7</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Contacto</h4>
               <ul className="space-y-2 text-sm opacity-80">
-                <li className="flex items-center">
-                  <span className="drocolven-icon mr-2">📞</span>
-                  +58 (212) 555-0123
-                </li>
-                <li className="flex items-center">
-                  <span className="drocolven-icon mr-2">📧</span>
-                  info@drocolven.com
-                </li>
-                <li className="flex items-center">
-                  <span className="drocolven-icon mr-2">📍</span>
-                  Caracas, Venezuela
-                </li>
-                <li className="flex items-center">
-                  <span className="drocolven-icon mr-2">🕒</span>
-                  Lun - Dom: 24 horas
-                </li>
+                <li>📞 +58 (212) 555-0123</li>
+                <li>📧 info@drocolven.com</li>
+                <li>📍 Caracas, Venezuela</li>
+                <li>🕒 Lun - Dom: 24 horas</li>
               </ul>
             </div>
           </div>

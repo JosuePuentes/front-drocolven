@@ -73,34 +73,34 @@ function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen drocolven-bg-futurista">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+      <header className="drocolven-header border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <img src={logoSolo} alt="Drocolven Logo" className="h-10 w-auto" />
+              <img src={logoSolo} alt="Drocolven Logo" className="h-10 w-auto drocolven-pulse" />
               <div>
-                <h1 className="text-xl font-bold text-primary">DROCOLVEN</h1>
+                <h1 className="text-xl font-bold drocolven-gradient-text">DROCOLVEN</h1>
                 <p className="text-xs text-muted-foreground">Servicio, compromiso y calidad</p>
               </div>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#inicio" className="text-gray-700 hover:text-primary transition-colors">Inicio</a>
-              <a href="#productos" className="text-gray-700 hover:text-primary transition-colors">Productos</a>
-              <a href="#sobre-nosotros" className="text-gray-700 hover:text-primary transition-colors">Sobre Nosotros</a>
-              <a href="#contacto" className="text-gray-700 hover:text-primary transition-colors">Contacto</a>
+              <a href="#inicio" className="drocolven-nav-link">Inicio</a>
+              <a href="#productos" className="drocolven-nav-link">Productos</a>
+              <a href="#sobre-nosotros" className="drocolven-nav-link">Sobre Nosotros</a>
+              <a href="#contacto" className="drocolven-nav-link">Contacto</a>
             </nav>
 
             {/* Actions */}
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Button variant="outline" size="sm" className="drocolven-btn-secondary">
                 Iniciar Sesión
               </Button>
-              <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => window.location.href = '/adminlogin'}>
+              <Button size="sm" className="drocolven-btn" onClick={() => window.location.href = '/adminlogin'}>
                 Panel Admin
               </Button>
               
@@ -117,12 +117,12 @@ function HomePage() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden drocolven-card border-t border-gray-200">
             <div className="px-4 py-2 space-y-2">
-              <a href="#inicio" className="block py-2 text-gray-700 hover:text-primary">Inicio</a>
-              <a href="#productos" className="block py-2 text-gray-700 hover:text-primary">Productos</a>
-              <a href="#sobre-nosotros" className="block py-2 text-gray-700 hover:text-primary">Sobre Nosotros</a>
-              <a href="#contacto" className="block py-2 text-gray-700 hover:text-primary">Contacto</a>
+              <a href="#inicio" className="block py-2 drocolven-nav-link">Inicio</a>
+              <a href="#productos" className="block py-2 drocolven-nav-link">Productos</a>
+              <a href="#sobre-nosotros" className="block py-2 drocolven-nav-link">Sobre Nosotros</a>
+              <a href="#contacto" className="block py-2 drocolven-nav-link">Contacto</a>
             </div>
           </div>
         )}
@@ -136,12 +136,12 @@ function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <Badge className="bg-accent/20 text-accent-foreground border-accent/30 holographic-border">
+                <Badge className="drocolven-badge">
                   Droguería Digital Avanzada
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                   Bienvenido a{' '}
-                  <span className="hologram-text">Drocolven</span>
+                  <span className="drocolven-gradient-text">Drocolven</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
                   Los mejores precios en medicamentos y productos farmacéuticos con la más alta calidad y servicio profesional.
@@ -149,11 +149,11 @@ function HomePage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 hologram-glow medical-pulse">
+                <Button size="lg" className="drocolven-btn">
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   Explorar Catálogo
                 </Button>
-                <Button variant="outline" size="lg" className="holographic-border">
+                <Button variant="outline" size="lg" className="drocolven-btn-secondary">
                   <Heart className="mr-2 h-5 w-5" />
                   Conocer Más
                 </Button>
@@ -178,7 +178,7 @@ function HomePage() {
 
             {/* Hero Visual */}
             <div className="relative">
-              <div className="futuristic-card rounded-3xl p-8 floating-animation quantum-effect">
+              <div className="drocolven-card rounded-3xl p-8 drocolven-bounce">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-4">
                     <HolographicIcon icon={Pill} size={64} />
@@ -198,17 +198,17 @@ function HomePage() {
       {/* Search Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white/50 relative">
         <div className="max-w-4xl mx-auto">
-          <div className="futuristic-card rounded-2xl p-8 medical-scanner">
-            <h2 className="text-2xl font-bold text-center mb-6 hologram-text">Busca tu medicamento</h2>
+          <div className="drocolven-card rounded-2xl p-8 drocolven-shadow-medium">
+            <h2 className="text-2xl font-bold text-center mb-6 drocolven-gradient-text">Busca tu medicamento</h2>
             <div className="flex gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input 
                   placeholder="Buscar medicamentos, vitaminas, productos..." 
-                  className="pl-10 h-12 holographic-border data-stream"
+                  className="drocolven-input pl-10 h-12"
                 />
               </div>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 hologram-glow">
+              <Button size="lg" className="drocolven-btn">
                 Buscar
               </Button>
             </div>
@@ -220,7 +220,7 @@ function HomePage() {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Promociones Destacadas</h2>
+            <h2 className="text-3xl font-bold mb-4 drocolven-gradient-text">Promociones Destacadas</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Aprovecha nuestras ofertas especiales en medicamentos y productos de alta calidad
             </p>
@@ -228,25 +228,25 @@ function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <Card key={product.id} className="futuristic-card hover-lift border-0 overflow-hidden quantum-effect">
+              <Card key={product.id} className="drocolven-card border-0 overflow-hidden">
                 <CardHeader className="p-0">
-                  <div className="relative medical-scanner">
-                    <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                  <div className="relative drocolven-loading">
+                    <div className="w-full h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center">
                       <HolographicIcon icon={Pill} size={64} animate={false} />
                     </div>
-                    <Badge className="absolute top-2 right-2 bg-red-500 text-white hologram-glow">
+                    <Badge className="absolute top-2 right-2 drocolven-badge bg-red-500 text-white">
                       -{product.discount}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="space-y-2">
-                    <Badge variant="outline" className="text-xs holographic-border">
+                    <Badge variant="outline" className="text-xs drocolven-badge-outline">
                       {product.category}
                     </Badge>
-                    <CardTitle className="text-lg hologram-text">{product.name}</CardTitle>
+                    <CardTitle className="text-lg drocolven-gradient-text">{product.name}</CardTitle>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-primary">{product.price}</span>
+                      <span className="text-2xl font-bold text-green-600">{product.price}</span>
                       <span className="text-sm text-muted-foreground line-through">
                         {product.originalPrice}
                       </span>
@@ -258,7 +258,7 @@ function HomePage() {
                       <span className="text-sm text-muted-foreground ml-1">(4.8)</span>
                     </div>
                   </div>
-                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90 hologram-glow medical-pulse">
+                  <Button className="w-full mt-4 drocolven-btn">
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Ver Oferta
                   </Button>
@@ -270,11 +270,11 @@ function HomePage() {
       </section>
 
       {/* Daily Verse Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary/5 to-secondary/5 relative neural-network">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-50 to-blue-50 relative neural-network">
         <ParticleField density={8} />
         <div className="max-w-4xl mx-auto text-center">
-          <div className="futuristic-card rounded-2xl p-8 quantum-effect">
-            <h3 className="text-xl font-semibold mb-4 hologram-text">Versículo del Día</h3>
+          <div className="drocolven-card rounded-2xl p-8 drocolven-shadow-soft">
+            <h3 className="text-xl font-semibold mb-4 drocolven-gradient-text">Versículo del Día</h3>
             <blockquote className="text-lg italic text-gray-700 mb-2">
               "{currentVerse.text}"
             </blockquote>
@@ -284,12 +284,12 @@ function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-secondary text-secondary-foreground py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="drocolven-gradient-bg text-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <img src={logoSolo} alt="Drocolven Logo" className="h-8 w-auto" />
+                <img src={logoSolo} alt="Drocolven Logo" className="h-8 w-auto brightness-0 invert" />
                 <div>
                   <h3 className="font-bold">DROCOLVEN</h3>
                   <p className="text-xs opacity-80">Servicio, compromiso y calidad</p>
@@ -353,4 +353,3 @@ function App() {
 }
 
 export default App
-

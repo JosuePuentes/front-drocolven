@@ -7,6 +7,9 @@ import { useClientes } from './useClientes';
 import { useNuevoPedido } from './useNuevoPedido';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { animate } from 'animejs';
+import { PedidoResponse } from './useNuevoPedido';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Utilidad de filtrado por múltiples palabras
 function filtrarPorMultiplesPalabrasAND<T>(
@@ -39,6 +42,9 @@ const CrearPedidoPage: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [productos, setProductos] = useState<any[]>([]); // inventario
   const [carrito, setCarrito] = useState<any[]>([]);
+  const [preliminarVisible, setPreliminarVisible] = useState(false);
+  const [busquedaPedidos, setBusquedaPedidos] = useState('');
+  const [selectedPedido, setSelectedPedido] = useState<PedidoResponse | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const { clientes, loading: loadingClientes, error: errorClientes } = useClientes();
@@ -49,7 +55,18 @@ const CrearPedidoPage: React.FC = () => {
     success,
     reset,
     getInventario,
+    getPedidos,
+    pedidos,
   } = useNuevoPedido();
+
+  // Cargar inventario y pedidos al montar
+  useEffect(() => {
+    (async () => {
+      const data = await getInventario?.();
+      if (data && Array.isArray(data)) setProductos(data);
+      await getPedidos?.(); // Fetch existing orders
+    })();
+  }, [getInventario, getPedidos]);
 
   // Cargar inventario al montar
   useEffect(() => {
@@ -75,6 +92,12 @@ const CrearPedidoPage: React.FC = () => {
   const productosFiltrados = useMemo(
     () => filtrarPorMultiplesPalabrasAND(productos, busqueda, ['descripcion', 'id']),
     [productos, busqueda]
+  );
+
+  // Filtrado de pedidos
+  const pedidosFiltrados = useMemo(
+    () => filtrarPorMultiplesPalabrasAND(pedidos, busquedaPedidos, ['cliente', 'usuario', '_id']),
+    [pedidos, busquedaPedidos]
   );
 
   // Carrito: agregar producto
@@ -246,17 +269,71 @@ const CrearPedidoPage: React.FC = () => {
                 </ul>
               )}
             </div>
-            <Button
-              type="submit"
-              className="w-full mt-4"
-              disabled={loading || loadingClientes || !carrito.length || !form.cliente || !form.usuario}
-            >
-              {loading ? 'Creando...' : 'Crear Pedido'}
-            </Button>
+            <div className="flex items-center gap-4 mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setPreliminarVisible(true)}
+                className="w-full"
+                disabled={!carrito.length}
+              >
+                Ver Preliminar
+              </Button>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || loadingClientes || !carrito.length || !form.cliente || !form.usuario}
+              >
+                {loading ? 'Creando...' : 'Crear Pedido'}
+              </Button>
+            </div>
             {success && <div className="text-green-600 text-center mt-2">¡Pedido creado!</div>}
             {error && <div className="text-red-600 text-center mt-2">{error}</div>}
             {errorClientes && <div className="text-red-600 text-center mt-2">{errorClientes}</div>}
           </form>
+
+          {/* Pedidos Existentes */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+              <AiOutlineShoppingCart className="w-5 h-5 text-gray-700" /> Pedidos Existentes
+            </h3>
+            <div className="flex items-center gap-3 mb-2">
+              <Input
+                placeholder="Buscar pedido por cliente o ID"
+                value={busquedaPedidos}
+                onChange={(e) => setBusquedaPedidos(e.target.value)}
+                className="flex-1 text-sm"
+              />
+            </div>
+            <div className="max-h-60 overflow-y-auto border rounded-md bg-gray-50 p-2">
+              {pedidosFiltrados.length === 0 ? (
+                <div className="text-gray-400 text-sm text-center py-4">No hay pedidos que coincidan con la búsqueda</div>
+              ) : (
+                <ul className="divide-y divide-gray-200">
+                  {pedidosFiltrados.map((pedido) => (
+                    <li key={pedido._id} className="flex items-center justify-between py-2 px-1">
+                      <span className="text-gray-700 text-sm font-medium flex-1 truncate">
+                        {pedido.cliente} - {pedido.usuario}
+                      </span>
+                      <span className="text-xs text-gray-400 ml-2">{pedido._id}</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="ml-2"
+                        onClick={() => {
+                          setSelectedPedido(pedido);
+                          setPreliminarVisible(true);
+                        }}
+                      >
+                        Ver Preliminar
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -264,3 +341,29 @@ const CrearPedidoPage: React.FC = () => {
 };
 
 export default CrearPedidoPage;
+
+      {preliminarVisible && selectedPedido && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+            <h3 className="text-xl font-bold mb-4">Vista Preliminar del Pedido</h3>
+            <div id="pedido-preliminar-content" className="max-h-80 overflow-y-auto mb-4">
+              <p><strong>Cliente:</strong> {selectedPedido.cliente}</p>
+              <p><strong>Usuario:</strong> {selectedPedido.usuario}</p>
+              <h4 className="font-semibold mt-2">Productos:</h4>
+              <ul className="list-disc list-inside">
+                {selectedPedido.productos.map((item, index) => (
+                  <li key={index}>{item.productoId} - Cantidad: {item.cantidad}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setPreliminarVisible(false)}>
+                Cerrar
+              </Button>
+              <Button onClick={handleExportPdf}>
+                Exportar a PDF
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
